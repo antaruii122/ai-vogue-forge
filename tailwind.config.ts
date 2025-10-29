@@ -13,15 +13,23 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        heading: ['Poppins', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        background: "hsl(var(--background))",
+        background: {
+          DEFAULT: "hsl(var(--background))",
+          lighter: "hsl(var(--background-lighter))",
+        },
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          purple: "hsl(var(--primary-purple))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -57,6 +65,9 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+      },
+      backgroundImage: {
+        'gradient-primary': 'linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-purple)))',
       },
       borderRadius: {
         lg: "var(--radius)",
