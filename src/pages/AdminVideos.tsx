@@ -136,123 +136,137 @@ const AdminVideos = () => {
 
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Apply Media to Website Sections</CardTitle>
+          <CardTitle>Hero Section - Media Slots</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Hero Left Column Slot 1 */}
-            <Card className="p-4">
-              <h3 className="font-semibold mb-2 text-sm">Hero - Left Column (Top)</h3>
-              {selectedFile && (
-                <div className="mb-2">
-                  <video src={rows.find(r => r.name === selectedFile)?.publicUrl} className="w-full h-24 object-cover rounded" muted />
-                </div>
-              )}
-              <Button 
-                onClick={() => { setTargetSection("hero-left-1"); applyToSection(); }} 
-                disabled={!selectedFile}
-                className="w-full"
-                size="sm"
-              >
-                <Check className="h-4 w-4 mr-2" /> Apply Here
-              </Button>
-            </Card>
+        <CardContent>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Left Column */}
+            <div>
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <div className="h-1 w-1 rounded-full bg-primary"></div>
+                Left Column (Scrolls Up)
+              </h3>
+              <div className="space-y-4">
+                {['hero-left-1', 'hero-left-2', 'hero-left-3'].map((slot, idx) => {
+                  const currentUrl = localStorage.getItem(`video_${slot}`);
+                  const currentFile = rows.find(r => r.publicUrl === currentUrl);
+                  return (
+                    <Card key={slot} className="p-4 bg-muted/30">
+                      <div className="flex items-start gap-3">
+                        <div className="flex-1">
+                          <p className="text-xs text-muted-foreground mb-2">Slot {idx + 1}</p>
+                          {currentUrl ? (
+                            <div className="space-y-2">
+                              <video src={currentUrl} className="w-full h-32 object-cover rounded border" muted loop autoPlay />
+                              <p className="text-xs font-medium truncate">{currentFile?.name || 'Unknown'}</p>
+                            </div>
+                          ) : (
+                            <div className="w-full h-32 rounded border-2 border-dashed border-border flex items-center justify-center bg-background">
+                              <p className="text-sm text-muted-foreground">Empty</p>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <Button 
+                            size="sm"
+                            onClick={() => { setTargetSection(slot); applyToSection(); }}
+                            disabled={!selectedFile}
+                          >
+                            {currentUrl ? 'Replace' : 'Set'}
+                          </Button>
+                          {currentUrl && (
+                            <Button 
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                localStorage.removeItem(`video_${slot}`);
+                                toast.success('Slot cleared');
+                                fetchFiles();
+                              }}
+                            >
+                              Clear
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
 
-            {/* Hero Left Column Slot 2 */}
-            <Card className="p-4">
-              <h3 className="font-semibold mb-2 text-sm">Hero - Left Column (Middle)</h3>
-              {selectedFile && (
-                <div className="mb-2">
-                  <video src={rows.find(r => r.name === selectedFile)?.publicUrl} className="w-full h-24 object-cover rounded" muted />
-                </div>
-              )}
-              <Button 
-                onClick={() => { setTargetSection("hero-left-2"); applyToSection(); }} 
-                disabled={!selectedFile}
-                className="w-full"
-                size="sm"
-              >
-                <Check className="h-4 w-4 mr-2" /> Apply Here
-              </Button>
-            </Card>
-
-            {/* Hero Left Column Slot 3 */}
-            <Card className="p-4">
-              <h3 className="font-semibold mb-2 text-sm">Hero - Left Column (Bottom)</h3>
-              {selectedFile && (
-                <div className="mb-2">
-                  <video src={rows.find(r => r.name === selectedFile)?.publicUrl} className="w-full h-24 object-cover rounded" muted />
-                </div>
-              )}
-              <Button 
-                onClick={() => { setTargetSection("hero-left-3"); applyToSection(); }} 
-                disabled={!selectedFile}
-                className="w-full"
-                size="sm"
-              >
-                <Check className="h-4 w-4 mr-2" /> Apply Here
-              </Button>
-            </Card>
-
-            {/* Hero Right Column Slot 1 */}
-            <Card className="p-4">
-              <h3 className="font-semibold mb-2 text-sm">Hero - Right Column (Top)</h3>
-              {selectedFile && (
-                <div className="mb-2">
-                  <video src={rows.find(r => r.name === selectedFile)?.publicUrl} className="w-full h-24 object-cover rounded" muted />
-                </div>
-              )}
-              <Button 
-                onClick={() => { setTargetSection("hero-right-1"); applyToSection(); }} 
-                disabled={!selectedFile}
-                className="w-full"
-                size="sm"
-              >
-                <Check className="h-4 w-4 mr-2" /> Apply Here
-              </Button>
-            </Card>
-
-            {/* Hero Right Column Slot 2 */}
-            <Card className="p-4">
-              <h3 className="font-semibold mb-2 text-sm">Hero - Right Column (Middle)</h3>
-              {selectedFile && (
-                <div className="mb-2">
-                  <video src={rows.find(r => r.name === selectedFile)?.publicUrl} className="w-full h-24 object-cover rounded" muted />
-                </div>
-              )}
-              <Button 
-                onClick={() => { setTargetSection("hero-right-2"); applyToSection(); }} 
-                disabled={!selectedFile}
-                className="w-full"
-                size="sm"
-              >
-                <Check className="h-4 w-4 mr-2" /> Apply Here
-              </Button>
-            </Card>
-
-            {/* Hero Right Column Slot 3 */}
-            <Card className="p-4">
-              <h3 className="font-semibold mb-2 text-sm">Hero - Right Column (Bottom)</h3>
-              {selectedFile && (
-                <div className="mb-2">
-                  <video src={rows.find(r => r.name === selectedFile)?.publicUrl} className="w-full h-24 object-cover rounded" muted />
-                </div>
-              )}
-              <Button 
-                onClick={() => { setTargetSection("hero-right-3"); applyToSection(); }} 
-                disabled={!selectedFile}
-                className="w-full"
-                size="sm"
-              >
-                <Check className="h-4 w-4 mr-2" /> Apply Here
-              </Button>
-            </Card>
+            {/* Right Column */}
+            <div>
+              <h3 className="font-semibold mb-4 flex items-center gap-2">
+                <div className="h-1 w-1 rounded-full bg-primary"></div>
+                Right Column (Scrolls Down)
+              </h3>
+              <div className="space-y-4">
+                {['hero-right-1', 'hero-right-2', 'hero-right-3'].map((slot, idx) => {
+                  const currentUrl = localStorage.getItem(`video_${slot}`);
+                  const currentFile = rows.find(r => r.publicUrl === currentUrl);
+                  return (
+                    <Card key={slot} className="p-4 bg-muted/30">
+                      <div className="flex items-start gap-3">
+                        <div className="flex-1">
+                          <p className="text-xs text-muted-foreground mb-2">Slot {idx + 1}</p>
+                          {currentUrl ? (
+                            <div className="space-y-2">
+                              <video src={currentUrl} className="w-full h-32 object-cover rounded border" muted loop autoPlay />
+                              <p className="text-xs font-medium truncate">{currentFile?.name || 'Unknown'}</p>
+                            </div>
+                          ) : (
+                            <div className="w-full h-32 rounded border-2 border-dashed border-border flex items-center justify-center bg-background">
+                              <p className="text-sm text-muted-foreground">Empty</p>
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          <Button 
+                            size="sm"
+                            onClick={() => { setTargetSection(slot); applyToSection(); }}
+                            disabled={!selectedFile}
+                          >
+                            {currentUrl ? 'Replace' : 'Set'}
+                          </Button>
+                          {currentUrl && (
+                            <Button 
+                              size="sm"
+                              variant="outline"
+                              onClick={() => {
+                                localStorage.removeItem(`video_${slot}`);
+                                toast.success('Slot cleared');
+                                fetchFiles();
+                              }}
+                            >
+                              Clear
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
           </div>
           
           {selectedFile && (
-            <p className="text-sm text-muted-foreground text-center pt-4 border-t">
-              Selected: <span className="font-medium">{selectedFile}</span>
-            </p>
+            <div className="mt-6 p-4 bg-primary/10 rounded-lg border border-primary/20">
+              <p className="text-sm font-medium">
+                Currently selected: <span className="text-primary">{selectedFile}</span>
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Click "Set" or "Replace" on any slot above to place this video
+              </p>
+            </div>
+          )}
+          {!selectedFile && (
+            <div className="mt-6 p-4 bg-muted rounded-lg">
+              <p className="text-sm text-muted-foreground">
+                Select a video from the table below to place it in a slot
+              </p>
+            </div>
           )}
         </CardContent>
       </Card>
