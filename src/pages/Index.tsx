@@ -9,9 +9,27 @@ const Index = () => {
   const [showAnnouncement, setShowAnnouncement] = useState(true);
   const navigate = useNavigate();
   const [videoUrl, setVideoUrl] = useState<string>('/videos/BOLD.mp4');
+  const [heroVideos, setHeroVideos] = useState({
+    left1: '',
+    left2: '',
+    left3: '',
+    right1: '',
+    right2: '',
+    right3: ''
+  });
 
   useEffect(() => {
-    // Check for video selection from admin panel
+    // Load all hero video slots from localStorage
+    setHeroVideos({
+      left1: localStorage.getItem('video_hero-left-1') || '',
+      left2: localStorage.getItem('video_hero-left-2') || '',
+      left3: localStorage.getItem('video_hero-left-3') || '',
+      right1: localStorage.getItem('video_hero-right-1') || '',
+      right2: localStorage.getItem('video_hero-right-2') || '',
+      right3: localStorage.getItem('video_hero-right-3') || ''
+    });
+    
+    // Check for video selection from admin panel (legacy)
     const savedHeroVideo = localStorage.getItem('video_hero');
     if (savedHeroVideo) {
       setVideoUrl(savedHeroVideo);
@@ -118,46 +136,81 @@ const Index = () => {
             <div className="relative h-[600px] flex gap-4">
               {/* Left Column - Moves Up */}
               <div className="flex-1 flex flex-col gap-4 animate-scroll-up">
+                {/* Slot 1 */}
                 <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                  <video 
-                    className="w-full h-full object-cover" 
-                    autoPlay 
-                    loop 
-                    muted 
-                    playsInline
-                    key={videoUrl}
-                  >
-                    <source src={videoUrl} type="video/mp4" />
-                  </video>
+                  {heroVideos.left1 ? (
+                    <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                      <source src={heroVideos.left1} type="video/mp4" />
+                    </video>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      <Camera className="h-12 w-12" />
+                    </div>
+                  )}
                 </div>
+                {/* Slot 2 */}
                 <div className="aspect-[3/4] bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                    <Camera className="h-12 w-12" />
-                  </div>
+                  {heroVideos.left2 ? (
+                    <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                      <source src={heroVideos.left2} type="video/mp4" />
+                    </video>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      <Camera className="h-12 w-12" />
+                    </div>
+                  )}
                 </div>
+                {/* Slot 3 */}
                 <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                    <Camera className="h-12 w-12" />
-                  </div>
+                  {heroVideos.left3 ? (
+                    <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                      <source src={heroVideos.left3} type="video/mp4" />
+                    </video>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      <Camera className="h-12 w-12" />
+                    </div>
+                  )}
                 </div>
               </div>
 
               {/* Right Column - Moves Down */}
               <div className="flex-1 flex flex-col gap-4 animate-scroll-down pt-12">
+                {/* Slot 1 */}
                 <div className="aspect-square bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                    <Camera className="h-12 w-12" />
-                  </div>
+                  {heroVideos.right1 ? (
+                    <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                      <source src={heroVideos.right1} type="video/mp4" />
+                    </video>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      <Camera className="h-12 w-12" />
+                    </div>
+                  )}
                 </div>
+                {/* Slot 2 */}
                 <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                    <Camera className="h-12 w-12" />
-                  </div>
+                  {heroVideos.right2 ? (
+                    <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                      <source src={heroVideos.right2} type="video/mp4" />
+                    </video>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      <Camera className="h-12 w-12" />
+                    </div>
+                  )}
                 </div>
+                {/* Slot 3 */}
                 <div className="aspect-square bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                    <Camera className="h-12 w-12" />
-                  </div>
+                  {heroVideos.right3 ? (
+                    <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                      <source src={heroVideos.right3} type="video/mp4" />
+                    </video>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                      <Camera className="h-12 w-12" />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
