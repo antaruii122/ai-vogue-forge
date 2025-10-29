@@ -131,10 +131,13 @@ const Index = () => {
             <div className="space-y-8">
               <div className="space-y-4">
                 <h1 className="text-5xl md:text-6xl font-heading font-bold leading-tight">
-                  AI Fashion Photography, Videos & Product Scenes for E-commerce
+                  AI Photoshoots and Videos for Ecommerce
                 </h1>
                 <p className="text-lg md:text-xl text-muted-foreground">
-                  Create Stunning Product and Fashion Photography with AI. Brand visuals that convert while saving costs.
+                  Create Stunning Product and Fashion Photography with AI.
+                </p>
+                <p className="text-base text-muted-foreground">
+                  Brand visuals that convert while saving costs.
                 </p>
               </div>
               
@@ -149,17 +152,45 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div
-                  key={i}
-                  className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden"
-                >
+            {/* Staggered Photo Gallery */}
+            <div className="relative h-[600px] flex gap-4">
+              {/* Left Column - Moves Up */}
+              <div className="flex-1 flex flex-col gap-4 animate-scroll-up">
+                <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
                   <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                     <Camera className="h-12 w-12" />
                   </div>
                 </div>
-              ))}
+                <div className="aspect-[3/4] bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                    <Camera className="h-12 w-12" />
+                  </div>
+                </div>
+                <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                    <Camera className="h-12 w-12" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column - Moves Down */}
+              <div className="flex-1 flex flex-col gap-4 animate-scroll-down pt-12">
+                <div className="aspect-square bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                    <Camera className="h-12 w-12" />
+                  </div>
+                </div>
+                <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                    <Camera className="h-12 w-12" />
+                  </div>
+                </div>
+                <div className="aspect-square bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                    <Camera className="h-12 w-12" />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
