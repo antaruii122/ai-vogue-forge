@@ -134,40 +134,7 @@ const Index = () => {
       </section>
 
       {/* How It Works */}
-      <section className="py-20 bg-background-lighter">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-heading font-bold mb-4">How It Works</h2>
-            <p className="text-lg text-muted-foreground">Three simple steps to professional visuals</p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[{
-            icon: Upload,
-            title: "Upload Product Image",
-            description: "Simply upload your product photo or flat-lay image"
-          }, {
-            icon: Wand2,
-            title: "Add AI Model + Scene Description",
-            description: "Describe your desired model, pose, and setting with text"
-          }, {
-            icon: Download,
-            title: "Download Professional Photo",
-            description: "Get your high-quality, on-model lifestyle image instantly"
-          }].map((step, i) => <div key={i} className="relative">
-                <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-gradient-primary flex items-center justify-center">
-                    <step.icon className="h-8 w-8 text-white" />
-                  </div>
-                  <div className="space-y-2">
-                    <h3 className="text-xl font-heading font-semibold">{step.title}</h3>
-                    <p className="text-muted-foreground">{step.description}</p>
-                  </div>
-                </div>
-              </div>)}
-          </div>
-        </div>
-      </section>
+      
 
       {/* Feature Cards */}
       <section id="features" className="py-20">
