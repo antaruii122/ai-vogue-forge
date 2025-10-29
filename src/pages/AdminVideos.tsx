@@ -71,18 +71,20 @@ const AdminVideos = () => {
   };
 
   const rows = useMemo(() => {
-    const heroVideo = localStorage.getItem('video_hero');
-    const gallery1Video = localStorage.getItem('video_gallery1');
-    const gallery2Video = localStorage.getItem('video_gallery2');
+    const sections = ['hero-left-1', 'hero-left-2', 'hero-left-3', 'hero-right-1', 'hero-right-2', 'hero-right-3'];
+    const sectionVideos = sections.map(s => localStorage.getItem(`video_${s}`));
     
     return files.map((f) => {
       const { data } = supabase.storage.from(bucket).getPublicUrl(f.name);
       const url = data.publicUrl;
       
       const usedIn: string[] = [];
-      if (url === heroVideo) usedIn.push('Hero');
-      if (url === gallery1Video) usedIn.push('Gallery 1');
-      if (url === gallery2Video) usedIn.push('Gallery 2');
+      sections.forEach((section, idx) => {
+        if (url === sectionVideos[idx]) {
+          const label = section.replace('hero-', 'Hero ').replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+          usedIn.push(label);
+        }
+      });
       
       return { ...f, publicUrl: url, usedIn } as typeof f & { publicUrl: string; usedIn: string[] };
     });
@@ -101,7 +103,8 @@ const AdminVideos = () => {
     
     // Store the selection in localStorage
     localStorage.setItem(`video_${targetSection}`, url);
-    toast.success(`Video applied to ${targetSection} section. Refresh the homepage to see changes.`);
+    const sectionLabel = targetSection.replace('hero-', 'Hero ').replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    toast.success(`Video applied to ${sectionLabel}. Refresh the homepage to see changes.`);
   };
 
   return (
@@ -133,26 +136,121 @@ const AdminVideos = () => {
 
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Apply Video to Website Section</CardTitle>
+          <CardTitle>Apply Media to Website Sections</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Select value={targetSection} onValueChange={setTargetSection}>
-              <SelectTrigger className="w-full sm:w-[200px]">
-                <SelectValue placeholder="Select section" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="hero">Hero Section</SelectItem>
-                <SelectItem value="gallery1">Gallery Slot 1</SelectItem>
-                <SelectItem value="gallery2">Gallery Slot 2</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button onClick={applyToSection} disabled={!selectedFile}>
-              <Check className="h-4 w-4 mr-2" /> Apply to {targetSection}
-            </Button>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {/* Hero Left Column Slot 1 */}
+            <Card className="p-4">
+              <h3 className="font-semibold mb-2 text-sm">Hero - Left Column (Top)</h3>
+              {selectedFile && (
+                <div className="mb-2">
+                  <video src={rows.find(r => r.name === selectedFile)?.publicUrl} className="w-full h-24 object-cover rounded" muted />
+                </div>
+              )}
+              <Button 
+                onClick={() => { setTargetSection("hero-left-1"); applyToSection(); }} 
+                disabled={!selectedFile}
+                className="w-full"
+                size="sm"
+              >
+                <Check className="h-4 w-4 mr-2" /> Apply Here
+              </Button>
+            </Card>
+
+            {/* Hero Left Column Slot 2 */}
+            <Card className="p-4">
+              <h3 className="font-semibold mb-2 text-sm">Hero - Left Column (Middle)</h3>
+              {selectedFile && (
+                <div className="mb-2">
+                  <video src={rows.find(r => r.name === selectedFile)?.publicUrl} className="w-full h-24 object-cover rounded" muted />
+                </div>
+              )}
+              <Button 
+                onClick={() => { setTargetSection("hero-left-2"); applyToSection(); }} 
+                disabled={!selectedFile}
+                className="w-full"
+                size="sm"
+              >
+                <Check className="h-4 w-4 mr-2" /> Apply Here
+              </Button>
+            </Card>
+
+            {/* Hero Left Column Slot 3 */}
+            <Card className="p-4">
+              <h3 className="font-semibold mb-2 text-sm">Hero - Left Column (Bottom)</h3>
+              {selectedFile && (
+                <div className="mb-2">
+                  <video src={rows.find(r => r.name === selectedFile)?.publicUrl} className="w-full h-24 object-cover rounded" muted />
+                </div>
+              )}
+              <Button 
+                onClick={() => { setTargetSection("hero-left-3"); applyToSection(); }} 
+                disabled={!selectedFile}
+                className="w-full"
+                size="sm"
+              >
+                <Check className="h-4 w-4 mr-2" /> Apply Here
+              </Button>
+            </Card>
+
+            {/* Hero Right Column Slot 1 */}
+            <Card className="p-4">
+              <h3 className="font-semibold mb-2 text-sm">Hero - Right Column (Top)</h3>
+              {selectedFile && (
+                <div className="mb-2">
+                  <video src={rows.find(r => r.name === selectedFile)?.publicUrl} className="w-full h-24 object-cover rounded" muted />
+                </div>
+              )}
+              <Button 
+                onClick={() => { setTargetSection("hero-right-1"); applyToSection(); }} 
+                disabled={!selectedFile}
+                className="w-full"
+                size="sm"
+              >
+                <Check className="h-4 w-4 mr-2" /> Apply Here
+              </Button>
+            </Card>
+
+            {/* Hero Right Column Slot 2 */}
+            <Card className="p-4">
+              <h3 className="font-semibold mb-2 text-sm">Hero - Right Column (Middle)</h3>
+              {selectedFile && (
+                <div className="mb-2">
+                  <video src={rows.find(r => r.name === selectedFile)?.publicUrl} className="w-full h-24 object-cover rounded" muted />
+                </div>
+              )}
+              <Button 
+                onClick={() => { setTargetSection("hero-right-2"); applyToSection(); }} 
+                disabled={!selectedFile}
+                className="w-full"
+                size="sm"
+              >
+                <Check className="h-4 w-4 mr-2" /> Apply Here
+              </Button>
+            </Card>
+
+            {/* Hero Right Column Slot 3 */}
+            <Card className="p-4">
+              <h3 className="font-semibold mb-2 text-sm">Hero - Right Column (Bottom)</h3>
+              {selectedFile && (
+                <div className="mb-2">
+                  <video src={rows.find(r => r.name === selectedFile)?.publicUrl} className="w-full h-24 object-cover rounded" muted />
+                </div>
+              )}
+              <Button 
+                onClick={() => { setTargetSection("hero-right-3"); applyToSection(); }} 
+                disabled={!selectedFile}
+                className="w-full"
+                size="sm"
+              >
+                <Check className="h-4 w-4 mr-2" /> Apply Here
+              </Button>
+            </Card>
           </div>
+          
           {selectedFile && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground text-center pt-4 border-t">
               Selected: <span className="font-medium">{selectedFile}</span>
             </p>
           )}
