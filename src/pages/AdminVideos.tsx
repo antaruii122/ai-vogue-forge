@@ -122,8 +122,8 @@ const AdminVideos = () => {
       toast.error("File not found");
       return;
     }
-    
-    localStorage.setItem(`video_${slot}`, url);
+    const bustedUrl = `${url}${url.includes('?') ? '&' : '?'}v=${Date.now()}`;
+    localStorage.setItem(`video_${slot}`, bustedUrl);
     const sectionLabel = slot.replace('hero-', 'Hero ').replace('feature', 'Feature').replace('comparison-', 'Compare ').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     toast.success(`Applied to ${sectionLabel}. Refresh homepage to see changes.`);
     fetchFiles();
@@ -132,12 +132,6 @@ const AdminVideos = () => {
   const clearSlot = (slot: string) => {
     localStorage.removeItem(`video_${slot}`);
     toast.success('Slot cleared');
-    fetchFiles();
-  };
-
-  const applyChanges = (slot: string) => {
-    const sectionLabel = slot.replace('hero-', 'Hero ').replace('feature', 'Feature').replace('comparison-', 'Compare ').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-    toast.success(`${sectionLabel} applied and updated`);
     fetchFiles();
   };
 
@@ -186,7 +180,7 @@ const AdminVideos = () => {
                 <Button 
                   size="sm"
                   variant="secondary"
-                  onClick={() => applyChanges(slot)}
+                  onClick={() => applyToSection(slot)}
                 >
                   Apply
                 </Button>
