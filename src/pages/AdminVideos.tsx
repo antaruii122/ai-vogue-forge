@@ -18,7 +18,6 @@ const AdminVideos = () => {
   const [file, setFile] = useState<File | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [targetSection, setTargetSection] = useState<string>("hero-left-1");
-  const [lsTick, setLsTick] = useState(0);
 
   const bucket = 'videos';
 
@@ -67,7 +66,6 @@ const AdminVideos = () => {
       return;
     }
     toast.success(file.type.startsWith('image/') ? 'Image uploaded' : 'Video uploaded');
-    setSelectedFile(file.name);
     setFile(null);
     await fetchFiles();
   };
@@ -112,7 +110,7 @@ const AdminVideos = () => {
       
       return { ...f, publicUrl: url, usedIn } as typeof f & { publicUrl: string; usedIn: string[] };
     });
-  }, [files, lsTick]);
+  }, [files]);
 
   const applyToSection = (slot: string) => {
     if (!selectedFile) {
@@ -128,14 +126,12 @@ const AdminVideos = () => {
     localStorage.setItem(`video_${slot}`, url);
     const sectionLabel = slot.replace('hero-', 'Hero ').replace('feature', 'Feature').replace('comparison-', 'Compare ').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
     toast.success(`Applied to ${sectionLabel}. Refresh homepage to see changes.`);
-    setLsTick((t) => t + 1);
     fetchFiles();
   };
 
   const clearSlot = (slot: string) => {
     localStorage.removeItem(`video_${slot}`);
     toast.success('Slot cleared');
-    setLsTick((t) => t + 1);
     fetchFiles();
   };
 
