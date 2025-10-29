@@ -11,6 +11,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const [activeItem, setActiveItem] = useState("Fashion Photography");
 
   const menuItems = {
+    dashboard: [
+      { name: "Fashion Photography", badge: null },
+      { name: "Video Generation", badge: null },
+      { name: "Product Photography", badge: null },
+    ],
     resources: [
       { name: "Portfolio", badge: null },
     ],
@@ -110,6 +115,32 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             >
               Dashboard
             </a>
+            
+            {/* Dashboard Subcategories */}
+            {menuItems.dashboard.map((item) => (
+              <button
+                key={item.name}
+                onClick={() => {
+                  setActiveItem(item.name);
+                  setIsSidebarOpen(false);
+                }}
+                className={`
+                  w-full text-left pl-8 pr-4 py-3 text-sm transition-colors flex items-center justify-between
+                  ${
+                    activeItem === item.name
+                      ? "bg-[#f5f5f5] text-[#000000] font-bold border-l-[3px] border-[#000000]"
+                      : "text-[#666666] hover:bg-[#fafafa]"
+                  }
+                `}
+              >
+                <span>{item.name}</span>
+                {item.badge && (
+                  <span className="px-2 py-0.5 text-[10px] bg-[#1a1a1a] text-white rounded-full font-medium">
+                    {item.badge}
+                  </span>
+                )}
+              </button>
+            ))}
           </div>
 
           {/* Resources Section */}
