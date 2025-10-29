@@ -210,80 +210,71 @@ const AdminVideos = () => {
         </CardContent>
       </Card>
 
-      <Tabs defaultValue="hero" className="mb-8">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="hero">Hero Section</TabsTrigger>
-          <TabsTrigger value="features">Feature Sections</TabsTrigger>
-          <TabsTrigger value="comparison">Comparison Section</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="hero">
-          <Card>
-            <CardHeader>
-              <CardTitle>Hero Section Slots</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Accordion type="multiple" defaultValue={["left", "right"]} className="w-full">
-                <AccordionItem value="left">
-                  <AccordionTrigger className="text-base font-semibold">
-                    Left Column (Scrolls Up)
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="space-y-4 pt-4">
+      <Accordion type="multiple" defaultValue={["hero", "features", "comparison"]} className="mb-8">
+        <AccordionItem value="hero">
+          <AccordionTrigger className="text-lg font-semibold px-6">
+            Hero Section (6 slots)
+          </AccordionTrigger>
+          <AccordionContent>
+            <Card className="border-0 shadow-none">
+              <CardContent className="pt-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  <div>
+                    <h3 className="font-semibold mb-4">Left Column (Scrolls Up)</h3>
+                    <div className="space-y-4">
                       {renderSlotCard('hero-left-1', 'Slot 1 - Top')}
                       {renderSlotCard('hero-left-2', 'Slot 2 - Middle')}
                       {renderSlotCard('hero-left-3', 'Slot 3 - Bottom')}
                     </div>
-                  </AccordionContent>
-                </AccordionItem>
-
-                <AccordionItem value="right">
-                  <AccordionTrigger className="text-base font-semibold">
-                    Right Column (Scrolls Down)
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="space-y-4 pt-4">
+                  </div>
+                  <div>
+                    <h3 className="font-semibold mb-4">Right Column (Scrolls Down)</h3>
+                    <div className="space-y-4">
                       {renderSlotCard('hero-right-1', 'Slot 1 - Top')}
                       {renderSlotCard('hero-right-2', 'Slot 2 - Middle')}
                       {renderSlotCard('hero-right-3', 'Slot 3 - Bottom')}
                     </div>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </CardContent>
-          </Card>
-        </TabsContent>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </AccordionContent>
+        </AccordionItem>
 
-        <TabsContent value="features">
-          <Card>
-            <CardHeader>
-              <CardTitle>Feature Section Media</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {renderSlotCard('fashion-feature', 'AI Fashion Photography')}
-                {renderSlotCard('video-feature', 'AI Video Generation')}
-                {renderSlotCard('product-feature', 'AI Product Photography')}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
+        <AccordionItem value="features">
+          <AccordionTrigger className="text-lg font-semibold px-6">
+            Feature Sections (3 slots)
+          </AccordionTrigger>
+          <AccordionContent>
+            <Card className="border-0 shadow-none">
+              <CardContent className="pt-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {renderSlotCard('fashion-feature', 'AI Fashion Photography')}
+                  {renderSlotCard('video-feature', 'AI Video Generation')}
+                  {renderSlotCard('product-feature', 'AI Product Photography')}
+                </div>
+              </CardContent>
+            </Card>
+          </AccordionContent>
+        </AccordionItem>
 
-        <TabsContent value="comparison">
-          <Card>
-            <CardHeader>
-              <CardTitle>Quality Comparison Section</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {renderSlotCard('comparison-original', 'Original Product')}
-                {renderSlotCard('comparison-ours', 'AI Fashion Studio')}
-                {renderSlotCard('comparison-competitor', 'Competitor Result')}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+        <AccordionItem value="comparison">
+          <AccordionTrigger className="text-lg font-semibold px-6">
+            Comparison Section (3 slots)
+          </AccordionTrigger>
+          <AccordionContent>
+            <Card className="border-0 shadow-none">
+              <CardContent className="pt-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {renderSlotCard('comparison-original', 'Original Product')}
+                  {renderSlotCard('comparison-ours', 'AI Fashion Studio')}
+                  {renderSlotCard('comparison-competitor', 'Competitor Result')}
+                </div>
+              </CardContent>
+            </Card>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
 
       {selectedFile && (
         <div className="mb-6 p-4 bg-primary/10 rounded-lg border border-primary/20">
