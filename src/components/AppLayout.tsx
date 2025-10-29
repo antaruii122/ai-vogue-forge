@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Menu, ChevronDown, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -7,22 +8,23 @@ interface AppLayoutProps {
 }
 
 const AppLayout = ({ children }: AppLayoutProps) => {
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeItem, setActiveItem] = useState("Fashion Photography");
 
   const menuItems = {
     dashboard: [
-      { name: "Fashion Photography", badge: null },
-      { name: "Video Generation", badge: null },
-      { name: "Product Photography", badge: null },
+      { name: "Fashion Photography", badge: null, route: "/tools/fashion-photography" },
+      { name: "Video Generation", badge: null, route: "/tools/video-generation" },
+      { name: "Product Photography", badge: null, route: "/tools/product-photography" },
     ],
     resources: [
-      { name: "Portfolio", badge: null },
+      { name: "Portfolio", badge: null, route: "#" },
     ],
     profile: [
-      { name: "Profile", badge: null },
-      { name: "Billing", badge: null },
-      { name: "API Keys", badge: null },
+      { name: "Profile", badge: null, route: "#" },
+      { name: "Billing", badge: null, route: "#" },
+      { name: "API Keys", badge: null, route: "#" },
     ],
   };
 
@@ -96,13 +98,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         <nav className="py-4">
           {/* Dashboard Section */}
           <div className="mb-6">
-            <a
-              href="/dashboard"
-              onClick={(e) => {
-                e.preventDefault();
+            <button
+              onClick={() => {
                 setActiveItem("Dashboard");
                 setIsSidebarOpen(false);
-                window.location.href = "/dashboard";
+                navigate("/dashboard");
               }}
               className={`
                 block w-full text-left px-4 py-3 text-sm transition-colors
@@ -114,7 +114,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               `}
             >
               Dashboard
-            </a>
+            </button>
             
             {/* Dashboard Subcategories */}
             {menuItems.dashboard.map((item) => (
@@ -123,6 +123,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                 onClick={() => {
                   setActiveItem(item.name);
                   setIsSidebarOpen(false);
+                  navigate(item.route);
                 }}
                 className={`
                   w-full text-left pl-8 pr-4 py-3 text-sm transition-colors flex items-center justify-between
