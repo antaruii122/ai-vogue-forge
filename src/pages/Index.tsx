@@ -2,86 +2,37 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Upload, 
-  Wand2, 
-  Download, 
-  Camera, 
-  Video, 
-  Package, 
-  Sparkles,
-  X,
-  Star,
-  Check
-} from "lucide-react";
-
+import { Upload, Wand2, Download, Camera, Video, Package, Sparkles, X, Star, Check } from "lucide-react";
 const Index = () => {
   const [showAnnouncement, setShowAnnouncement] = useState(true);
   const navigate = useNavigate();
-
-  const categories = [
-    "dresses", "pants", "tops", "graphic t-shirts", "outerwear", 
-    "baby & kids clothing", "men's clothing", "women's clothing", 
-    "jewellery", "handbags", "sunglasses", "hats", "skincare", 
-    "makeup", "beverage", "health & wellness", "pet products", "electronics"
-  ];
-
-  const pricingPlans = [
-    { 
-      name: "Essentials", 
-      price: "$9", 
-      credits: "10 credits",
-      popular: false,
-      features: [
-        "Up to 5 images",
-        "Or up to 2 videos",
-        "Unlimited fashion model customization from ethnicity, poses, and sizes",
-        "Catalogue of templates, props, and avatars to choose from"
-      ]
-    },
-    { 
-      name: "Starter", 
-      price: "$30", 
-      credits: "30 credits",
-      popular: false,
-      features: [
-        "Up to 15 images",
-        "Or up to 7 videos",
-        "Unlimited fashion model customization from ethnicity, poses, and sizes",
-        "Catalogue of templates, props, and avatars to choose from",
-        "Unlimited access to CreativeAgent"
-      ]
-    },
-    { 
-      name: "Advanced", 
-      price: "$100", 
-      credits: "200 credits",
-      popular: true,
-      features: [
-        "Up to 100 images",
-        "Or up to 50 videos",
-        "Unlimited fashion model customization from ethnicity, poses, and sizes",
-        "Catalogue of templates, props, and avatars to choose from",
-        "Unlimited access to CreativeAgent"
-      ]
-    },
-    { 
-      name: "Pro", 
-      price: "$199", 
-      credits: "400 credits",
-      popular: false,
-      features: [
-        "Up to 200 images",
-        "Or up to 100 videos",
-        "Unlimited fashion model customization from ethnicity, poses, and sizes",
-        "Catalogue of templates, props, and avatars to choose from",
-        "Unlimited access to CreativeAgent"
-      ]
-    },
-  ];
-
-  return (
-    <div className="min-h-screen bg-background">
+  const categories = ["dresses", "pants", "tops", "graphic t-shirts", "outerwear", "baby & kids clothing", "men's clothing", "women's clothing", "jewellery", "handbags", "sunglasses", "hats", "skincare", "makeup", "beverage", "health & wellness", "pet products", "electronics"];
+  const pricingPlans = [{
+    name: "Essentials",
+    price: "$9",
+    credits: "10 credits",
+    popular: false,
+    features: ["Up to 5 images", "Or up to 2 videos", "Unlimited fashion model customization from ethnicity, poses, and sizes", "Catalogue of templates, props, and avatars to choose from"]
+  }, {
+    name: "Starter",
+    price: "$30",
+    credits: "30 credits",
+    popular: false,
+    features: ["Up to 15 images", "Or up to 7 videos", "Unlimited fashion model customization from ethnicity, poses, and sizes", "Catalogue of templates, props, and avatars to choose from", "Unlimited access to CreativeAgent"]
+  }, {
+    name: "Advanced",
+    price: "$100",
+    credits: "200 credits",
+    popular: true,
+    features: ["Up to 100 images", "Or up to 50 videos", "Unlimited fashion model customization from ethnicity, poses, and sizes", "Catalogue of templates, props, and avatars to choose from", "Unlimited access to CreativeAgent"]
+  }, {
+    name: "Pro",
+    price: "$199",
+    credits: "400 credits",
+    popular: false,
+    features: ["Up to 200 images", "Or up to 100 videos", "Unlimited fashion model customization from ethnicity, poses, and sizes", "Catalogue of templates, props, and avatars to choose from", "Unlimited access to CreativeAgent"]
+  }];
+  return <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border">
         <div className="container mx-auto px-4">
@@ -94,7 +45,7 @@ const Index = () => {
             <nav className="hidden md:flex items-center gap-8">
               <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Features</a>
               <a href="#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
-              <a href="#api" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">API</a>
+              
               <a href="#resources" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Resources</a>
             </nav>
 
@@ -107,23 +58,7 @@ const Index = () => {
       </header>
 
       {/* Announcement Bar */}
-      {showAnnouncement && (
-        <div className="relative bg-gradient-to-r from-primary/20 via-primary-purple/20 to-primary/20 border-b border-primary/30">
-          <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center justify-center gap-4">
-              <p className="text-sm text-center">
-                <span className="font-semibold">Limited Time:</span> 2X Credits on Any Plan. Redeem by Dec 31, 2025.
-              </p>
-              <button
-                onClick={() => setShowAnnouncement(false)}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {showAnnouncement}
 
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 md:py-32">
@@ -207,12 +142,19 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              { icon: Upload, title: "Upload Product Image", description: "Simply upload your product photo or flat-lay image" },
-              { icon: Wand2, title: "Add AI Model + Scene Description", description: "Describe your desired model, pose, and setting with text" },
-              { icon: Download, title: "Download Professional Photo", description: "Get your high-quality, on-model lifestyle image instantly" },
-            ].map((step, i) => (
-              <div key={i} className="relative">
+            {[{
+            icon: Upload,
+            title: "Upload Product Image",
+            description: "Simply upload your product photo or flat-lay image"
+          }, {
+            icon: Wand2,
+            title: "Add AI Model + Scene Description",
+            description: "Describe your desired model, pose, and setting with text"
+          }, {
+            icon: Download,
+            title: "Download Professional Photo",
+            description: "Get your high-quality, on-model lifestyle image instantly"
+          }].map((step, i) => <div key={i} className="relative">
                 <div className="flex flex-col items-center text-center space-y-4">
                   <div className="w-16 h-16 rounded-full bg-gradient-primary flex items-center justify-center">
                     <step.icon className="h-8 w-8 text-white" />
@@ -222,8 +164,7 @@ const Index = () => {
                     <p className="text-muted-foreground">{step.description}</p>
                   </div>
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -244,18 +185,10 @@ const Index = () => {
                     Create fashion photos with AI-generated models wearing your products
                   </CardDescription>
                   <ul className="space-y-2">
-                    {[
-                      "Generate hyper-personalized ad creatives for different customer segments",
-                      "Showcase apparel on diverse AI models in various settings worldwide",
-                      "Seamless automatic background removal from flat-lay",
-                      "Turn simple flat-lays into professional on-model lifestyle photography",
-                      "Ideal for: dresses, shirts, pants, and more"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-2">
+                    {["Generate hyper-personalized ad creatives for different customer segments", "Showcase apparel on diverse AI models in various settings worldwide", "Seamless automatic background removal from flat-lay", "Turn simple flat-lays into professional on-model lifestyle photography", "Ideal for: dresses, shirts, pants, and more"].map((item, i) => <li key={i} className="flex items-start gap-2">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-sm text-muted-foreground">{item}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                   <Button variant="outline" className="w-fit" onClick={() => navigate("/ai-fashion-photography")}>
                     Explore AI Fashion Photography
@@ -286,17 +219,10 @@ const Index = () => {
                     Create instant video clips with AI from your product images
                   </CardDescription>
                   <ul className="space-y-2">
-                    {[
-                      "Instant video generation from images",
-                      "Perfect for ads, social media, and product display pages",
-                      "Animated, engaging content in seconds",
-                      "Multiple video styles: Zoom, Rotate, Pan, Fade"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-2">
+                    {["Instant video generation from images", "Perfect for ads, social media, and product display pages", "Animated, engaging content in seconds", "Multiple video styles: Zoom, Rotate, Pan, Fade"].map((item, i) => <li key={i} className="flex items-start gap-2">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-sm text-muted-foreground">{item}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                   <Button variant="outline" className="w-fit">
                     Explore AI Video Generation
@@ -317,18 +243,10 @@ const Index = () => {
                     Create customizable AI scenes for stunning product photos
                   </CardDescription>
                   <ul className="space-y-2">
-                    {[
-                      "Generate product shots with contextually relevant scenes",
-                      "Personalized for each customer segment",
-                      "Seamless automatic background removal",
-                      "Creatively edit by adding props and adjusting layers",
-                      "Ideal for: beauty, wellness, electronics, and more"
-                    ].map((item, i) => (
-                      <li key={i} className="flex items-start gap-2">
+                    {["Generate product shots with contextually relevant scenes", "Personalized for each customer segment", "Seamless automatic background removal", "Creatively edit by adding props and adjusting layers", "Ideal for: beauty, wellness, electronics, and more"].map((item, i) => <li key={i} className="flex items-start gap-2">
                         <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                         <span className="text-sm text-muted-foreground">{item}</span>
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                   <Button variant="outline" className="w-fit">
                     Explore AI Product Photography
@@ -358,11 +276,9 @@ const Index = () => {
           </div>
 
           <div className="flex flex-wrap justify-center gap-3">
-            {categories.map((category, i) => (
-              <Button key={i} variant="pill" size="sm">
+            {categories.map((category, i) => <Button key={i} variant="pill" size="sm">
                 {category}
-              </Button>
-            ))}
+              </Button>)}
           </div>
         </div>
       </section>
@@ -376,22 +292,12 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {pricingPlans.map((plan, i) => (
-              <Card 
-                key={i} 
-                className={`relative overflow-hidden ${
-                  plan.popular 
-                    ? "border-2 border-primary bg-gradient-to-b from-primary/5 via-primary-purple/5 to-transparent" 
-                    : "border border-border"
-                }`}
-              >
-                {plan.popular && (
-                  <div className="absolute -top-3 right-4">
+            {pricingPlans.map((plan, i) => <Card key={i} className={`relative overflow-hidden ${plan.popular ? "border-2 border-primary bg-gradient-to-b from-primary/5 via-primary-purple/5 to-transparent" : "border border-border"}`}>
+                {plan.popular && <div className="absolute -top-3 right-4">
                     <span className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-xs font-medium">
                       Most popular
                     </span>
-                  </div>
-                )}
+                  </div>}
                 <CardHeader className="space-y-6 pb-8">
                   <div className="space-y-2">
                     <CardTitle className="text-2xl">{plan.name}</CardTitle>
@@ -401,10 +307,7 @@ const Index = () => {
                     </div>
                   </div>
                   
-                  <Button 
-                    className={`w-full ${plan.popular ? "" : "bg-secondary hover:bg-secondary/80"}`}
-                    variant={plan.popular ? "default" : "secondary"}
-                  >
+                  <Button className={`w-full ${plan.popular ? "" : "bg-secondary hover:bg-secondary/80"}`} variant={plan.popular ? "default" : "secondary"}>
                     Get Started
                   </Button>
                   
@@ -416,18 +319,15 @@ const Index = () => {
                       <span className="font-semibold">{plan.credits}</span>
                     </div>
                     
-                    {plan.features.map((feature, j) => (
-                      <div key={j} className="flex items-start gap-3">
+                    {plan.features.map((feature, j) => <div key={j} className="flex items-start gap-3">
                         <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
                           <Check className="h-3 w-3 text-primary" />
                         </div>
                         <span className="text-sm text-muted-foreground leading-relaxed">{feature}</span>
-                      </div>
-                    ))}
+                      </div>)}
                   </div>
                 </CardHeader>
-              </Card>
-            ))}
+              </Card>)}
           </div>
 
           <div className="text-center space-y-4">
@@ -551,8 +451,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
