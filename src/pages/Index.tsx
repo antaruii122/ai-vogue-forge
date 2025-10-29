@@ -25,10 +25,57 @@ const Index = () => {
   ];
 
   const pricingPlans = [
-    { name: "Free", price: "$0", credits: "5 credits", popular: false },
-    { name: "Starter", price: "$9", credits: "30 credits", popular: false },
-    { name: "Pro", price: "$29", credits: "100 credits", popular: true },
-    { name: "Agency", price: "$79", credits: "300 credits", popular: false },
+    { 
+      name: "Essentials", 
+      price: "$9", 
+      credits: "10 credits",
+      popular: false,
+      features: [
+        "Up to 5 images",
+        "Or up to 2 videos",
+        "Unlimited fashion model customization from ethnicity, poses, and sizes",
+        "Catalogue of templates, props, and avatars to choose from"
+      ]
+    },
+    { 
+      name: "Starter", 
+      price: "$30", 
+      credits: "30 credits",
+      popular: false,
+      features: [
+        "Up to 15 images",
+        "Or up to 7 videos",
+        "Unlimited fashion model customization from ethnicity, poses, and sizes",
+        "Catalogue of templates, props, and avatars to choose from",
+        "Unlimited access to CreativeAgent"
+      ]
+    },
+    { 
+      name: "Advanced", 
+      price: "$100", 
+      credits: "200 credits",
+      popular: true,
+      features: [
+        "Up to 100 images",
+        "Or up to 50 videos",
+        "Unlimited fashion model customization from ethnicity, poses, and sizes",
+        "Catalogue of templates, props, and avatars to choose from",
+        "Unlimited access to CreativeAgent"
+      ]
+    },
+    { 
+      name: "Pro", 
+      price: "$199", 
+      credits: "400 credits",
+      popular: false,
+      features: [
+        "Up to 200 images",
+        "Or up to 100 videos",
+        "Unlimited fashion model customization from ethnicity, poses, and sizes",
+        "Catalogue of templates, props, and avatars to choose from",
+        "Unlimited access to CreativeAgent"
+      ]
+    },
   ];
 
   return (
@@ -297,34 +344,62 @@ const Index = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             {pricingPlans.map((plan, i) => (
-              <Card key={i} className={plan.popular ? "border-2 border-primary relative" : ""}>
+              <Card 
+                key={i} 
+                className={`relative overflow-hidden ${
+                  plan.popular 
+                    ? "border-2 border-primary bg-gradient-to-b from-primary/5 via-primary-purple/5 to-transparent" 
+                    : "border border-border"
+                }`}
+              >
                 {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="bg-gradient-primary text-white px-4 py-1 rounded-full text-sm font-semibold">
-                      Most Popular
+                  <div className="absolute -top-3 right-4">
+                    <span className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-xs font-medium">
+                      Most popular
                     </span>
                   </div>
                 )}
-                <CardHeader className="text-center space-y-4">
-                  <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                  <div>
-                    <span className="text-4xl font-bold">{plan.price}</span>
-                    {plan.price !== "$0" && <span className="text-muted-foreground">/month</span>}
+                <CardHeader className="space-y-6 pb-8">
+                  <div className="space-y-2">
+                    <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-5xl font-bold">{plan.price}</span>
+                      <span className="text-muted-foreground">/month</span>
+                    </div>
                   </div>
-                  <CardDescription className="text-lg">{plan.credits}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button className="w-full" variant={plan.popular ? "default" : "outline"}>
+                  
+                  <Button 
+                    className={`w-full ${plan.popular ? "" : "bg-secondary hover:bg-secondary/80"}`}
+                    variant={plan.popular ? "default" : "secondary"}
+                  >
                     Get Started
                   </Button>
-                </CardContent>
+                  
+                  <div className="space-y-4 pt-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                        <Check className="h-3 w-3 text-primary" />
+                      </div>
+                      <span className="font-semibold">{plan.credits}</span>
+                    </div>
+                    
+                    {plan.features.map((feature, j) => (
+                      <div key={j} className="flex items-start gap-3">
+                        <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <Check className="h-3 w-3 text-primary" />
+                        </div>
+                        <span className="text-sm text-muted-foreground leading-relaxed">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardHeader>
               </Card>
             ))}
           </div>
 
           <div className="text-center space-y-4">
-            <p className="text-muted-foreground">Need more? Contact sales for enterprise.</p>
-            <Button variant="outline">Contact Sales</Button>
+            <p className="text-muted-foreground">Need more than 400 credits? Contact us to learn about our enterprise plans.</p>
+            <Button variant="default" size="lg">Contact Sales</Button>
           </div>
         </div>
       </section>
