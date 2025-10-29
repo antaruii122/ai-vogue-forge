@@ -94,9 +94,15 @@ const Index = () => {
               {/* Left Column - Moves Up */}
               <div className="flex-1 flex flex-col gap-4 animate-scroll-up">
                 <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                    <Camera className="h-12 w-12" />
-                  </div>
+                  <video 
+                    className="w-full h-full object-cover" 
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline
+                  >
+                    <source src="/videos/BOLD.mp4" type="video/mp4" />
+                  </video>
                 </div>
                 <div className="aspect-[3/4] bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
                   <div className="w-full h-full flex items-center justify-center text-muted-foreground">
