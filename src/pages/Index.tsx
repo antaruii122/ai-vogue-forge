@@ -19,32 +19,55 @@ const Index = () => {
   });
 
   useEffect(() => {
-    // Load all hero video slots from localStorage
-    setHeroVideos({
-      left1: localStorage.getItem('video_hero-left-1') || '',
-      left2: localStorage.getItem('video_hero-left-2') || '',
-      left3: localStorage.getItem('video_hero-left-3') || '',
-      right1: localStorage.getItem('video_hero-right-1') || '',
-      right2: localStorage.getItem('video_hero-right-2') || '',
-      right3: localStorage.getItem('video_hero-right-3') || ''
-    });
+    // Function to load videos from localStorage
+    const loadVideos = () => {
+      setHeroVideos({
+        left1: localStorage.getItem('video_hero-left-1') || '',
+        left2: localStorage.getItem('video_hero-left-2') || '',
+        left3: localStorage.getItem('video_hero-left-3') || '',
+        right1: localStorage.getItem('video_hero-right-1') || '',
+        right2: localStorage.getItem('video_hero-right-2') || '',
+        right3: localStorage.getItem('video_hero-right-3') || ''
+      });
+    };
+
+    // Load initially
+    loadVideos();
+
+    // Reload when window gains focus (user comes back from admin page)
+    const handleFocus = () => {
+      loadVideos();
+    };
+    window.addEventListener('focus', handleFocus);
+
+    // Listen for storage events (when localStorage changes in another tab/window)
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key?.startsWith('video_')) {
+        loadVideos();
+      }
+    };
+    window.addEventListener('storage', handleStorage);
     
-    // Check for video selection from admin panel (legacy)
+    // Legacy support for old video upload
     const savedHeroVideo = localStorage.getItem('video_hero');
     if (savedHeroVideo) {
       setVideoUrl(savedHeroVideo);
-      return;
+    } else {
+      const initVideo = async () => {
+        try {
+          const url = await uploadVideoToStorage();
+          setVideoUrl(url);
+        } catch (error) {
+          console.error('Failed to upload video:', error);
+        }
+      };
+      initVideo();
     }
-    
-    const initVideo = async () => {
-      try {
-        const url = await uploadVideoToStorage();
-        setVideoUrl(url);
-      } catch (error) {
-        console.error('Failed to upload video:', error);
-      }
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('storage', handleStorage);
     };
-    initVideo();
   }, []);
   const categories = ["dresses", "pants", "tops", "graphic t-shirts", "outerwear", "baby & kids clothing", "men's clothing", "women's clothing", "jewellery", "handbags", "sunglasses", "hats", "skincare", "makeup", "beverage", "health & wellness", "pet products", "electronics"];
   const pricingPlans = [{
@@ -139,9 +162,13 @@ const Index = () => {
                 {/* Slot 1 */}
                 <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
                   {heroVideos.left1 ? (
-                    <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
-                      <source src={heroVideos.left1} type="video/mp4" />
-                    </video>
+                    heroVideos.left1.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                      <img src={heroVideos.left1} className="w-full h-full object-cover" alt="Hero Left 1" />
+                    ) : (
+                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                        <source src={heroVideos.left1} type="video/mp4" />
+                      </video>
+                    )
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                       <Camera className="h-12 w-12" />
@@ -151,9 +178,13 @@ const Index = () => {
                 {/* Slot 2 */}
                 <div className="aspect-[3/4] bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
                   {heroVideos.left2 ? (
-                    <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
-                      <source src={heroVideos.left2} type="video/mp4" />
-                    </video>
+                    heroVideos.left2.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                      <img src={heroVideos.left2} className="w-full h-full object-cover" alt="Hero Left 2" />
+                    ) : (
+                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                        <source src={heroVideos.left2} type="video/mp4" />
+                      </video>
+                    )
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                       <Camera className="h-12 w-12" />
@@ -163,9 +194,13 @@ const Index = () => {
                 {/* Slot 3 */}
                 <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
                   {heroVideos.left3 ? (
-                    <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
-                      <source src={heroVideos.left3} type="video/mp4" />
-                    </video>
+                    heroVideos.left3.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                      <img src={heroVideos.left3} className="w-full h-full object-cover" alt="Hero Left 3" />
+                    ) : (
+                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                        <source src={heroVideos.left3} type="video/mp4" />
+                      </video>
+                    )
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                       <Camera className="h-12 w-12" />
@@ -179,9 +214,13 @@ const Index = () => {
                 {/* Slot 1 */}
                 <div className="aspect-square bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
                   {heroVideos.right1 ? (
-                    <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
-                      <source src={heroVideos.right1} type="video/mp4" />
-                    </video>
+                    heroVideos.right1.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                      <img src={heroVideos.right1} className="w-full h-full object-cover" alt="Hero Right 1" />
+                    ) : (
+                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                        <source src={heroVideos.right1} type="video/mp4" />
+                      </video>
+                    )
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                       <Camera className="h-12 w-12" />
@@ -191,9 +230,13 @@ const Index = () => {
                 {/* Slot 2 */}
                 <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
                   {heroVideos.right2 ? (
-                    <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
-                      <source src={heroVideos.right2} type="video/mp4" />
-                    </video>
+                    heroVideos.right2.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                      <img src={heroVideos.right2} className="w-full h-full object-cover" alt="Hero Right 2" />
+                    ) : (
+                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                        <source src={heroVideos.right2} type="video/mp4" />
+                      </video>
+                    )
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                       <Camera className="h-12 w-12" />
@@ -203,9 +246,13 @@ const Index = () => {
                 {/* Slot 3 */}
                 <div className="aspect-square bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
                   {heroVideos.right3 ? (
-                    <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
-                      <source src={heroVideos.right3} type="video/mp4" />
-                    </video>
+                    heroVideos.right3.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                      <img src={heroVideos.right3} className="w-full h-full object-cover" alt="Hero Right 3" />
+                    ) : (
+                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                        <source src={heroVideos.right3} type="video/mp4" />
+                      </video>
+                    )
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                       <Camera className="h-12 w-12" />
