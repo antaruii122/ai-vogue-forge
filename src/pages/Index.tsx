@@ -1,11 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, Wand2, Download, Camera, Video, Package, Sparkles, X, Star, Check } from "lucide-react";
+import { uploadVideoToStorage } from "@/utils/uploadVideoToStorage";
+
 const Index = () => {
   const [showAnnouncement, setShowAnnouncement] = useState(true);
   const navigate = useNavigate();
+  const [videoUrl, setVideoUrl] = useState<string>('/videos/BOLD.mp4');
+
+  useEffect(() => {
+    const initVideo = async () => {
+      try {
+        const url = await uploadVideoToStorage();
+        setVideoUrl(url);
+      } catch (error) {
+        console.error('Failed to upload video:', error);
+      }
+    };
+    initVideo();
+  }, []);
   const categories = ["dresses", "pants", "tops", "graphic t-shirts", "outerwear", "baby & kids clothing", "men's clothing", "women's clothing", "jewellery", "handbags", "sunglasses", "hats", "skincare", "makeup", "beverage", "health & wellness", "pet products", "electronics"];
   const pricingPlans = [{
     name: "Essentials",
@@ -100,8 +115,9 @@ const Index = () => {
                     loop 
                     muted 
                     playsInline
+                    key={videoUrl}
                   >
-                    <source src="/videos/BOLD.mp4" type="video/mp4" />
+                    <source src={videoUrl} type="video/mp4" />
                   </video>
                 </div>
                 <div className="aspect-[3/4] bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
