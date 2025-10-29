@@ -107,12 +107,21 @@ export default {
             transform: "translateY(0)",
           },
         },
+        "scroll-left": {
+          "0%": {
+            transform: "translateX(0)",
+          },
+          "100%": {
+            transform: "translateX(-50%)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "scroll-up": "scroll-up 20s linear infinite",
         "scroll-down": "scroll-down 20s linear infinite",
+        "scroll-left": "scroll-left 40s linear infinite",
       },
     },
   },

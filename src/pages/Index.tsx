@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
@@ -16,6 +17,7 @@ import {
 
 const Index = () => {
   const [showAnnouncement, setShowAnnouncement] = useState(true);
+  const navigate = useNavigate();
 
   const categories = [
     "dresses", "pants", "tops", "graphic t-shirts", "outerwear", 
@@ -255,7 +257,7 @@ const Index = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button variant="outline" className="w-fit">
+                  <Button variant="outline" className="w-fit" onClick={() => navigate("/ai-fashion-photography")}>
                     Explore AI Fashion Photography
                   </Button>
                 </CardHeader>
