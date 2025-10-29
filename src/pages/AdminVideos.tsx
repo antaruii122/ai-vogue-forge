@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, Upload as UploadIcon, RefreshCcw, ExternalLink, Check, ArrowLeft } from "lucide-react";
+import { Trash2, Upload as UploadIcon, RefreshCcw, ExternalLink, ArrowLeft } from "lucide-react";
 
 const AdminVideos = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const AdminVideos = () => {
   const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [targetSection, setTargetSection] = useState<string>("hero");
+  const [targetSection, setTargetSection] = useState<string>("hero-left-1");
 
   const bucket = 'videos';
 
@@ -71,7 +71,12 @@ const AdminVideos = () => {
   };
 
   const rows = useMemo(() => {
-    const sections = ['hero-left-1', 'hero-left-2', 'hero-left-3', 'hero-right-1', 'hero-right-2', 'hero-right-3'];
+    const sections = [
+      'hero-left-1', 'hero-left-2', 'hero-left-3',
+      'hero-right-1', 'hero-right-2', 'hero-right-3',
+      'fashion-feature', 'video-feature', 'product-feature',
+      'comparison-original', 'comparison-ours', 'comparison-competitor'
+    ];
     const sectionVideos = sections.map(s => localStorage.getItem(`video_${s}`));
     
     return files.map((f) => {
@@ -81,7 +86,12 @@ const AdminVideos = () => {
       const usedIn: string[] = [];
       sections.forEach((section, idx) => {
         if (url === sectionVideos[idx]) {
-          const label = section.replace('hero-', 'Hero ').replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+          const label = section
+            .replace('hero-', 'Hero ')
+            .replace('feature', 'Feature')
+            .replace('comparison-', 'Compare ')
+            .replace(/-/g, ' ')
+            .replace(/\b\w/g, l => l.toUpperCase());
           usedIn.push(label);
         }
       });
@@ -90,7 +100,7 @@ const AdminVideos = () => {
     });
   }, [files]);
 
-  const applyToSection = () => {
+  const applyToSection = (slot: string) => {
     if (!selectedFile) {
       toast.message("Select a video first");
       return;
@@ -101,10 +111,59 @@ const AdminVideos = () => {
       return;
     }
     
-    // Store the selection in localStorage
-    localStorage.setItem(`video_${targetSection}`, url);
-    const sectionLabel = targetSection.replace('hero-', 'Hero ').replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
-    toast.success(`Video applied to ${sectionLabel}. Refresh the homepage to see changes.`);
+    localStorage.setItem(`video_${slot}`, url);
+    const sectionLabel = slot.replace('hero-', 'Hero ').replace('feature', 'Feature').replace('comparison-', 'Compare ').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    toast.success(`Applied to ${sectionLabel}. Refresh homepage to see changes.`);
+    fetchFiles();
+  };
+
+  const clearSlot = (slot: string) => {
+    localStorage.removeItem(`video_${slot}`);
+    toast.success('Slot cleared');
+    fetchFiles();
+  };
+
+  const renderSlotCard = (slot: string, label: string) => {
+    const currentUrl = localStorage.getItem(`video_${slot}`);
+    const currentFile = rows.find(r => r.publicUrl === currentUrl);
+    
+    return (
+      <Card className="p-4 bg-muted/30">
+        <div className="flex items-start gap-3">
+          <div className="flex-1">
+            <p className="text-xs text-muted-foreground mb-2">{label}</p>
+            {currentUrl ? (
+              <div className="space-y-2">
+                <video src={currentUrl} className="w-full h-32 object-cover rounded border" muted loop autoPlay />
+                <p className="text-xs font-medium truncate">{currentFile?.name || 'Unknown'}</p>
+              </div>
+            ) : (
+              <div className="w-full h-32 rounded border-2 border-dashed border-border flex items-center justify-center bg-background">
+                <p className="text-sm text-muted-foreground">Empty</p>
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col gap-2">
+            <Button 
+              size="sm"
+              onClick={() => applyToSection(slot)}
+              disabled={!selectedFile}
+            >
+              {currentUrl ? 'Replace' : 'Set'}
+            </Button>
+            {currentUrl && (
+              <Button 
+                size="sm"
+                variant="outline"
+                onClick={() => clearSlot(slot)}
+              >
+                Clear
+              </Button>
+            )}
+          </div>
+        </div>
+      </Card>
+    );
   };
 
   return (
@@ -119,10 +178,10 @@ const AdminVideos = () => {
       
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Videos Manager</CardTitle>
+          <CardTitle>Upload & Manage Media</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-          <Input type="file" accept="video/*" onChange={(e) => setFile(e.target.files?.[0] || null)} className="max-w-xs" />
+          <Input type="file" accept="video/*,image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} className="max-w-xs" />
           <div className="flex gap-2">
             <Button onClick={onUpload} disabled={uploading || !file}>
               <UploadIcon className="h-4 w-4 mr-2" /> {uploading ? 'Uploading...' : 'Upload'}
@@ -134,146 +193,86 @@ const AdminVideos = () => {
         </CardContent>
       </Card>
 
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle>Hero Section - Media Slots</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column */}
-            <div>
-              <h3 className="font-semibold mb-4 flex items-center gap-2">
-                <div className="h-1 w-1 rounded-full bg-primary"></div>
-                Left Column (Scrolls Up)
-              </h3>
-              <div className="space-y-4">
-                {['hero-left-1', 'hero-left-2', 'hero-left-3'].map((slot, idx) => {
-                  const currentUrl = localStorage.getItem(`video_${slot}`);
-                  const currentFile = rows.find(r => r.publicUrl === currentUrl);
-                  return (
-                    <Card key={slot} className="p-4 bg-muted/30">
-                      <div className="flex items-start gap-3">
-                        <div className="flex-1">
-                          <p className="text-xs text-muted-foreground mb-2">Slot {idx + 1}</p>
-                          {currentUrl ? (
-                            <div className="space-y-2">
-                              <video src={currentUrl} className="w-full h-32 object-cover rounded border" muted loop autoPlay />
-                              <p className="text-xs font-medium truncate">{currentFile?.name || 'Unknown'}</p>
-                            </div>
-                          ) : (
-                            <div className="w-full h-32 rounded border-2 border-dashed border-border flex items-center justify-center bg-background">
-                              <p className="text-sm text-muted-foreground">Empty</p>
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <Button 
-                            size="sm"
-                            onClick={() => { setTargetSection(slot); applyToSection(); }}
-                            disabled={!selectedFile}
-                          >
-                            {currentUrl ? 'Replace' : 'Set'}
-                          </Button>
-                          {currentUrl && (
-                            <Button 
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                localStorage.removeItem(`video_${slot}`);
-                                toast.success('Slot cleared');
-                                fetchFiles();
-                              }}
-                            >
-                              Clear
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })}
-              </div>
-            </div>
+      <Tabs defaultValue="hero" className="mb-8">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="hero">Hero Section</TabsTrigger>
+          <TabsTrigger value="features">Feature Sections</TabsTrigger>
+          <TabsTrigger value="comparison">Comparison Section</TabsTrigger>
+        </TabsList>
 
-            {/* Right Column */}
-            <div>
-              <h3 className="font-semibold mb-4 flex items-center gap-2">
-                <div className="h-1 w-1 rounded-full bg-primary"></div>
-                Right Column (Scrolls Down)
-              </h3>
-              <div className="space-y-4">
-                {['hero-right-1', 'hero-right-2', 'hero-right-3'].map((slot, idx) => {
-                  const currentUrl = localStorage.getItem(`video_${slot}`);
-                  const currentFile = rows.find(r => r.publicUrl === currentUrl);
-                  return (
-                    <Card key={slot} className="p-4 bg-muted/30">
-                      <div className="flex items-start gap-3">
-                        <div className="flex-1">
-                          <p className="text-xs text-muted-foreground mb-2">Slot {idx + 1}</p>
-                          {currentUrl ? (
-                            <div className="space-y-2">
-                              <video src={currentUrl} className="w-full h-32 object-cover rounded border" muted loop autoPlay />
-                              <p className="text-xs font-medium truncate">{currentFile?.name || 'Unknown'}</p>
-                            </div>
-                          ) : (
-                            <div className="w-full h-32 rounded border-2 border-dashed border-border flex items-center justify-center bg-background">
-                              <p className="text-sm text-muted-foreground">Empty</p>
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          <Button 
-                            size="sm"
-                            onClick={() => { setTargetSection(slot); applyToSection(); }}
-                            disabled={!selectedFile}
-                          >
-                            {currentUrl ? 'Replace' : 'Set'}
-                          </Button>
-                          {currentUrl && (
-                            <Button 
-                              size="sm"
-                              variant="outline"
-                              onClick={() => {
-                                localStorage.removeItem(`video_${slot}`);
-                                toast.success('Slot cleared');
-                                fetchFiles();
-                              }}
-                            >
-                              Clear
-                            </Button>
-                          )}
-                        </div>
-                      </div>
-                    </Card>
-                  );
-                })}
+        <TabsContent value="hero">
+          <Card>
+            <CardHeader>
+              <CardTitle>Hero Section Slots</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                  <h3 className="font-semibold mb-4">Left Column (Scrolls Up)</h3>
+                  <div className="space-y-4">
+                    {renderSlotCard('hero-left-1', 'Slot 1 - Top')}
+                    {renderSlotCard('hero-left-2', 'Slot 2 - Middle')}
+                    {renderSlotCard('hero-left-3', 'Slot 3 - Bottom')}
+                  </div>
+                </div>
+                <div>
+                  <h3 className="font-semibold mb-4">Right Column (Scrolls Down)</h3>
+                  <div className="space-y-4">
+                    {renderSlotCard('hero-right-1', 'Slot 1 - Top')}
+                    {renderSlotCard('hero-right-2', 'Slot 2 - Middle')}
+                    {renderSlotCard('hero-right-3', 'Slot 3 - Bottom')}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          
-          {selectedFile && (
-            <div className="mt-6 p-4 bg-primary/10 rounded-lg border border-primary/20">
-              <p className="text-sm font-medium">
-                Currently selected: <span className="text-primary">{selectedFile}</span>
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Click "Set" or "Replace" on any slot above to place this video
-              </p>
-            </div>
-          )}
-          {!selectedFile && (
-            <div className="mt-6 p-4 bg-muted rounded-lg">
-              <p className="text-sm text-muted-foreground">
-                Select a video from the table below to place it in a slot
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="features">
+          <Card>
+            <CardHeader>
+              <CardTitle>Feature Section Media</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {renderSlotCard('fashion-feature', 'AI Fashion Photography')}
+                {renderSlotCard('video-feature', 'AI Video Generation')}
+                {renderSlotCard('product-feature', 'AI Product Photography')}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="comparison">
+          <Card>
+            <CardHeader>
+              <CardTitle>Quality Comparison Section</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {renderSlotCard('comparison-original', 'Original Product')}
+                {renderSlotCard('comparison-ours', 'AI Fashion Studio')}
+                {renderSlotCard('comparison-competitor', 'Competitor Result')}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      {selectedFile && (
+        <div className="mb-6 p-4 bg-primary/10 rounded-lg border border-primary/20">
+          <p className="text-sm font-medium">
+            Currently selected: <span className="text-primary">{selectedFile}</span>
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Click "Set" or "Replace" on any slot above to place this media
+          </p>
+        </div>
+      )}
 
       <Card>
         <CardHeader>
-          <CardTitle>Files in videos bucket</CardTitle>
+          <CardTitle>All Media Files</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
