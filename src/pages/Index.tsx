@@ -51,7 +51,7 @@ const Index = () => {
 
             <div className="flex items-center gap-4">
               <Button variant="outline" size="sm">Log In</Button>
-              <Button size="sm">Try Now</Button>
+              <Button size="sm" onClick={() => navigate("/tools/fashion-photography")}>Try Now</Button>
             </div>
           </div>
         </div>
@@ -79,7 +79,7 @@ const Index = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="text-lg">
+                <Button size="lg" className="text-lg" onClick={() => navigate("/tools/fashion-photography")}>
                   Try Now
                 </Button>
                 <div className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-full">
