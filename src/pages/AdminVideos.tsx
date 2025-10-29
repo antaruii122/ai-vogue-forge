@@ -135,6 +135,12 @@ const AdminVideos = () => {
     fetchFiles();
   };
 
+  const applyChanges = (slot: string) => {
+    const sectionLabel = slot.replace('hero-', 'Hero ').replace('feature', 'Feature').replace('comparison-', 'Compare ').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    toast.success(`${sectionLabel} applied and updated`);
+    fetchFiles();
+  };
+
   const renderSlotCard = (slot: string, label: string) => {
     const currentUrl = localStorage.getItem(`video_${slot}`);
     const currentFile = rows.find(r => r.publicUrl === currentUrl);
@@ -169,13 +175,22 @@ const AdminVideos = () => {
               {currentUrl ? 'Replace' : 'Set'}
             </Button>
             {currentUrl && (
-              <Button 
-                size="sm"
-                variant="outline"
-                onClick={() => clearSlot(slot)}
-              >
-                Clear
-              </Button>
+              <>
+                <Button 
+                  size="sm"
+                  variant="outline"
+                  onClick={() => clearSlot(slot)}
+                >
+                  Clear
+                </Button>
+                <Button 
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => applyChanges(slot)}
+                >
+                  Apply
+                </Button>
+              </>
             )}
           </div>
         </div>
