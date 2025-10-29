@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,9 +7,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, Upload as UploadIcon, RefreshCcw, ExternalLink, Check } from "lucide-react";
+import { Trash2, Upload as UploadIcon, RefreshCcw, ExternalLink, Check, ArrowLeft } from "lucide-react";
 
 const AdminVideos = () => {
+  const navigate = useNavigate();
   const [files, setFiles] = useState<Array<{ name: string; created_at?: string; updated_at?: string; id?: string; size?: number }>>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -93,6 +95,14 @@ const AdminVideos = () => {
 
   return (
     <main className="container mx-auto px-4 py-10">
+      <Button 
+        variant="outline" 
+        onClick={() => navigate("/")} 
+        className="mb-6"
+      >
+        <ArrowLeft className="h-4 w-4 mr-2" /> Back to Home
+      </Button>
+      
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>Videos Manager</CardTitle>
