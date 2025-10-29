@@ -100,10 +100,16 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         <nav className="py-4">
           {/* Dashboard Section */}
           <div className="mb-6">
-            <button
-              onClick={() => setActiveItem("Dashboard")}
+            <a
+              href="/dashboard"
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveItem("Dashboard");
+                setIsSidebarOpen(false);
+                window.location.href = "/dashboard";
+              }}
               className={`
-                w-full text-left px-4 py-3 text-sm transition-colors
+                block w-full text-left px-4 py-3 text-sm transition-colors
                 ${
                   activeItem === "Dashboard"
                     ? "bg-[#f5f5f5] text-[#000000] font-bold border-l-[3px] border-[#000000]"
@@ -112,7 +118,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               `}
             >
               Dashboard
-            </button>
+            </a>
           </div>
 
           {/* Features Section */}

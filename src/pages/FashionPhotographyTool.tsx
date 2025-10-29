@@ -94,14 +94,6 @@ const FashionPhotographyTool = () => {
 
   return (
     <AppLayout>
-      {/* Dashboard Header Section */}
-      <div className="mb-6">
-        <h1 className="text-4xl font-bold text-[#000000] mb-2">Dashboard</h1>
-        <p className="text-lg text-[#666666]">
-          Create an AI-generated photoshoot and video for your product
-        </p>
-      </div>
-
       <div className="min-h-screen flex w-full -m-6 md:-m-8 lg:-m-6">
       {/* Left Sidebar */}
       <aside className="w-[280px] bg-[#0f0f0f] text-foreground p-6 flex flex-col gap-8 overflow-y-auto">
