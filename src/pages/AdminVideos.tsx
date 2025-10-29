@@ -71,9 +71,20 @@ const AdminVideos = () => {
   };
 
   const rows = useMemo(() => {
+    const heroVideo = localStorage.getItem('video_hero');
+    const gallery1Video = localStorage.getItem('video_gallery1');
+    const gallery2Video = localStorage.getItem('video_gallery2');
+    
     return files.map((f) => {
       const { data } = supabase.storage.from(bucket).getPublicUrl(f.name);
-      return { ...f, publicUrl: data.publicUrl } as typeof f & { publicUrl: string };
+      const url = data.publicUrl;
+      
+      const usedIn: string[] = [];
+      if (url === heroVideo) usedIn.push('Hero');
+      if (url === gallery1Video) usedIn.push('Gallery 1');
+      if (url === gallery2Video) usedIn.push('Gallery 2');
+      
+      return { ...f, publicUrl: url, usedIn } as typeof f & { publicUrl: string; usedIn: string[] };
     });
   }, [files]);
 
@@ -160,13 +171,14 @@ const AdminVideos = () => {
                 <TableHead>Name</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead>Size (bytes)</TableHead>
+                <TableHead>Used In</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {rows.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5}>No files yet</TableCell>
+                  <TableCell colSpan={6}>No files yet</TableCell>
                 </TableRow>
               )}
               {rows.map((f) => (
@@ -191,6 +203,19 @@ const AdminVideos = () => {
                   </TableCell>
                   <TableCell>{f.created_at ? new Date(f.created_at).toLocaleString() : '-'}</TableCell>
                   <TableCell>{typeof f.size === 'number' ? f.size : '-'}</TableCell>
+                  <TableCell>
+                    {f.usedIn.length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {f.usedIn.map(section => (
+                          <span key={section} className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                            {section}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground text-sm">Not used</span>
+                    )}
+                  </TableCell>
                   <TableCell className="text-right">
                     <Button variant="destructive" size="sm" onClick={() => onDelete(f.name)}>
                       <Trash2 className="h-4 w-4 mr-1" /> Delete
