@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
+import AppLayout from "@/components/AppLayout";
 
 // Mock data for models
 const models = [
@@ -92,7 +93,8 @@ const FashionPhotographyTool = () => {
   };
 
   return (
-    <div className="min-h-screen flex w-full">
+    <AppLayout>
+      <div className="min-h-screen flex w-full -m-6 md:-m-8 lg:-m-6">
       {/* Left Sidebar */}
       <aside className="w-[280px] bg-[#0f0f0f] text-foreground p-6 flex flex-col gap-8 overflow-y-auto">
         {/* Upload Section */}
@@ -301,6 +303,7 @@ const FashionPhotographyTool = () => {
         </div>
       )}
     </div>
+    </AppLayout>
   );
 };
 
