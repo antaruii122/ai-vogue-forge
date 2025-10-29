@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import FashionPhotographyTool from "./pages/FashionPhotographyTool";
 import VideoGeneration from "./pages/VideoGeneration";
 import ProductPhotography from "./pages/ProductPhotography";
+import AdminVideos from "./pages/AdminVideos";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/tools/fashion-photography" element={<FashionPhotographyTool />} />
           <Route path="/tools/video-generation" element={<VideoGeneration />} />
           <Route path="/tools/product-photography" element={<ProductPhotography />} />
+          <Route path="/admin/videos" element={<AdminVideos />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
