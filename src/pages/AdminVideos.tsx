@@ -3,15 +3,18 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Trash2, Upload as UploadIcon, RefreshCcw, ExternalLink } from "lucide-react";
+import { Trash2, Upload as UploadIcon, RefreshCcw, ExternalLink, Check } from "lucide-react";
 
 const AdminVideos = () => {
   const [files, setFiles] = useState<Array<{ name: string; created_at?: string; updated_at?: string; id?: string; size?: number }>>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [targetSection, setTargetSection] = useState<string>("hero");
 
   const bucket = 'videos';
 
@@ -72,6 +75,22 @@ const AdminVideos = () => {
     });
   }, [files]);
 
+  const applyToSection = () => {
+    if (!selectedFile) {
+      toast.message("Select a video first");
+      return;
+    }
+    const url = rows.find(r => r.name === selectedFile)?.publicUrl;
+    if (!url) {
+      toast.error("File not found");
+      return;
+    }
+    
+    // Store the selection in localStorage
+    localStorage.setItem(`video_${targetSection}`, url);
+    toast.success(`Video applied to ${targetSection} section. Refresh the homepage to see changes.`);
+  };
+
   return (
     <main className="container mx-auto px-4 py-10">
       <Card className="mb-8">
@@ -91,6 +110,34 @@ const AdminVideos = () => {
         </CardContent>
       </Card>
 
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle>Apply Video to Website Section</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Select value={targetSection} onValueChange={setTargetSection}>
+              <SelectTrigger className="w-full sm:w-[200px]">
+                <SelectValue placeholder="Select section" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="hero">Hero Section</SelectItem>
+                <SelectItem value="gallery1">Gallery Slot 1</SelectItem>
+                <SelectItem value="gallery2">Gallery Slot 2</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button onClick={applyToSection} disabled={!selectedFile}>
+              <Check className="h-4 w-4 mr-2" /> Apply to {targetSection}
+            </Button>
+          </div>
+          {selectedFile && (
+            <p className="text-sm text-muted-foreground">
+              Selected: <span className="font-medium">{selectedFile}</span>
+            </p>
+          )}
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>Files in videos bucket</CardTitle>
@@ -99,6 +146,7 @@ const AdminVideos = () => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-12">Select</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Created</TableHead>
                 <TableHead>Size (bytes)</TableHead>
@@ -108,11 +156,23 @@ const AdminVideos = () => {
             <TableBody>
               {rows.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={4}>No files yet</TableCell>
+                  <TableCell colSpan={5}>No files yet</TableCell>
                 </TableRow>
               )}
               {rows.map((f) => (
-                <TableRow key={f.name}>
+                <TableRow 
+                  key={f.name}
+                  className={selectedFile === f.name ? "bg-primary/10" : ""}
+                >
+                  <TableCell>
+                    <input
+                      type="radio"
+                      name="selectedFile"
+                      checked={selectedFile === f.name}
+                      onChange={() => setSelectedFile(f.name)}
+                      className="h-4 w-4 cursor-pointer"
+                    />
+                  </TableCell>
                   <TableCell className="font-medium break-all">
                     <a href={f.publicUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:underline">
                       {f.name}

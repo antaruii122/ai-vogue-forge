@@ -11,6 +11,13 @@ const Index = () => {
   const [videoUrl, setVideoUrl] = useState<string>('/videos/BOLD.mp4');
 
   useEffect(() => {
+    // Check for video selection from admin panel
+    const savedHeroVideo = localStorage.getItem('video_hero');
+    if (savedHeroVideo) {
+      setVideoUrl(savedHeroVideo);
+      return;
+    }
+    
     const initVideo = async () => {
       try {
         const url = await uploadVideoToStorage();
