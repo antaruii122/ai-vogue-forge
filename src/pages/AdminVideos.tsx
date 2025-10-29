@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Trash2, Upload as UploadIcon, RefreshCcw, ExternalLink, ArrowLeft } from "lucide-react";
@@ -222,24 +223,33 @@ const AdminVideos = () => {
               <CardTitle>Hero Section Slots</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div>
-                  <h3 className="font-semibold mb-4">Left Column (Scrolls Up)</h3>
-                  <div className="space-y-4">
-                    {renderSlotCard('hero-left-1', 'Slot 1 - Top')}
-                    {renderSlotCard('hero-left-2', 'Slot 2 - Middle')}
-                    {renderSlotCard('hero-left-3', 'Slot 3 - Bottom')}
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-semibold mb-4">Right Column (Scrolls Down)</h3>
-                  <div className="space-y-4">
-                    {renderSlotCard('hero-right-1', 'Slot 1 - Top')}
-                    {renderSlotCard('hero-right-2', 'Slot 2 - Middle')}
-                    {renderSlotCard('hero-right-3', 'Slot 3 - Bottom')}
-                  </div>
-                </div>
-              </div>
+              <Accordion type="multiple" defaultValue={["left", "right"]} className="w-full">
+                <AccordionItem value="left">
+                  <AccordionTrigger className="text-base font-semibold">
+                    Left Column (Scrolls Up)
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-4 pt-4">
+                      {renderSlotCard('hero-left-1', 'Slot 1 - Top')}
+                      {renderSlotCard('hero-left-2', 'Slot 2 - Middle')}
+                      {renderSlotCard('hero-left-3', 'Slot 3 - Bottom')}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+
+                <AccordionItem value="right">
+                  <AccordionTrigger className="text-base font-semibold">
+                    Right Column (Scrolls Down)
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-4 pt-4">
+                      {renderSlotCard('hero-right-1', 'Slot 1 - Top')}
+                      {renderSlotCard('hero-right-2', 'Slot 2 - Middle')}
+                      {renderSlotCard('hero-right-3', 'Slot 3 - Bottom')}
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </CardContent>
           </Card>
         </TabsContent>
