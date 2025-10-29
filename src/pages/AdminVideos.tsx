@@ -38,14 +38,25 @@ const AdminVideos = () => {
 
   const onUpload = async () => {
     if (!file) {
-      toast.message('Select a video to upload');
+      toast.message('Select a file to upload');
       return;
     }
+    
+    // Detect content type
+    let contentType = file.type;
+    if (!contentType) {
+      if (file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+        contentType = 'image/' + file.name.split('.').pop()?.toLowerCase();
+      } else if (file.name.match(/\.(mp4|webm|mov)$/i)) {
+        contentType = 'video/' + file.name.split('.').pop()?.toLowerCase();
+      }
+    }
+    
     setUploading(true);
     const { error } = await supabase.storage.from(bucket).upload(file.name, file, {
       cacheControl: '3600',
       upsert: true,
-      contentType: file.type || 'video/mp4',
+      contentType: contentType || 'application/octet-stream',
     });
     setUploading(false);
     if (error) {
@@ -53,7 +64,7 @@ const AdminVideos = () => {
       toast.error(error.message || 'Upload failed');
       return;
     }
-    toast.success('Video uploaded');
+    toast.success(file.type.startsWith('image/') ? 'Image uploaded' : 'Video uploaded');
     setFile(null);
     await fetchFiles();
   };
@@ -126,6 +137,7 @@ const AdminVideos = () => {
   const renderSlotCard = (slot: string, label: string) => {
     const currentUrl = localStorage.getItem(`video_${slot}`);
     const currentFile = rows.find(r => r.publicUrl === currentUrl);
+    const isImage = currentFile?.name.match(/\.(jpg|jpeg|png|gif|webp)$/i);
     
     return (
       <Card className="p-4 bg-muted/30">
@@ -134,7 +146,11 @@ const AdminVideos = () => {
             <p className="text-xs text-muted-foreground mb-2">{label}</p>
             {currentUrl ? (
               <div className="space-y-2">
-                <video src={currentUrl} className="w-full h-32 object-cover rounded border" muted loop autoPlay />
+                {isImage ? (
+                  <img src={currentUrl} className="w-full h-32 object-cover rounded border" alt={currentFile?.name} />
+                ) : (
+                  <video src={currentUrl} className="w-full h-32 object-cover rounded border" muted loop autoPlay />
+                )}
                 <p className="text-xs font-medium truncate">{currentFile?.name || 'Unknown'}</p>
               </div>
             ) : (
