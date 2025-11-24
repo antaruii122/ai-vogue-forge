@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, Wand2, Download, Camera, Video, Package, Sparkles, X, Star, Check } from "lucide-react";
 import { uploadVideoToStorage } from "@/utils/uploadVideoToStorage";
+import tetesImage from "@/assets/tetes.png";
 
 const Index = () => {
   const [showAnnouncement, setShowAnnouncement] = useState(true);
@@ -327,9 +328,11 @@ const Index = () => {
                   </Button>
                 </CardHeader>
                 <CardContent className="p-6 flex items-center justify-center bg-muted/30">
-                  <div className="w-full aspect-square bg-gradient-to-br from-primary/20 to-primary-purple/20 rounded-lg border border-border flex items-center justify-center">
-                    <Camera className="h-16 w-16 text-muted-foreground" />
-                  </div>
+                  <img 
+                    src={tetesImage} 
+                    alt="Fashion photography example" 
+                    className="w-full h-full object-cover rounded-lg border border-border"
+                  />
                 </CardContent>
               </div>
             </Card>
