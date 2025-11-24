@@ -306,7 +306,7 @@ const Index = () => {
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-heading font-bold mb-4">See What You Can Create</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[400px] sm:max-w-none mx-auto">
             <VideoComparisonCard
               imageSrc="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800"
               videoSrc="/videos/BOLD.mp4"

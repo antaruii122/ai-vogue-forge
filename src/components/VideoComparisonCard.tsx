@@ -17,10 +17,10 @@ export const VideoComparisonCard = ({ imageSrc, videoSrc, templateName }: VideoC
 
   return (
     <Card 
-      className="border-primary/20 hover:border-primary/40 transition-all duration-300 hover:scale-[1.02] overflow-hidden cursor-pointer group"
+      className="border-primary/20 hover:border-primary/40 transition-all duration-300 hover:scale-[1.02] overflow-hidden cursor-pointer group w-full max-w-[300px] mx-auto"
       onClick={handleClick}
     >
-      <div className="relative aspect-video bg-gradient-to-br from-primary/20 to-primary-purple/20">
+      <div className="relative aspect-[9/16] bg-gradient-to-br from-primary/20 to-primary-purple/20">
         {/* Product Photo */}
         <img
           src={imageSrc}
