@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Upload, Wand2, Download, Camera, Video, Package, Sparkles, X, Star, Check } from "lucide-react";
 import { uploadVideoToStorage } from "@/utils/uploadVideoToStorage";
 import tetesImage from "@/assets/tetes.png";
+import { VideoComparisonCard } from "@/components/VideoComparisonCard";
 
 const Index = () => {
   const [showAnnouncement, setShowAnnouncement] = useState(true);
@@ -305,23 +306,37 @@ const Index = () => {
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-heading font-bold mb-4">See What You Can Create</h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map((index) => (
-              <Card key={index} className="border-primary/20 hover:border-primary/40 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 overflow-hidden group cursor-pointer">
-                <div className="relative aspect-video bg-gradient-to-br from-primary/20 to-primary-purple/20">
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center">
-                      <Video className="h-8 w-8 text-white" />
-                    </div>
-                  </div>
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <div className="bg-background/80 backdrop-blur-sm px-3 py-2 rounded-lg">
-                      <p className="text-sm font-medium">Example Video {index}</p>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <VideoComparisonCard
+              imageSrc="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800"
+              videoSrc="/videos/BOLD.mp4"
+              templateName="360° Spin"
+            />
+            <VideoComparisonCard
+              imageSrc="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800"
+              videoSrc="/videos/BOLD.mp4"
+              templateName="Zoom In"
+            />
+            <VideoComparisonCard
+              imageSrc="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=800"
+              videoSrc="/videos/BOLD.mp4"
+              templateName="Model Reveal"
+            />
+            <VideoComparisonCard
+              imageSrc="https://images.unsplash.com/photo-1560343090-f0409e92791a?w=800"
+              videoSrc="/videos/BOLD.mp4"
+              templateName="Lifestyle Scene"
+            />
+            <VideoComparisonCard
+              imageSrc="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=800"
+              videoSrc="/videos/BOLD.mp4"
+              templateName="Product Focus"
+            />
+            <VideoComparisonCard
+              imageSrc="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800"
+              videoSrc="/videos/BOLD.mp4"
+              templateName="Dynamic Motion"
+            />
           </div>
         </div>
       </section>
