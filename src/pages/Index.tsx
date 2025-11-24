@@ -129,19 +129,16 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 md:py-32">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(29,209,161,0.1),transparent)]" />
-        <div className="container mx-auto px-4">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1a0b2e] via-[#0f0728] to-background" />
+        <div className="container mx-auto px-4 relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="space-y-4">
                 <h1 className="text-5xl md:text-6xl font-heading font-bold leading-tight">
-                  AI Photoshoots and Videos for Ecommerce
+                  Turn Product Photos Into Scroll-Stopping Video Ads
                 </h1>
                 <p className="text-lg md:text-xl text-muted-foreground">
-                  Create Stunning Product and Fashion Photography with AI.
-                </p>
-                <p className="text-base text-muted-foreground">
-                  Brand visuals that convert while saving costs.
+                  Choose a style template. Upload your product. Get professional videos in minutes—no AI prompts needed.
                 </p>
               </div>
               
@@ -302,94 +299,134 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Feature Cards */}
+      {/* Examples Section */}
+      <section className="py-20 bg-gradient-to-b from-background to-muted/20">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-4">See What You Can Create</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[1, 2, 3, 4, 5, 6].map((index) => (
+              <Card key={index} className="border-primary/20 hover:border-primary/40 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 overflow-hidden group cursor-pointer">
+                <div className="relative aspect-video bg-gradient-to-br from-primary/20 to-primary-purple/20">
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <div className="w-16 h-16 rounded-full bg-primary/90 flex items-center justify-center">
+                      <Video className="h-8 w-8 text-white" />
+                    </div>
+                  </div>
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <div className="bg-background/80 backdrop-blur-sm px-3 py-2 rounded-lg">
+                      <p className="text-sm font-medium">Example Video {index}</p>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* One Tool Section */}
       <section id="features" className="py-20">
         <div className="container mx-auto px-4">
-          <div className="space-y-12">
-            {/* AI Fashion Photography */}
-            <Card className="overflow-hidden border-2">
-              <div className="grid lg:grid-cols-2 gap-8">
-                <CardHeader className="space-y-4">
-                  <div className="w-12 h-12 rounded-lg bg-gradient-primary flex items-center justify-center">
-                    <Camera className="h-6 w-6 text-white" />
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-heading font-bold mb-4">One Tool. Endless Possibilities.</h2>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              Whether it's fashion, products, or lifestyle—create stunning videos for any use case
+            </p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Fashion */}
+            <Card className="border-primary/20 hover:border-primary/40 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary-purple/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative z-10">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <Camera className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="text-3xl">AI Fashion Photography</CardTitle>
-                  <CardDescription className="text-base">
-                    Create fashion photos with AI-generated models wearing your products
+                  <CardTitle className="text-2xl">Fashion</CardTitle>
+                  <CardDescription>
+                    Stunning fashion videos with AI-powered effects and lighting
                   </CardDescription>
-                  <ul className="space-y-2">
-                    {["Generate hyper-personalized ad creatives for different customer segments", "Showcase apparel on diverse AI models in various settings worldwide", "Seamless automatic background removal from flat-lay", "Turn simple flat-lays into professional on-model lifestyle photography", "Ideal for: dresses, shirts, pants, and more"].map((item, i) => <li key={i} className="flex items-start gap-2">
-                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-muted-foreground">{item}</span>
-                      </li>)}
-                  </ul>
-                  <Button variant="outline" className="w-fit" onClick={() => navigate("/ai-fashion-photography")}>
-                    Explore AI Fashion Photography
-                  </Button>
                 </CardHeader>
-                <CardContent className="p-6 flex items-center justify-center bg-muted/30">
-                  <img 
-                    src={tetesImage} 
-                    alt="Fashion photography example" 
-                    className="w-full h-full object-cover rounded-lg border border-border"
-                  />
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-primary" />
+                      <span className="text-sm">Professional lighting</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-primary" />
+                      <span className="text-sm">Multiple style templates</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-primary" />
+                      <span className="text-sm">High-resolution output</span>
+                    </div>
+                  </div>
                 </CardContent>
               </div>
             </Card>
 
-            {/* AI Video Generation */}
-            <Card className="overflow-hidden border-2">
-              <div className="grid lg:grid-cols-2 gap-8">
-                <CardContent className="p-6 flex items-center justify-center bg-muted/30 order-2 lg:order-1">
-                  <div className="w-full aspect-square bg-gradient-to-br from-primary/20 to-primary-purple/20 rounded-lg border border-border flex items-center justify-center">
-                    <Video className="h-16 w-16 text-muted-foreground" />
+            {/* Products */}
+            <Card className="border-primary/20 hover:border-primary/40 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary-purple/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative z-10">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <Package className="h-6 w-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-2xl">Products</CardTitle>
+                  <CardDescription>
+                    Professional product videos perfect for e-commerce
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-primary" />
+                      <span className="text-sm">Studio-quality lighting</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-primary" />
+                      <span className="text-sm">Background effects</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-primary" />
+                      <span className="text-sm">E-commerce ready</span>
+                    </div>
                   </div>
                 </CardContent>
-                <CardHeader className="space-y-4 order-1 lg:order-2">
-                  <div className="w-12 h-12 rounded-lg bg-gradient-primary flex items-center justify-center">
-                    <Video className="h-6 w-6 text-white" />
-                  </div>
-                  <CardTitle className="text-3xl">AI Video Generation</CardTitle>
-                  <CardDescription className="text-base">
-                    Create instant video clips with AI from your product images
-                  </CardDescription>
-                  <ul className="space-y-2">
-                    {["Instant video generation from images", "Perfect for ads, social media, and product display pages", "Animated, engaging content in seconds", "Multiple video styles: Zoom, Rotate, Pan, Fade"].map((item, i) => <li key={i} className="flex items-start gap-2">
-                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-muted-foreground">{item}</span>
-                      </li>)}
-                  </ul>
-                  <Button variant="outline" className="w-fit">
-                    Explore AI Video Generation
-                  </Button>
-                </CardHeader>
               </div>
             </Card>
 
-            {/* AI Product Photography */}
-            <Card className="overflow-hidden border-2">
-              <div className="grid lg:grid-cols-2 gap-8">
-                <CardHeader className="space-y-4">
-                  <div className="w-12 h-12 rounded-lg bg-gradient-primary flex items-center justify-center">
-                    <Package className="h-6 w-6 text-white" />
+            {/* Lifestyle */}
+            <Card className="border-primary/20 hover:border-primary/40 transition-all duration-300 hover:shadow-lg hover:shadow-primary/20 overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary-purple/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative z-10">
+                <CardHeader>
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                    <Sparkles className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="text-3xl">AI Product Photography</CardTitle>
-                  <CardDescription className="text-base">
-                    Create customizable AI scenes for stunning product photos
+                  <CardTitle className="text-2xl">Lifestyle</CardTitle>
+                  <CardDescription>
+                    Engaging lifestyle videos for social media and marketing
                   </CardDescription>
-                  <ul className="space-y-2">
-                    {["Generate product shots with contextually relevant scenes", "Personalized for each customer segment", "Seamless automatic background removal", "Creatively edit by adding props and adjusting layers", "Ideal for: beauty, wellness, electronics, and more"].map((item, i) => <li key={i} className="flex items-start gap-2">
-                        <Check className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
-                        <span className="text-sm text-muted-foreground">{item}</span>
-                      </li>)}
-                  </ul>
-                  <Button variant="outline" className="w-fit">
-                    Explore AI Product Photography
-                  </Button>
                 </CardHeader>
-                <CardContent className="p-6 flex items-center justify-center bg-muted/30">
-                  <div className="w-full aspect-square bg-gradient-to-br from-primary/20 to-primary-purple/20 rounded-lg border border-border flex items-center justify-center">
-                    <Package className="h-16 w-16 text-muted-foreground" />
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-primary" />
+                      <span className="text-sm">Social media optimized</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-primary" />
+                      <span className="text-sm">Multiple video styles</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-primary" />
+                      <span className="text-sm">Instant preview</span>
+                    </div>
                   </div>
                 </CardContent>
               </div>
