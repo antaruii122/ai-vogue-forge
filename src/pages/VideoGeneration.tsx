@@ -112,149 +112,169 @@ const VideoGeneration = () => {
 
   return (
     <AppLayout>
-      <div className="p-6">
-        {/* Header */}
-        <div className="mt-20 mb-12">
-          <h1 className="text-4xl font-bold text-white text-center">
-            Create Video Ads
-          </h1>
-          <p className="text-gray-400 text-center mt-2">
-            Upload your product → Pick a style → Get your video
-          </p>
-        </div>
-
-        {/* Upload Section - Only show if no image uploaded */}
-        {!selectedFile && (
-          <div className="max-w-[600px] mx-auto">
-          <div
-            onClick={handleClick}
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            className={`
-              h-80 rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-12
-              border-2 border-dashed cursor-pointer
-              flex flex-col items-center justify-center
-              transition-all duration-300 ease-in-out
-              ${isDragging 
-                ? 'border-purple-400 shadow-lg shadow-purple-500/30 scale-[1.01]' 
-                : 'border-gray-500 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-[1.01]'
-              }
-            `}
-          >
-            <UploadCloud className="w-16 h-16 text-gray-400" />
-            <p className="text-xl text-white mt-4">
-              Drag & drop your product photo
-            </p>
-            <p className="text-sm text-gray-400 mt-2">
-              or click to browse
-            </p>
-            <p className="text-xs text-gray-500 mt-4">
-              Supports: JPG, PNG, WEBP • Max 10MB
-            </p>
+      {/* Premium dark gradient background with animated mesh */}
+      <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 relative overflow-hidden">
+        {/* Animated gradient mesh overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-purple-500/5 animate-pulse pointer-events-none" />
+        
+        <div className="relative z-10 p-6">
+          {/* Main page title */}
+          <div className="mt-20 mb-8">
+            <h1 className="text-3xl font-bold text-foreground text-center">
+              Video Generation
+            </h1>
           </div>
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/jpeg,image/jpg,image/png,image/webp"
-            onChange={handleFileInput}
-            className="hidden"
-          />
-        </div>
-        )}
+          {/* 2-column layout on desktop */}
+          <div className="max-w-[1400px] mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+              
+              {/* LEFT COLUMN - Upload & Preview (35% width) */}
+              <div className="lg:col-span-4">
+                {/* Subtitle */}
+                <p className="text-muted-foreground text-sm mb-6">
+                  Upload your product → Pick a style → Get your video
+                </p>
 
-        {/* Image Preview - Show after upload */}
-        {selectedFile && previewUrl && (
-          <div className="max-w-[400px] mx-auto mb-8">
-            <div className="relative">
-              <img
-                src={previewUrl}
-                alt="Uploaded product"
-                className="w-full max-h-[400px] object-contain rounded-lg shadow-lg border border-gray-700"
-              />
-            </div>
-            <button
-              onClick={handleChangePhoto}
-              className="w-full mt-4 text-sm text-purple-400 hover:text-purple-300 cursor-pointer transition-colors"
-            >
-              Change Photo
-            </button>
-          </div>
-        )}
-
-        {/* Template Gallery - Always visible */}
-        <div className="max-w-[1200px] mx-auto mt-16">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-white mb-2">
-              Choose Your Video Style
-            </h2>
-            <p className="text-gray-400 text-sm">
-              Select a template to generate your video (1 credit)
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-            {templates.map((template) => (
-              <div
-                key={template.id}
-                onClick={() => setSelectedTemplate(template.id)}
-                className={`
-                  h-[280px] cursor-pointer rounded-lg p-3
-                  bg-gradient-to-br from-gray-800 to-gray-900
-                  transition-all duration-300 ease-in-out
-                  relative flex flex-col
-                  ${selectedTemplate === template.id
-                    ? 'border-2 border-primary-purple bg-purple-900/20 scale-[1.03]'
-                    : 'border border-gray-600 hover:border-primary-purple hover:scale-[1.03] hover:shadow-lg hover:shadow-purple-500/20'
-                  }
-                `}
-              >
-                {/* Gradient Thumbnail Placeholder */}
-                <div className={`
-                  flex-1 rounded-md bg-gradient-to-br ${template.gradient} opacity-20
-                  flex items-center justify-center relative overflow-hidden
-                `}>
-                  <Sparkles className="w-8 h-8 text-white/50" />
-                  
-                  {/* Selected Checkmark */}
-                  {selectedTemplate === template.id && (
-                    <div className="absolute top-2 right-2 bg-primary-purple rounded-full p-1">
-                      <Check className="w-4 h-4 text-white" />
+                {/* Upload Section - Show if no image uploaded */}
+                {!selectedFile && (
+                  <div>
+                    <div
+                      onClick={handleClick}
+                      onDragOver={handleDragOver}
+                      onDragLeave={handleDragLeave}
+                      onDrop={handleDrop}
+                      className={`
+                        h-[250px] rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-8
+                        border-2 border-dashed cursor-pointer
+                        flex flex-col items-center justify-center
+                        transition-all duration-300 ease-in-out
+                        ${isDragging 
+                          ? 'border-purple-400 shadow-lg shadow-purple-500/30 scale-[1.01]' 
+                          : 'border-gray-500 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-[1.01]'
+                        }
+                      `}
+                    >
+                      <UploadCloud className="w-12 h-12 text-muted-foreground" />
+                      <p className="text-lg text-foreground mt-4 text-center">
+                        Drag & drop your product photo
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        or click to browse
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-4">
+                        Supports: JPG, PNG, WEBP • Max 10MB
+                      </p>
                     </div>
-                  )}
+
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      onChange={handleFileInput}
+                      className="hidden"
+                    />
+                  </div>
+                )}
+
+                {/* Image Preview - Show after upload with glassmorphism */}
+                {selectedFile && previewUrl && (
+                  <div className="max-w-[300px]">
+                    <div className="relative backdrop-blur-xl bg-white/5 rounded-lg p-4 border border-white/10 shadow-xl shadow-purple-500/10">
+                      <img
+                        src={previewUrl}
+                        alt="Uploaded product"
+                        className="w-full max-h-[300px] object-contain rounded-lg"
+                      />
+                    </div>
+                    <button
+                      onClick={handleChangePhoto}
+                      className="w-full mt-4 text-sm text-purple-400 hover:text-purple-300 cursor-pointer transition-colors"
+                    >
+                      Change Photo
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* RIGHT COLUMN - Template Gallery (65% width) */}
+              <div className="lg:col-span-8">
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold text-foreground mb-2">
+                    Choose Your Video Style
+                  </h2>
+                  <p className="text-muted-foreground text-sm">
+                    Select a template to generate your video (1 credit)
+                  </p>
                 </div>
 
-                {/* Template Name */}
-                <p className="text-sm text-white font-medium mt-2 text-center">
-                  {template.name}
-                </p>
-              </div>
-            ))}
-          </div>
+                {/* Template grid - 4 columns, tighter spacing */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {templates.map((template) => (
+                    <div
+                      key={template.id}
+                      onClick={() => setSelectedTemplate(template.id)}
+                      className={`
+                        h-[280px] cursor-pointer rounded-lg p-3
+                        bg-gradient-to-br from-gray-800 to-gray-900
+                        transition-all duration-300 ease-in-out
+                        relative flex flex-col
+                        ${selectedTemplate === template.id
+                          ? 'border-[3px] border-purple-500 bg-purple-500/20 scale-105 shadow-xl shadow-purple-500/50 animate-pulse'
+                          : 'border border-gray-700 opacity-70 hover:border-2 hover:border-purple-400 hover:opacity-100 hover:scale-[1.03] hover:shadow-lg hover:shadow-purple-500/30'
+                        }
+                      `}
+                    >
+                      {/* Gradient Thumbnail Placeholder */}
+                      <div className={`
+                        flex-1 rounded-md bg-gradient-to-br ${template.gradient} opacity-20
+                        flex items-center justify-center relative overflow-hidden
+                      `}>
+                        {selectedTemplate === template.id ? (
+                          // Large checkmark in center when selected
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="bg-purple-500 rounded-full p-3">
+                              <Check className="w-8 h-8 text-white" />
+                            </div>
+                          </div>
+                        ) : (
+                          <Sparkles className="w-8 h-8 text-white/50" />
+                        )}
+                      </div>
 
-          {/* Generate Button - Show only when both image and template selected */}
-          {selectedFile && selectedTemplate && (
-            <div className="flex justify-center mt-8">
-              <Button
-                onClick={handleGenerate}
-                disabled={isGenerating}
-                className="px-8 py-4 text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Generating your video...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="mr-2 h-5 w-5" />
-                    Generate Video (1 Credit)
-                  </>
+                      {/* Template Name */}
+                      <p className="text-sm text-foreground font-medium mt-2 text-center">
+                        {template.name}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Generate Button - Show only when both image and template selected */}
+                {selectedFile && selectedTemplate && (
+                  <div className="flex justify-center mt-8">
+                    <Button
+                      onClick={handleGenerate}
+                      disabled={isGenerating}
+                      className="px-8 py-4 text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    >
+                      {isGenerating ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          Generating your video...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="mr-2 h-5 w-5" />
+                          Generate Video (1 Credit)
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 )}
-              </Button>
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </div>
     </AppLayout>
