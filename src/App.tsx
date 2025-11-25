@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import FashionPhotographyTool from "./pages/FashionPhotographyTool";
+import FashionPhotography from "./pages/FashionPhotography";
 import VideoGeneration from "./pages/VideoGeneration";
 import ProductPhotography from "./pages/ProductPhotography";
 import AdminVideos from "./pages/AdminVideos";
@@ -22,7 +23,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/tools/fashion-photography" element={<FashionPhotographyTool />} />
+          <Route path="/tools/fashion-photography-old" element={<FashionPhotographyTool />} />
+          <Route path="/tools/fashion-photography" element={<FashionPhotography />} />
           <Route path="/tools/video-generation" element={<VideoGeneration />} />
           <Route path="/tools/product-photography" element={<ProductPhotography />} />
           <Route path="/admin/videos" element={<AdminVideos />} />
