@@ -90,13 +90,13 @@ const VideoGeneration = () => {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             className={`
-              h-80 rounded-xl bg-gray-900/50 backdrop-blur-sm p-12
+              h-80 rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-12
               border-2 border-dashed cursor-pointer
               flex flex-col items-center justify-center
               transition-all duration-300 ease-in-out
               ${isDragging 
-                ? 'border-purple-500 scale-[1.01]' 
-                : 'border-gray-600 hover:border-purple-500 hover:scale-[1.01]'
+                ? 'border-purple-400 shadow-lg shadow-purple-500/30 scale-[1.01]' 
+                : 'border-gray-500 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-[1.01]'
               }
             `}
           >
@@ -121,58 +121,57 @@ const VideoGeneration = () => {
           />
         </div>
 
-        {/* Template Gallery - Only show after image upload */}
-        {selectedFile && (
-          <div className="max-w-[1200px] mx-auto mt-12">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-white mb-2">
-                Choose Your Video Style
-              </h2>
-              <p className="text-gray-400 text-sm">
-                Select a template to generate your video (1 credit)
-              </p>
-            </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-              {templates.map((template) => (
-                <div
-                  key={template.id}
-                  onClick={() => setSelectedTemplate(template.id)}
-                  className={`
-                    aspect-[9/16] h-[280px] cursor-pointer rounded-lg p-3
-                    bg-gray-800/50 backdrop-blur-sm
-                    transition-all duration-300 ease-in-out
-                    relative overflow-hidden
-                    ${selectedTemplate === template.id
-                      ? 'border-2 border-primary-purple bg-purple-900/20 scale-[1.03]'
-                      : 'border border-gray-700 hover:border-primary-purple hover:scale-[1.03] hover:shadow-lg hover:shadow-purple-500/20'
-                    }
-                  `}
-                >
-                  {/* Gradient Thumbnail Placeholder */}
-                  <div className={`
-                    w-full h-full rounded-md bg-gradient-to-br ${template.gradient}
-                    flex items-center justify-center relative
-                  `}>
-                    <Sparkles className="w-8 h-8 text-white/30" />
-                    
-                    {/* Selected Checkmark */}
-                    {selectedTemplate === template.id && (
-                      <div className="absolute top-2 right-2 bg-primary-purple rounded-full p-1">
-                        <Check className="w-4 h-4 text-white" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Template Name */}
-                  <p className="text-sm text-white font-medium mt-2 text-center">
-                    {template.name}
-                  </p>
-                </div>
-              ))}
-            </div>
+        {/* Template Gallery - Always visible */}
+        <div className="max-w-[1200px] mx-auto mt-16">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-bold text-white mb-2">
+              Choose Your Video Style
+            </h2>
+            <p className="text-gray-400 text-sm">
+              Select a template to generate your video (1 credit)
+            </p>
           </div>
-        )}
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            {templates.map((template) => (
+              <div
+                key={template.id}
+                onClick={() => setSelectedTemplate(template.id)}
+                className={`
+                  h-[280px] cursor-pointer rounded-lg p-3
+                  bg-gradient-to-br from-gray-800 to-gray-900
+                  transition-all duration-300 ease-in-out
+                  relative flex flex-col
+                  ${selectedTemplate === template.id
+                    ? 'border-2 border-primary-purple bg-purple-900/20 scale-[1.03]'
+                    : 'border border-gray-600 hover:border-primary-purple hover:scale-[1.03] hover:shadow-lg hover:shadow-purple-500/20'
+                  }
+                `}
+              >
+                {/* Gradient Thumbnail Placeholder */}
+                <div className={`
+                  flex-1 rounded-md bg-gradient-to-br ${template.gradient} opacity-20
+                  flex items-center justify-center relative overflow-hidden
+                `}>
+                  <Sparkles className="w-8 h-8 text-white/50" />
+                  
+                  {/* Selected Checkmark */}
+                  {selectedTemplate === template.id && (
+                    <div className="absolute top-2 right-2 bg-primary-purple rounded-full p-1">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Template Name */}
+                <p className="text-sm text-white font-medium mt-2 text-center">
+                  {template.name}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </AppLayout>
   );
