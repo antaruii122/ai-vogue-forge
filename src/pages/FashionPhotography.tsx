@@ -155,11 +155,11 @@ const FashionPhotography = () => {
           <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-purple-500/5 animate-pulse pointer-events-none" />
           
           <div className="relative z-10 p-6">
-            <div className="max-w-[1200px] mx-auto mt-20">
+            <div className="max-w-6xl mx-auto mt-12 px-6">
               {/* Success Header */}
-              <div className="text-center mb-10">
-                <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-4" />
-                <h1 className="text-3xl font-bold text-foreground mb-2">
+              <div className="text-center mb-6">
+                <CheckCircle className="w-10 h-10 text-green-400 mx-auto mb-3" />
+                <h1 className="text-2xl font-bold text-foreground mb-1">
                   Your Photos Are Ready!
                 </h1>
                 <p className="text-muted-foreground text-sm">
@@ -167,12 +167,12 @@ const FashionPhotography = () => {
                 </p>
               </div>
 
-              {/* Photo Grid - 2x2 layout */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10 max-w-[900px] mx-auto">
+              {/* Photo Grid - 2x2 layout, more compact */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8 mb-8 max-w-[800px] mx-auto">
                 {generatedPhotos.map((photo, index) => (
                   <div 
                     key={index} 
-                    className="relative group aspect-square"
+                    className="relative group aspect-square max-w-[350px] mx-auto"
                     onMouseEnter={() => setHoveredImageIndex(index)}
                     onMouseLeave={() => setHoveredImageIndex(null)}
                   >
@@ -212,53 +212,53 @@ const FashionPhotography = () => {
                 ))}
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 mb-10 max-w-[600px] mx-auto">
+              {/* Action Buttons - more compact */}
+              <div className="flex flex-col sm:flex-row gap-3 mt-6 max-w-[600px] mx-auto">
                 <Button
                   onClick={handleDownload}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-lg font-semibold"
+                  className="flex-1 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-semibold"
                 >
-                  <Download className="mr-2 h-5 w-5" />
+                  <Download className="mr-2 h-4 w-4" />
                   Download All (ZIP)
                 </Button>
                 
                 <Button
                   variant="outline"
-                  className="px-6 py-3 border-2 border-purple-500 text-purple-400 hover:bg-purple-500/10"
+                  className="px-5 py-2.5 border-2 border-purple-500 text-purple-400 hover:bg-purple-500/10"
                 >
-                  <Save className="mr-2 h-5 w-5" />
+                  <Save className="mr-2 h-4 w-4" />
                   Save to Portfolio
                 </Button>
               </div>
 
-              <div className="flex justify-center mb-10">
+              <div className="flex justify-center mt-4 mb-6">
                 <button
                   onClick={handleGenerateAnother}
-                  className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
+                  className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2 text-sm"
                 >
                   <Plus className="h-4 w-4" />
                   Generate More Photos
                 </button>
               </div>
 
-              {/* Photo Info Card */}
-              <div className="max-w-[600px] mx-auto backdrop-blur-xl bg-white/5 rounded-lg p-6 border border-white/10">
-                <div className="grid grid-cols-2 gap-4">
+              {/* Photo Info Card - more compact */}
+              <div className="max-w-[600px] mx-auto backdrop-blur-xl bg-white/5 rounded-lg py-4 px-5 border border-white/10 mt-6">
+                <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <p className="text-muted-foreground text-sm mb-1">Style</p>
-                    <p className="text-foreground font-medium">{getTemplateName()}</p>
+                    <p className="text-muted-foreground text-xs mb-1">Style</p>
+                    <p className="text-foreground text-base font-medium">{getTemplateName()}</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-sm mb-1">Images</p>
-                    <p className="text-foreground font-medium">4 photos</p>
+                    <p className="text-muted-foreground text-xs mb-1">Images</p>
+                    <p className="text-foreground text-base font-medium">4 photos</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-sm mb-1">Resolution</p>
-                    <p className="text-foreground font-medium">2048x2048</p>
+                    <p className="text-muted-foreground text-xs mb-1">Resolution</p>
+                    <p className="text-foreground text-base font-medium">2048x2048</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-sm mb-1">Cost</p>
-                    <p className="text-foreground font-medium">1 credit</p>
+                    <p className="text-muted-foreground text-xs mb-1">Cost</p>
+                    <p className="text-foreground text-base font-medium">1 credit</p>
                   </div>
                 </div>
               </div>
