@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 import AppLayout from "@/components/AppLayout";
-import { UploadCloud, Sparkles, Check } from "lucide-react";
+import { UploadCloud, Sparkles, Check, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 const templates = [
   { id: 1, name: "360° Spin", gradient: "from-purple-500 to-pink-500" },
@@ -17,9 +19,12 @@ const templates = [
 
 const VideoGeneration = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -52,17 +57,53 @@ const VideoGeneration = () => {
     // Validate file type
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!validTypes.includes(file.type)) {
-      alert('Please upload a valid image file (JPG, PNG, or WEBP)');
+      toast({
+        title: "Invalid file type",
+        description: "Please upload a valid image file (JPG, PNG, or WEBP)",
+        variant: "destructive",
+      });
       return;
     }
 
     // Validate file size (10MB)
     if (file.size > 10 * 1024 * 1024) {
-      alert('File size must be less than 10MB');
+      toast({
+        title: "File too large",
+        description: "File size must be less than 10MB",
+        variant: "destructive",
+      });
       return;
     }
 
     setSelectedFile(file);
+    
+    // Create preview URL
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+  };
+
+  const handleChangePhoto = () => {
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    setSelectedTemplate(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleGenerate = async () => {
+    if (!selectedFile || !selectedTemplate) return;
+
+    setIsGenerating(true);
+    
+    // Simulate video generation (replace with actual API call)
+    setTimeout(() => {
+      setIsGenerating(false);
+      toast({
+        title: "Video generated!",
+        description: "Your video is ready to download.",
+      });
+    }, 3000);
   };
 
   const handleClick = () => {
@@ -82,8 +123,9 @@ const VideoGeneration = () => {
           </p>
         </div>
 
-        {/* Upload Section */}
-        <div className="max-w-[600px] mx-auto">
+        {/* Upload Section - Only show if no image uploaded */}
+        {!selectedFile && (
+          <div className="max-w-[600px] mx-auto">
           <div
             onClick={handleClick}
             onDragOver={handleDragOver}
@@ -120,7 +162,26 @@ const VideoGeneration = () => {
             className="hidden"
           />
         </div>
+        )}
 
+        {/* Image Preview - Show after upload */}
+        {selectedFile && previewUrl && (
+          <div className="max-w-[400px] mx-auto mb-8">
+            <div className="relative">
+              <img
+                src={previewUrl}
+                alt="Uploaded product"
+                className="w-full max-h-[400px] object-contain rounded-lg shadow-lg border border-gray-700"
+              />
+            </div>
+            <button
+              onClick={handleChangePhoto}
+              className="w-full mt-4 text-sm text-purple-400 hover:text-purple-300 cursor-pointer transition-colors"
+            >
+              Change Photo
+            </button>
+          </div>
+        )}
 
         {/* Template Gallery - Always visible */}
         <div className="max-w-[1200px] mx-auto mt-16">
@@ -171,6 +232,29 @@ const VideoGeneration = () => {
               </div>
             ))}
           </div>
+
+          {/* Generate Button - Show only when both image and template selected */}
+          {selectedFile && selectedTemplate && (
+            <div className="flex justify-center mt-8">
+              <Button
+                onClick={handleGenerate}
+                disabled={isGenerating}
+                className="px-8 py-4 text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    Generating your video...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="mr-2 h-5 w-5" />
+                    Generate Video (1 Credit)
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </AppLayout>
