@@ -3,6 +3,7 @@ import AppLayout from "@/components/AppLayout";
 import { UploadCloud, MapPin, Sparkles, Sun, Crown, Check, Loader2, Download, Save, Plus, CheckCircle, Expand, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { uploadImageToStorage } from "@/utils/uploadToStorage";
 
 const templates = [
   { id: 1, name: "Urban Lifestyle", gradient: "from-blue-500 to-purple-500", icon: MapPin },
@@ -13,12 +14,14 @@ const templates = [
 
 const FashionPhotography = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedPhotos, setGeneratedPhotos] = useState<string[] | null>(null);
   const [hoveredImageIndex, setHoveredImageIndex] = useState<number | null>(null);
+  const [webhookUrl, setWebhookUrl] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -49,7 +52,7 @@ const FashionPhotography = () => {
     }
   };
 
-  const handleFile = (file: File) => {
+  const handleFile = async (file: File) => {
     // Validate file type
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!validTypes.includes(file.type)) {
@@ -71,15 +74,39 @@ const FashionPhotography = () => {
       return;
     }
 
-    setSelectedFile(file);
-    
-    // Create preview URL
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
+    try {
+      toast({
+        title: "Uploading image...",
+        description: "Please wait while we upload your photo",
+      });
+      
+      // Upload to storage and get public URL
+      const publicUrl = await uploadImageToStorage(file);
+      
+      setSelectedFile(file);
+      setUploadedImageUrl(publicUrl);
+      
+      // Create preview URL for display
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+      
+      toast({
+        title: "Upload successful!",
+        description: "Your image has been uploaded to storage",
+      });
+    } catch (error) {
+      toast({
+        title: "Upload failed",
+        description: "There was an error uploading your image. Please try again.",
+        variant: "destructive",
+      });
+      console.error("Upload error:", error);
+    }
   };
 
   const handleChangePhoto = () => {
     setSelectedFile(null);
+    setUploadedImageUrl(null);
     setPreviewUrl(null);
     setSelectedTemplate(null);
     setGeneratedPhotos(null);
@@ -89,30 +116,74 @@ const FashionPhotography = () => {
   };
 
   const handleGenerate = async () => {
-    if (!selectedFile || !selectedTemplate) return;
+    if (!uploadedImageUrl || !selectedTemplate || !webhookUrl) {
+      toast({
+        title: "Missing information",
+        description: "Please upload an image, select a style, and enter a webhook URL",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setIsGenerating(true);
     
-    // Simulate photo generation (replace with actual API call)
-    setTimeout(() => {
-      // Use placeholder images (replace with actual generated photos)
-      setGeneratedPhotos([
-        "/placeholder.svg",
-        "/placeholder.svg",
-        "/placeholder.svg",
-        "/placeholder.svg",
-      ]);
+    try {
+      // Send POST request to webhook
+      const response = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          imageUrl: uploadedImageUrl,
+          style: getTemplateName(),
+          styleId: selectedTemplate,
+          timestamp: new Date().toISOString(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Webhook responded with status ${response.status}`);
+      }
+
+      toast({
+        title: "Request sent!",
+        description: "Your request has been sent to the webhook",
+      });
+
+      // Simulate generation time for demo purposes
+      setTimeout(() => {
+        // Mock generated images (in production, these would come from your webhook/AI service)
+        const mockImages = [
+          "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80",
+          "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=500&q=80",
+          "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500&q=80",
+          "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=500&q=80",
+        ];
+        
+        setGeneratedPhotos(mockImages);
+        setIsGenerating(false);
+        
+        toast({
+          title: "Photos generated!",
+          description: "Your 4 fashion photos are ready.",
+        });
+      }, 3000);
+    } catch (error) {
       setIsGenerating(false);
       toast({
-        title: "Photos generated!",
-        description: "Your 4 fashion photos are ready.",
+        title: "Generation failed",
+        description: "There was an error sending your request. Please try again.",
+        variant: "destructive",
       });
-    }, 3000);
+      console.error("Webhook error:", error);
+    }
   };
 
   const handleGenerateAnother = () => {
     setGeneratedPhotos(null);
     setSelectedFile(null);
+    setUploadedImageUrl(null);
     setPreviewUrl(null);
     setSelectedTemplate(null);
     if (fileInputRef.current) {
@@ -381,6 +452,11 @@ const FashionPhotography = () => {
                     >
                       Change Photo
                     </button>
+                    {uploadedImageUrl && (
+                      <p className="text-xs text-green-400 mt-2 text-center">
+                        ✓ Uploaded to storage
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
@@ -393,6 +469,24 @@ const FashionPhotography = () => {
                   </h2>
                   <p className="text-muted-foreground text-sm">
                     Select a photography style (1 credit = 4 photos)
+                  </p>
+                </div>
+
+                {/* Webhook URL Input */}
+                <div className="mb-6 max-w-[700px]">
+                  <label htmlFor="webhookUrl" className="block text-sm font-medium text-gray-400 mb-2">
+                    Webhook URL
+                  </label>
+                  <input
+                    id="webhookUrl"
+                    type="url"
+                    placeholder="https://your-webhook-endpoint.com/api/process"
+                    value={webhookUrl}
+                    onChange={(e) => setWebhookUrl(e.target.value)}
+                    className="w-full px-4 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    The webhook will receive the image URL and selected style
                   </p>
                 </div>
 
