@@ -21,9 +21,11 @@ const FashionPhotography = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedPhotos, setGeneratedPhotos] = useState<string[] | null>(null);
   const [hoveredImageIndex, setHoveredImageIndex] = useState<number | null>(null);
-  const [webhookUrl, setWebhookUrl] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  // Hardcoded webhook URL
+  const WEBHOOK_URL = "https://n8n.quicklyandgood.com/webhook-test/662d6440-b0ef-4c5e-9c71-f1e077a84e39";
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -116,10 +118,10 @@ const FashionPhotography = () => {
   };
 
   const handleGenerate = async () => {
-    if (!uploadedImageUrl || !selectedTemplate || !webhookUrl) {
+    if (!uploadedImageUrl || !selectedTemplate) {
       toast({
         title: "Missing information",
-        description: "Please upload an image, select a style, and enter a webhook URL",
+        description: "Please upload an image and select a style",
         variant: "destructive",
       });
       return;
@@ -128,14 +130,14 @@ const FashionPhotography = () => {
     setIsGenerating(true);
     
     try {
-      // Send POST request to webhook
-      const response = await fetch(webhookUrl, {
+      // Send POST request to hardcoded webhook
+      const response = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          imageUrl: uploadedImageUrl,
+          image_url: uploadedImageUrl,
           style: getTemplateName(),
           styleId: selectedTemplate,
           timestamp: new Date().toISOString(),
@@ -148,7 +150,7 @@ const FashionPhotography = () => {
 
       toast({
         title: "Request sent!",
-        description: "Your request has been sent to the webhook",
+        description: "Your request has been sent for processing",
       });
 
       // Simulate generation time for demo purposes
@@ -469,24 +471,6 @@ const FashionPhotography = () => {
                   </h2>
                   <p className="text-muted-foreground text-sm">
                     Select a photography style (1 credit = 4 photos)
-                  </p>
-                </div>
-
-                {/* Webhook URL Input */}
-                <div className="mb-6 max-w-[700px]">
-                  <label htmlFor="webhookUrl" className="block text-sm font-medium text-gray-400 mb-2">
-                    Webhook URL
-                  </label>
-                  <input
-                    id="webhookUrl"
-                    type="url"
-                    placeholder="https://your-webhook-endpoint.com/api/process"
-                    value={webhookUrl}
-                    onChange={(e) => setWebhookUrl(e.target.value)}
-                    className="w-full px-4 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">
-                    The webhook will receive the image URL and selected style
                   </p>
                 </div>
 
