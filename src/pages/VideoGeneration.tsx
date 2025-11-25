@@ -217,10 +217,10 @@ const VideoGeneration = () => {
                       className={`
                         h-[280px] cursor-pointer rounded-lg p-3
                         bg-gradient-to-br from-gray-800 to-gray-900
-                        transition-all duration-300 ease-in-out
+                        transition-all duration-300 ease-out
                         relative flex flex-col
                         ${selectedTemplate === template.id
-                          ? 'border-[3px] border-purple-500 bg-purple-500/20 scale-105 shadow-xl shadow-purple-500/50 animate-pulse'
+                          ? 'border-[3px] border-purple-500 bg-purple-500/20 scale-105 shadow-xl shadow-purple-500/50'
                           : 'border border-gray-700 opacity-70 hover:border-2 hover:border-purple-400 hover:opacity-100 hover:scale-[1.03] hover:shadow-lg hover:shadow-purple-500/30'
                         }
                       `}
