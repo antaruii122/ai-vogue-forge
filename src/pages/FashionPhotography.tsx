@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import AppLayout from "@/components/AppLayout";
-import { UploadCloud, MapPin, Sparkles, Sun, Crown, Check, Loader2, Download, Save, Plus, CheckCircle } from "lucide-react";
+import { UploadCloud, MapPin, Sparkles, Sun, Crown, Check, Loader2, Download, Save, Plus, CheckCircle, Expand, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
@@ -18,6 +18,7 @@ const FashionPhotography = () => {
   const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedPhotos, setGeneratedPhotos] = useState<string[] | null>(null);
+  const [hoveredImageIndex, setHoveredImageIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -122,7 +123,22 @@ const FashionPhotography = () => {
   const handleDownload = () => {
     toast({
       title: "Download started",
-      description: "Your photos are being downloaded.",
+      description: "Your photos are being downloaded as ZIP.",
+    });
+  };
+
+  const handleDownloadSingle = (index: number) => {
+    toast({
+      title: "Download started",
+      description: `Downloading photo ${index + 1}.`,
+    });
+  };
+
+  const handleShare = (index: number) => {
+    navigator.clipboard.writeText(window.location.href);
+    toast({
+      title: "Link copied",
+      description: "Photo link copied to clipboard.",
     });
   };
 
@@ -141,37 +157,69 @@ const FashionPhotography = () => {
           <div className="relative z-10 p-6">
             <div className="max-w-[1200px] mx-auto mt-20">
               {/* Success Header */}
-              <div className="text-center mb-8">
+              <div className="text-center mb-10">
                 <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-4" />
                 <h1 className="text-3xl font-bold text-foreground mb-2">
-                  Your Photos are Ready!
+                  Your Photos Are Ready!
                 </h1>
                 <p className="text-muted-foreground text-sm">
-                  Generated in 45 seconds
+                  4 high-quality images generated
                 </p>
               </div>
 
-              {/* Photo Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              {/* Photo Grid - 2x2 layout */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10 max-w-[900px] mx-auto">
                 {generatedPhotos.map((photo, index) => (
-                  <div key={index} className="aspect-square">
+                  <div 
+                    key={index} 
+                    className="relative group aspect-square"
+                    onMouseEnter={() => setHoveredImageIndex(index)}
+                    onMouseLeave={() => setHoveredImageIndex(null)}
+                  >
                     <img
                       src={photo}
                       alt={`Generated photo ${index + 1}`}
-                      className="w-full h-full object-cover rounded-xl border border-gray-700 shadow-2xl shadow-purple-500/30"
+                      className="w-full h-full object-cover rounded-xl border border-gray-700 shadow-2xl shadow-purple-500/20 transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-purple-500/40"
                     />
+                    
+                    {/* Hover overlay with actions */}
+                    {hoveredImageIndex === index && (
+                      <div className="absolute inset-0 bg-black/50 rounded-xl flex items-center justify-center gap-3 transition-all duration-300">
+                        <button
+                          onClick={() => handleDownloadSingle(index)}
+                          className="p-3 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
+                          title="Download this image"
+                        >
+                          <Download className="w-5 h-5 text-white" />
+                        </button>
+                        <button
+                          onClick={() => toast({ title: "Full size view", description: "Coming soon!" })}
+                          className="p-3 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
+                          title="View full size"
+                        >
+                          <Expand className="w-5 h-5 text-white" />
+                        </button>
+                        <button
+                          onClick={() => handleShare(index)}
+                          className="p-3 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
+                          title="Share this image"
+                        >
+                          <Share2 className="w-5 h-5 text-white" />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 mb-8 max-w-[500px] mx-auto">
+              <div className="flex flex-col sm:flex-row gap-4 mb-10 max-w-[600px] mx-auto">
                 <Button
                   onClick={handleDownload}
                   className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-lg font-semibold"
                 >
                   <Download className="mr-2 h-5 w-5" />
-                  Download All
+                  Download All (ZIP)
                 </Button>
                 
                 <Button
@@ -183,13 +231,13 @@ const FashionPhotography = () => {
                 </Button>
               </div>
 
-              <div className="flex justify-center mb-8">
+              <div className="flex justify-center mb-10">
                 <button
                   onClick={handleGenerateAnother}
                   className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
                 >
                   <Plus className="h-4 w-4" />
-                  Generate Another
+                  Generate More Photos
                 </button>
               </div>
 
@@ -201,12 +249,12 @@ const FashionPhotography = () => {
                     <p className="text-foreground font-medium">{getTemplateName()}</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-sm mb-1">Resolution</p>
-                    <p className="text-foreground font-medium">1024x1024</p>
+                    <p className="text-muted-foreground text-sm mb-1">Images</p>
+                    <p className="text-foreground font-medium">4 photos</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-sm mb-1">Photos</p>
-                    <p className="text-foreground font-medium">4 images</p>
+                    <p className="text-muted-foreground text-sm mb-1">Resolution</p>
+                    <p className="text-foreground font-medium">2048x2048</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground text-sm mb-1">Cost</p>
@@ -231,10 +279,10 @@ const FashionPhotography = () => {
           <div className="relative z-10 text-center">
             <Loader2 className="w-16 h-16 text-purple-400 animate-spin mx-auto mb-6" />
             <h2 className="text-2xl font-bold text-foreground mb-2">
-              Generating your photos...
+              Generating your fashion photos...
             </h2>
             <p className="text-muted-foreground mb-8">
-              This usually takes 30-60 seconds
+              Creating 4 stunning images (30-45 seconds)
             </p>
             
             {/* Progress bar */}
