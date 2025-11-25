@@ -25,7 +25,7 @@ const FashionPhotography = () => {
   const { toast } = useToast();
 
   // Hardcoded webhook URL
-  const WEBHOOK_URL = "https://n8n.quicklyandgood.com/webhook-test/662d6440-b0ef-4c5e-9c71-f1e077a84e39";
+  const WEBHOOK_URL = "https://n8n.quicklyandgood.com/webhook-test/662d6440-b0e1-4c5e-9c71-11e077a84e39";
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
