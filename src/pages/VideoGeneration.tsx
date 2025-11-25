@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import AppLayout from "@/components/AppLayout";
-import { UploadCloud, Sparkles, Check, Loader2 } from "lucide-react";
+import { UploadCloud, Sparkles, Check, Loader2, Download, Save, Plus, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
@@ -23,6 +23,7 @@ const VideoGeneration = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -86,6 +87,7 @@ const VideoGeneration = () => {
     setSelectedFile(null);
     setPreviewUrl(null);
     setSelectedTemplate(null);
+    setGeneratedVideoUrl(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -98,6 +100,8 @@ const VideoGeneration = () => {
     
     // Simulate video generation (replace with actual API call)
     setTimeout(() => {
+      // Use placeholder video URL (replace with actual generated video)
+      setGeneratedVideoUrl("/videos/BOLD.mp4");
       setIsGenerating(false);
       toast({
         title: "Video generated!",
@@ -106,9 +110,153 @@ const VideoGeneration = () => {
     }, 3000);
   };
 
+  const handleGenerateAnother = () => {
+    setGeneratedVideoUrl(null);
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    setSelectedTemplate(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleDownload = () => {
+    if (!generatedVideoUrl) return;
+    const link = document.createElement('a');
+    link.href = generatedVideoUrl;
+    link.download = 'generated-video.mp4';
+    link.click();
+    toast({
+      title: "Download started",
+      description: "Your video is being downloaded.",
+    });
+  };
+
   const handleClick = () => {
     fileInputRef.current?.click();
   };
+
+  const getTemplateName = () => {
+    const template = templates.find(t => t.id === selectedTemplate);
+    return template?.name || "Unknown";
+  };
+
+  // Show results view if video is generated
+  if (generatedVideoUrl) {
+    return (
+      <AppLayout>
+        <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 relative overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-purple-500/5 animate-pulse pointer-events-none" />
+          
+          <div className="relative z-10 p-6">
+            <div className="max-w-[900px] mx-auto mt-20">
+              {/* Success Header */}
+              <div className="text-center mb-8">
+                <CheckCircle className="w-12 h-12 text-green-400 mx-auto mb-4" />
+                <h1 className="text-3xl font-bold text-foreground mb-2">
+                  Your Video is Ready!
+                </h1>
+                <p className="text-muted-foreground text-sm">
+                  Generated in 45 seconds
+                </p>
+              </div>
+
+              {/* Video Player */}
+              <div className="flex justify-center mb-8">
+                <div className="w-full max-w-[400px]">
+                  <video
+                    src={generatedVideoUrl}
+                    controls
+                    autoPlay
+                    muted
+                    loop
+                    className="w-full aspect-[9/16] rounded-xl border border-gray-700 shadow-2xl shadow-purple-500/50"
+                  />
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 mb-8 max-w-[500px] mx-auto">
+                <Button
+                  onClick={handleDownload}
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-lg font-semibold"
+                >
+                  <Download className="mr-2 h-5 w-5" />
+                  Download Video
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  className="px-6 py-3 border-2 border-purple-500 text-purple-400 hover:bg-purple-500/10"
+                >
+                  <Save className="mr-2 h-5 w-5" />
+                  Save to Portfolio
+                </Button>
+              </div>
+
+              <div className="flex justify-center mb-8">
+                <button
+                  onClick={handleGenerateAnother}
+                  className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Generate Another
+                </button>
+              </div>
+
+              {/* Video Info Card */}
+              <div className="max-w-[600px] mx-auto backdrop-blur-xl bg-white/5 rounded-lg p-6 border border-white/10">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-muted-foreground text-sm mb-1">Template</p>
+                    <p className="text-foreground font-medium">{getTemplateName()}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-sm mb-1">Resolution</p>
+                    <p className="text-foreground font-medium">1080x1920 (9:16)</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-sm mb-1">Duration</p>
+                    <p className="text-foreground font-medium">5 seconds</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground text-sm mb-1">Cost</p>
+                    <p className="text-foreground font-medium">1 credit</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  // Show loading view while generating
+  if (isGenerating) {
+    return (
+      <AppLayout>
+        <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 relative overflow-hidden flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-purple-500/5 animate-pulse pointer-events-none" />
+          
+          <div className="relative z-10 text-center">
+            <Loader2 className="w-16 h-16 text-purple-400 animate-spin mx-auto mb-6" />
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Generating your video...
+            </h2>
+            <p className="text-muted-foreground mb-8">
+              This usually takes 30-60 seconds
+            </p>
+            
+            {/* Progress bar */}
+            <div className="w-[300px] mx-auto h-2 bg-gray-800 rounded-full overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-purple-600 to-pink-600 animate-pulse" style={{ width: '70%' }} />
+            </div>
+          </div>
+        </div>
+      </AppLayout>
+    );
+  }
 
   return (
     <AppLayout>
