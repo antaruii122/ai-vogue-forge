@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { uploadImageToStorage } from "@/utils/uploadToStorage";
 import luxuryPremiumExample from "@/assets/luxury-premium-example.jpeg";
+import studioCleanExample from "@/assets/studio-clean-example.jpeg";
 
 const templates = [
   { id: 1, name: "Urban Lifestyle", gradient: "from-blue-500 to-purple-500", icon: MapPin },
@@ -499,11 +500,18 @@ const FashionPhotography = () => {
                           flex-1 rounded-md bg-gradient-to-br ${template.gradient} opacity-20
                           flex items-center justify-center relative overflow-hidden
                         `}>
-                          {/* Show example image for Urban Lifestyle template */}
+                          {/* Show example images for templates */}
                           {template.id === 1 && (
                             <img 
                               src={luxuryPremiumExample} 
                               alt="Urban Lifestyle example"
+                              className="absolute inset-0 w-full h-full object-cover opacity-100"
+                            />
+                          )}
+                          {template.id === 2 && (
+                            <img 
+                              src={studioCleanExample} 
+                              alt="Studio Clean example"
                               className="absolute inset-0 w-full h-full object-cover opacity-100"
                             />
                           )}
@@ -515,7 +523,7 @@ const FashionPhotography = () => {
                                 <Check className="w-8 h-8 text-white" />
                               </div>
                             </div>
-                          ) : template.id !== 1 && (
+                          ) : (template.id !== 1 && template.id !== 2) && (
                             <IconComponent className="w-12 h-12 text-white/50" />
                           )}
                         </div>
