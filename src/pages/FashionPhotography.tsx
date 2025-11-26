@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import AppLayout from "@/components/AppLayout";
-import { UploadCloud, MapPin, Sparkles, Sun, Crown, Check, Loader2, Download, Save, Plus, CheckCircle, Expand, Share2, ChevronDown, ChevronUp } from "lucide-react";
+import { UploadCloud, MapPin, Sparkles, Sun, Crown, Check, Loader2, Download, Save, Plus, CheckCircle, Expand, Share2, ChevronDown, ChevronUp, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -20,6 +20,61 @@ const templates = [
   { id: 4, name: "Luxury Premium", gradient: "from-amber-500 to-orange-500", icon: Crown },
 ];
 
+// Dynamic background options based on selected style
+const getBackgroundOptions = (styleId: number | null) => {
+  if (styleId === 1) {
+    // Urban Lifestyle
+    return [
+      { value: "auto", label: "Auto (from style)" },
+      { value: "rooftop", label: "Rooftop terrace" },
+      { value: "city-street", label: "City street" },
+      { value: "industrial-loft", label: "Industrial loft" },
+      { value: "modern-apartment", label: "Modern apartment" },
+      { value: "urban-cafe", label: "Urban café" },
+      { value: "custom", label: "Custom" }
+    ];
+  } else if (styleId === 2) {
+    // Studio Clean
+    return [
+      { value: "auto", label: "Auto (from style)" },
+      { value: "white-seamless", label: "White seamless backdrop" },
+      { value: "gray-backdrop", label: "Gray backdrop" },
+      { value: "colored-paper", label: "Colored paper backdrop" },
+      { value: "minimalist-setup", label: "Minimalist setup" },
+      { value: "black-backdrop", label: "Black backdrop" },
+      { value: "custom", label: "Custom" }
+    ];
+  } else if (styleId === 3) {
+    // Outdoor Natural
+    return [
+      { value: "auto", label: "Auto (from style)" },
+      { value: "beach-coastal", label: "Beach/coastal scene" },
+      { value: "forest-woodland", label: "Forest/woodland" },
+      { value: "park-garden", label: "Park/garden setting" },
+      { value: "mountain-landscape", label: "Mountain landscape" },
+      { value: "open-field", label: "Open field" },
+      { value: "custom", label: "Custom" }
+    ];
+  } else if (styleId === 4) {
+    // Luxury Premium
+    return [
+      { value: "auto", label: "Auto (from style)" },
+      { value: "marble-showroom", label: "Marble showroom" },
+      { value: "velvet-lounge", label: "Velvet lounge" },
+      { value: "boutique-interior", label: "Boutique interior" },
+      { value: "gold-accents", label: "Gold accents room" },
+      { value: "elegant-study", label: "Elegant study" },
+      { value: "custom", label: "Custom" }
+    ];
+  }
+  
+  // Default options (when no style selected)
+  return [
+    { value: "auto", label: "Auto (from style)" },
+    { value: "custom", label: "Custom" }
+  ];
+};
+
 const FashionPhotography = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
@@ -37,6 +92,7 @@ const FashionPhotography = () => {
   const [customLighting, setCustomLighting] = useState<string>("");
   const [cameraAngle, setCameraAngle] = useState<string>("auto");
   const [customCameraAngle, setCustomCameraAngle] = useState<string>("");
+  const [styleChangeWarning, setStyleChangeWarning] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -500,8 +556,27 @@ const FashionPhotography = () => {
                     const IconComponent = template.icon;
                     return (
                       <div
-                        key={template.id}
-                        onClick={() => setSelectedTemplate(template.id)}
+                         key={template.id}
+                        onClick={() => {
+                          // Check if background was previously set (and not auto)
+                          if (selectedTemplate !== null && background !== "auto") {
+                            if (background === "custom") {
+                              // Preserve custom background
+                              setStyleChangeWarning("Style changed - Custom background preserved");
+                            } else {
+                              // Reset to auto
+                              setBackground("auto");
+                              setStyleChangeWarning("Style changed - Background reset to Auto");
+                            }
+                            
+                            // Auto-dismiss warning after 3 seconds
+                            setTimeout(() => {
+                              setStyleChangeWarning(null);
+                            }, 3000);
+                          }
+                          
+                          setSelectedTemplate(template.id);
+                        }}
                         className={`
                           cursor-pointer rounded-lg p-3
                           bg-gradient-to-br from-gray-800 to-gray-900
@@ -634,109 +709,118 @@ const FashionPhotography = () => {
                   </div>
                 )}
 
-                {/* Advanced Options Section - Collapsible */}
-                {selectedTemplate && (
-                  <div className="mt-6 max-w-[700px]">
-                    <button
-                      onClick={() => setAdvancedOptionsOpen(!advancedOptionsOpen)}
-                      className="w-full flex items-center justify-between p-4 rounded-lg bg-gray-800/50 border border-gray-700 hover:border-purple-400 transition-all"
-                    >
-                      <span className="text-foreground font-medium flex items-center gap-2">
-                        <span>⚙️</span>
-                        Advanced Options (optional)
-                      </span>
-                      {advancedOptionsOpen ? (
-                        <ChevronUp className="w-5 h-5 text-muted-foreground" />
-                      ) : (
-                        <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                      )}
-                    </button>
-                    
-                    {advancedOptionsOpen && (
-                      <div className="mt-4 p-6 rounded-lg bg-gray-800/30 border border-gray-700 space-y-6 animate-in slide-in-from-top-2 duration-300">
-                        {/* Background Dropdown */}
-                        <div>
-                          <Label htmlFor="background" className="text-foreground mb-2 block">Background</Label>
-                          <Select value={background} onValueChange={setBackground}>
-                            <SelectTrigger id="background" className="bg-gray-900 border-gray-700">
-                              <SelectValue placeholder="Select background" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="auto">Auto (from style)</SelectItem>
-                              <SelectItem value="studio">Studio</SelectItem>
-                              <SelectItem value="urban-street">Urban Street</SelectItem>
-                              <SelectItem value="beach">Beach</SelectItem>
-                              <SelectItem value="forest">Forest</SelectItem>
-                              <SelectItem value="modern-cafe">Modern Café</SelectItem>
-                              <SelectItem value="custom">Custom</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          {background === "custom" && (
-                            <Input
-                              value={customBackground}
-                              onChange={(e) => setCustomBackground(e.target.value)}
-                              placeholder="e.g., cozy bookstore interior"
-                              className="mt-2 bg-gray-900 border-gray-700"
-                            />
-                          )}
-                        </div>
-
-                        {/* Lighting Dropdown */}
-                        <div>
-                          <Label htmlFor="lighting" className="text-foreground mb-2 block">Lighting</Label>
-                          <Select value={lighting} onValueChange={setLighting}>
-                            <SelectTrigger id="lighting" className="bg-gray-900 border-gray-700">
-                              <SelectValue placeholder="Select lighting" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="auto">Auto (from style)</SelectItem>
-                              <SelectItem value="bright-airy">Bright & Airy</SelectItem>
-                              <SelectItem value="dramatic-moody">Dramatic & Moody</SelectItem>
-                              <SelectItem value="natural-daylight">Natural Daylight</SelectItem>
-                              <SelectItem value="warm-golden-hour">Warm Golden Hour</SelectItem>
-                              <SelectItem value="custom">Custom</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          {lighting === "custom" && (
-                            <Input
-                              value={customLighting}
-                              onChange={(e) => setCustomLighting(e.target.value)}
-                              placeholder="e.g., soft window light"
-                              className="mt-2 bg-gray-900 border-gray-700"
-                            />
-                          )}
-                        </div>
-
-                        {/* Camera Angle Dropdown */}
-                        <div>
-                          <Label htmlFor="camera-angle" className="text-foreground mb-2 block">Camera Angle</Label>
-                          <Select value={cameraAngle} onValueChange={setCameraAngle}>
-                            <SelectTrigger id="camera-angle" className="bg-gray-900 border-gray-700">
-                              <SelectValue placeholder="Select camera angle" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="auto">Auto (from style)</SelectItem>
-                              <SelectItem value="eye-level">Eye Level</SelectItem>
-                              <SelectItem value="high-angle">High Angle</SelectItem>
-                              <SelectItem value="low-angle">Low Angle</SelectItem>
-                              <SelectItem value="45-angle">45° Angle</SelectItem>
-                              <SelectItem value="closeup-detail">Close-up Detail</SelectItem>
-                              <SelectItem value="custom">Custom</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          {cameraAngle === "custom" && (
-                            <Input
-                              value={customCameraAngle}
-                              onChange={(e) => setCustomCameraAngle(e.target.value)}
-                              placeholder="e.g., overhead flat lay"
-                              className="mt-2 bg-gray-900 border-gray-700"
-                            />
-                          )}
-                        </div>
-                      </div>
-                    )}
+                {/* Style Change Warning */}
+                {styleChangeWarning && (
+                  <div className="mt-6 max-w-[700px] animate-fade-in">
+                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/30 backdrop-blur-sm">
+                      <p className="text-sm text-white">{styleChangeWarning}</p>
+                    </div>
                   </div>
                 )}
+
+                {/* Advanced Options Section - Collapsible */}
+                <div className={`mt-6 max-w-[700px] transition-opacity duration-300 ${selectedTemplate === null ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
+                  {selectedTemplate === null && (
+                    <p className="text-sm text-muted-foreground/70 mb-2">Select a style first</p>
+                  )}
+                  <button
+                    onClick={() => setAdvancedOptionsOpen(!advancedOptionsOpen)}
+                    disabled={selectedTemplate === null}
+                    className="w-full flex items-center justify-between p-4 rounded-lg bg-gray-800/50 border border-gray-700 hover:border-purple-400 transition-all disabled:cursor-not-allowed"
+                  >
+                    <span className="text-foreground font-medium flex items-center gap-2">
+                      <Settings className="w-5 h-5 text-purple-400" />
+                      Advanced Options (optional)
+                    </span>
+                    {advancedOptionsOpen ? (
+                      <ChevronUp className="w-5 h-5 text-muted-foreground" />
+                    ) : (
+                      <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                    )}
+                  </button>
+                    
+                  {advancedOptionsOpen && (
+                    <div className="mt-4 p-6 rounded-lg bg-gray-800/30 border border-gray-700 space-y-6 animate-in slide-in-from-top-2 duration-300">
+                      {/* Background Dropdown */}
+                      <div>
+                        <Label htmlFor="background" className="text-foreground mb-2 block">Background</Label>
+                        <Select value={background} onValueChange={setBackground}>
+                          <SelectTrigger id="background" className="bg-gray-900 border-gray-700">
+                            <SelectValue placeholder="Select background" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {getBackgroundOptions(selectedTemplate).map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {background === "custom" && (
+                          <Input
+                            value={customBackground}
+                            onChange={(e) => setCustomBackground(e.target.value)}
+                            placeholder="e.g., cozy bookstore interior"
+                            className="mt-2 bg-gray-900 border-gray-700"
+                          />
+                        )}
+                      </div>
+
+                      {/* Lighting Dropdown */}
+                      <div>
+                        <Label htmlFor="lighting" className="text-foreground mb-2 block">Lighting</Label>
+                        <Select value={lighting} onValueChange={setLighting}>
+                          <SelectTrigger id="lighting" className="bg-gray-900 border-gray-700">
+                            <SelectValue placeholder="Select lighting" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="auto">Auto (from style)</SelectItem>
+                            <SelectItem value="bright-airy">Bright & Airy</SelectItem>
+                            <SelectItem value="dramatic-moody">Dramatic & Moody</SelectItem>
+                            <SelectItem value="natural-daylight">Natural Daylight</SelectItem>
+                            <SelectItem value="warm-golden-hour">Warm Golden Hour</SelectItem>
+                            <SelectItem value="custom">Custom</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {lighting === "custom" && (
+                          <Input
+                            value={customLighting}
+                            onChange={(e) => setCustomLighting(e.target.value)}
+                            placeholder="e.g., soft window light"
+                            className="mt-2 bg-gray-900 border-gray-700"
+                          />
+                        )}
+                      </div>
+
+                      {/* Camera Angle Dropdown */}
+                      <div>
+                        <Label htmlFor="camera-angle" className="text-foreground mb-2 block">Camera Angle</Label>
+                        <Select value={cameraAngle} onValueChange={setCameraAngle}>
+                          <SelectTrigger id="camera-angle" className="bg-gray-900 border-gray-700">
+                            <SelectValue placeholder="Select camera angle" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="auto">Auto (from style)</SelectItem>
+                            <SelectItem value="eye-level">Eye Level</SelectItem>
+                            <SelectItem value="high-angle">High Angle</SelectItem>
+                            <SelectItem value="low-angle">Low Angle</SelectItem>
+                            <SelectItem value="45-angle">45° Angle</SelectItem>
+                            <SelectItem value="closeup-detail">Close-up Detail</SelectItem>
+                            <SelectItem value="custom">Custom</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {cameraAngle === "custom" && (
+                          <Input
+                            value={customCameraAngle}
+                            onChange={(e) => setCustomCameraAngle(e.target.value)}
+                            placeholder="e.g., overhead flat lay"
+                            className="mt-2 bg-gray-900 border-gray-700"
+                          />
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 {/* Generate Button - Show only when both image and template selected */}
                 {selectedFile && selectedTemplate && (
