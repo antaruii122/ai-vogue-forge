@@ -1,8 +1,12 @@
 import { useState, useRef } from "react";
 import AppLayout from "@/components/AppLayout";
-import { UploadCloud, MapPin, Sparkles, Sun, Crown, Check, Loader2, Download, Save, Plus, CheckCircle, Expand, Share2 } from "lucide-react";
+import { UploadCloud, MapPin, Sparkles, Sun, Crown, Check, Loader2, Download, Save, Plus, CheckCircle, Expand, Share2, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { uploadImageToStorage } from "@/utils/uploadToStorage";
 import luxuryPremiumExample from "@/assets/luxury-premium-example.jpeg";
 import studioCleanExample from "@/assets/studio-clean-example.jpeg";
@@ -25,6 +29,14 @@ const FashionPhotography = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedPhotos, setGeneratedPhotos] = useState<string[] | null>(null);
   const [hoveredImageIndex, setHoveredImageIndex] = useState<number | null>(null);
+  const [aspectRatio, setAspectRatio] = useState<string>("9:16");
+  const [advancedOptionsOpen, setAdvancedOptionsOpen] = useState(false);
+  const [background, setBackground] = useState<string>("auto");
+  const [customBackground, setCustomBackground] = useState<string>("");
+  const [lighting, setLighting] = useState<string>("auto");
+  const [customLighting, setCustomLighting] = useState<string>("");
+  const [cameraAngle, setCameraAngle] = useState<string>("auto");
+  const [customCameraAngle, setCustomCameraAngle] = useState<string>("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -144,6 +156,10 @@ const FashionPhotography = () => {
           image_url: uploadedImageUrl,
           style: getTemplateName(),
           styleId: selectedTemplate,
+          aspectRatio,
+          background: background === "custom" ? customBackground : background,
+          lighting: lighting === "custom" ? customLighting : lighting,
+          cameraAngle: cameraAngle === "custom" ? customCameraAngle : cameraAngle,
           timestamp: new Date().toISOString(),
         }),
       });
@@ -478,7 +494,7 @@ const FashionPhotography = () => {
                   </p>
                 </div>
 
-                {/* Style grid - 2 columns */}
+                {/* Style grid - 2 columns with 9:16 aspect ratio */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-[700px]">
                   {templates.map((template) => {
                     const IconComponent = template.icon;
@@ -487,7 +503,7 @@ const FashionPhotography = () => {
                         key={template.id}
                         onClick={() => setSelectedTemplate(template.id)}
                         className={`
-                          h-[280px] cursor-pointer rounded-lg p-4
+                          cursor-pointer rounded-lg p-4
                           bg-gradient-to-br from-gray-800 to-gray-900
                           transition-all duration-300 ease-out
                           relative flex flex-col
@@ -497,11 +513,8 @@ const FashionPhotography = () => {
                           }
                         `}
                       >
-                        {/* Square Gradient Placeholder */}
-                        <div className={`
-                          flex-1 rounded-md bg-gradient-to-br ${template.gradient} opacity-20
-                          flex items-center justify-center relative overflow-hidden
-                        `}>
+                        {/* 9:16 Portrait Aspect Ratio Container */}
+                        <div className="aspect-[9/16] rounded-md bg-gradient-to-br from-gray-700 to-gray-900 opacity-20 flex items-center justify-center relative overflow-hidden">
                           {/* Show example images for templates */}
                           {template.id === 1 && (
                             <img 
@@ -552,6 +565,172 @@ const FashionPhotography = () => {
                     );
                   })}
                 </div>
+
+                {/* Output Format Section - Show only when template selected */}
+                {selectedTemplate && (
+                  <div className="mt-8 max-w-[700px]">
+                    <h3 className="text-lg font-semibold text-foreground mb-4">Output Format</h3>
+                    <RadioGroup value={aspectRatio} onValueChange={setAspectRatio} className="flex gap-4">
+                      <div className="flex items-center space-x-2 flex-1">
+                        <div className={`
+                          flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all
+                          ${aspectRatio === "9:16" 
+                            ? "border-purple-500 bg-purple-500/10" 
+                            : "border-gray-700 bg-gray-800/50 hover:border-purple-400"
+                          }
+                        `} onClick={() => setAspectRatio("9:16")}>
+                          <div className="flex items-center">
+                            <RadioGroupItem value="9:16" id="ratio-9-16" className="mr-3" />
+                            <Label htmlFor="ratio-9-16" className="cursor-pointer text-foreground font-medium">
+                              9:16
+                              <span className="block text-xs text-muted-foreground mt-0.5">Stories/Reels</span>
+                            </Label>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 flex-1">
+                        <div className={`
+                          flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all
+                          ${aspectRatio === "3:4" 
+                            ? "border-purple-500 bg-purple-500/10" 
+                            : "border-gray-700 bg-gray-800/50 hover:border-purple-400"
+                          }
+                        `} onClick={() => setAspectRatio("3:4")}>
+                          <div className="flex items-center">
+                            <RadioGroupItem value="3:4" id="ratio-3-4" className="mr-3" />
+                            <Label htmlFor="ratio-3-4" className="cursor-pointer text-foreground font-medium">
+                              3:4
+                              <span className="block text-xs text-muted-foreground mt-0.5">Feed Posts</span>
+                            </Label>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center space-x-2 flex-1">
+                        <div className={`
+                          flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all
+                          ${aspectRatio === "1:1" 
+                            ? "border-purple-500 bg-purple-500/10" 
+                            : "border-gray-700 bg-gray-800/50 hover:border-purple-400"
+                          }
+                        `} onClick={() => setAspectRatio("1:1")}>
+                          <div className="flex items-center">
+                            <RadioGroupItem value="1:1" id="ratio-1-1" className="mr-3" />
+                            <Label htmlFor="ratio-1-1" className="cursor-pointer text-foreground font-medium">
+                              1:1
+                              <span className="block text-xs text-muted-foreground mt-0.5">Square</span>
+                            </Label>
+                          </div>
+                        </div>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                )}
+
+                {/* Advanced Options Section - Collapsible */}
+                {selectedTemplate && (
+                  <div className="mt-6 max-w-[700px]">
+                    <button
+                      onClick={() => setAdvancedOptionsOpen(!advancedOptionsOpen)}
+                      className="w-full flex items-center justify-between p-4 rounded-lg bg-gray-800/50 border border-gray-700 hover:border-purple-400 transition-all"
+                    >
+                      <span className="text-foreground font-medium flex items-center gap-2">
+                        <span>⚙️</span>
+                        Advanced Options (optional)
+                      </span>
+                      {advancedOptionsOpen ? (
+                        <ChevronUp className="w-5 h-5 text-muted-foreground" />
+                      ) : (
+                        <ChevronDown className="w-5 h-5 text-muted-foreground" />
+                      )}
+                    </button>
+                    
+                    {advancedOptionsOpen && (
+                      <div className="mt-4 p-6 rounded-lg bg-gray-800/30 border border-gray-700 space-y-6 animate-in slide-in-from-top-2 duration-300">
+                        {/* Background Dropdown */}
+                        <div>
+                          <Label htmlFor="background" className="text-foreground mb-2 block">Background</Label>
+                          <Select value={background} onValueChange={setBackground}>
+                            <SelectTrigger id="background" className="bg-gray-900 border-gray-700">
+                              <SelectValue placeholder="Select background" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="auto">Auto (from style)</SelectItem>
+                              <SelectItem value="studio">Studio</SelectItem>
+                              <SelectItem value="urban-street">Urban Street</SelectItem>
+                              <SelectItem value="beach">Beach</SelectItem>
+                              <SelectItem value="forest">Forest</SelectItem>
+                              <SelectItem value="modern-cafe">Modern Café</SelectItem>
+                              <SelectItem value="custom">Custom</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          {background === "custom" && (
+                            <Input
+                              value={customBackground}
+                              onChange={(e) => setCustomBackground(e.target.value)}
+                              placeholder="e.g., cozy bookstore interior"
+                              className="mt-2 bg-gray-900 border-gray-700"
+                            />
+                          )}
+                        </div>
+
+                        {/* Lighting Dropdown */}
+                        <div>
+                          <Label htmlFor="lighting" className="text-foreground mb-2 block">Lighting</Label>
+                          <Select value={lighting} onValueChange={setLighting}>
+                            <SelectTrigger id="lighting" className="bg-gray-900 border-gray-700">
+                              <SelectValue placeholder="Select lighting" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="auto">Auto (from style)</SelectItem>
+                              <SelectItem value="bright-airy">Bright & Airy</SelectItem>
+                              <SelectItem value="dramatic-moody">Dramatic & Moody</SelectItem>
+                              <SelectItem value="natural-daylight">Natural Daylight</SelectItem>
+                              <SelectItem value="warm-golden-hour">Warm Golden Hour</SelectItem>
+                              <SelectItem value="custom">Custom</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          {lighting === "custom" && (
+                            <Input
+                              value={customLighting}
+                              onChange={(e) => setCustomLighting(e.target.value)}
+                              placeholder="e.g., soft window light"
+                              className="mt-2 bg-gray-900 border-gray-700"
+                            />
+                          )}
+                        </div>
+
+                        {/* Camera Angle Dropdown */}
+                        <div>
+                          <Label htmlFor="camera-angle" className="text-foreground mb-2 block">Camera Angle</Label>
+                          <Select value={cameraAngle} onValueChange={setCameraAngle}>
+                            <SelectTrigger id="camera-angle" className="bg-gray-900 border-gray-700">
+                              <SelectValue placeholder="Select camera angle" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="auto">Auto (from style)</SelectItem>
+                              <SelectItem value="eye-level">Eye Level</SelectItem>
+                              <SelectItem value="high-angle">High Angle</SelectItem>
+                              <SelectItem value="low-angle">Low Angle</SelectItem>
+                              <SelectItem value="45-angle">45° Angle</SelectItem>
+                              <SelectItem value="closeup-detail">Close-up Detail</SelectItem>
+                              <SelectItem value="custom">Custom</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          {cameraAngle === "custom" && (
+                            <Input
+                              value={customCameraAngle}
+                              onChange={(e) => setCustomCameraAngle(e.target.value)}
+                              placeholder="e.g., overhead flat lay"
+                              className="mt-2 bg-gray-900 border-gray-700"
+                            />
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Generate Button - Show only when both image and template selected */}
                 {selectedFile && selectedTemplate && (
