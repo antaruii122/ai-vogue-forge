@@ -513,8 +513,8 @@ const FashionPhotography = () => {
                           }
                         `}
                       >
-                        {/* 9:16 Portrait Aspect Ratio Container - 40% smaller */}
-                        <div className="aspect-[9/16] rounded-md bg-gradient-to-br from-gray-700 to-gray-900 opacity-20 flex items-center justify-center relative overflow-hidden max-h-[240px]">
+                        {/* 9:16 Portrait Aspect Ratio Container - Vertical/Portrait */}
+                        <div className="w-full rounded-md bg-gradient-to-br from-gray-700 to-gray-900 opacity-20 flex items-center justify-center relative overflow-hidden" style={{ aspectRatio: '9/16', maxHeight: '360px' }}>
                           {/* Show example images for templates */}
                           {template.id === 1 && (
                             <img 
@@ -582,9 +582,9 @@ const FashionPhotography = () => {
                           <div className="flex items-center">
                             <RadioGroupItem value="9:16" id="ratio-9-16" className="mr-3" />
                             <Label htmlFor="ratio-9-16" className="cursor-pointer flex-1">
-                              <span className="text-foreground font-medium block">9:16 - Stories/Reels</span>
-                              <span className="block text-[0.75rem] text-muted-foreground/70 mt-1.5 leading-relaxed">
-                                Instagram • TikTok • YouTube Shorts • Snapchat • Pinterest
+                              <span className="text-foreground font-semibold block text-base">9:16 - Stories/Reels</span>
+                              <span className="block text-[0.75rem] text-muted-foreground/60 mt-1">
+                                Instagram • TikTok • YouTube Shorts
                               </span>
                             </Label>
                           </div>
@@ -602,9 +602,9 @@ const FashionPhotography = () => {
                           <div className="flex items-center">
                             <RadioGroupItem value="3:4" id="ratio-3-4" className="mr-3" />
                             <Label htmlFor="ratio-3-4" className="cursor-pointer flex-1">
-                              <span className="text-foreground font-medium block">3:4 - Feed Posts</span>
-                              <span className="block text-[0.75rem] text-muted-foreground/70 mt-1.5 leading-relaxed">
-                                Instagram Feed • Pinterest • Facebook
+                              <span className="text-foreground font-semibold block text-base">3:4 - Feed Posts</span>
+                              <span className="block text-[0.75rem] text-muted-foreground/60 mt-1">
+                                Instagram Feed
                               </span>
                             </Label>
                           </div>
@@ -622,9 +622,9 @@ const FashionPhotography = () => {
                           <div className="flex items-center">
                             <RadioGroupItem value="1:1" id="ratio-1-1" className="mr-3" />
                             <Label htmlFor="ratio-1-1" className="cursor-pointer flex-1">
-                              <span className="text-foreground font-medium block">1:1 - Square</span>
-                              <span className="block text-[0.75rem] text-muted-foreground/70 mt-1.5 leading-relaxed">
-                                Instagram • Facebook • LinkedIn • Twitter/X
+                              <span className="text-foreground font-semibold block text-base">1:1 - Square</span>
+                              <span className="block text-[0.75rem] text-muted-foreground/60 mt-1">
+                                Instagram • Facebook • Twitter/X
                               </span>
                             </Label>
                           </div>
