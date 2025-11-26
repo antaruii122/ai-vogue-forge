@@ -7,6 +7,7 @@ import { uploadImageToStorage } from "@/utils/uploadToStorage";
 import luxuryPremiumExample from "@/assets/luxury-premium-example.jpeg";
 import studioCleanExample from "@/assets/studio-clean-example.jpeg";
 import outdoorNaturalExample from "@/assets/outdoor-natural-example.jpeg";
+import luxuryPremiumExample2 from "@/assets/luxury-premium-example2.jpeg";
 
 const templates = [
   { id: 1, name: "Urban Lifestyle", gradient: "from-blue-500 to-purple-500", icon: MapPin },
@@ -523,6 +524,13 @@ const FashionPhotography = () => {
                               className="absolute inset-0 w-full h-full object-cover opacity-100"
                             />
                           )}
+                          {template.id === 4 && (
+                            <img 
+                              src={luxuryPremiumExample2} 
+                              alt="Luxury Premium example"
+                              className="absolute inset-0 w-full h-full object-cover opacity-100"
+                            />
+                          )}
                           
                           {selectedTemplate === template.id ? (
                             // Large checkmark in center when selected
@@ -531,7 +539,7 @@ const FashionPhotography = () => {
                                 <Check className="w-8 h-8 text-white" />
                               </div>
                             </div>
-                          ) : (template.id !== 1 && template.id !== 2 && template.id !== 3) && (
+                          ) : (template.id < 1 || template.id > 4) && (
                             <IconComponent className="w-12 h-12 text-white/50" />
                           )}
                         </div>
