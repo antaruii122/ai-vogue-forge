@@ -494,8 +494,8 @@ const FashionPhotography = () => {
                   </p>
                 </div>
 
-                {/* Style grid - 2 columns with 9:16 aspect ratio */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-[700px]">
+                {/* Style grid - 2 columns with 9:16 aspect ratio - Smaller cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-[600px]">
                   {templates.map((template) => {
                     const IconComponent = template.icon;
                     return (
@@ -503,18 +503,18 @@ const FashionPhotography = () => {
                         key={template.id}
                         onClick={() => setSelectedTemplate(template.id)}
                         className={`
-                          cursor-pointer rounded-lg p-4
+                          cursor-pointer rounded-lg p-3
                           bg-gradient-to-br from-gray-800 to-gray-900
                           transition-all duration-300 ease-out
                           relative flex flex-col
                           ${selectedTemplate === template.id
-                            ? 'border-[3px] border-purple-500 bg-purple-500/20 scale-105 shadow-xl shadow-purple-500/50'
-                            : 'border border-gray-700 opacity-70 hover:border-2 hover:border-purple-400 hover:opacity-100 hover:scale-[1.03] hover:shadow-lg hover:shadow-purple-500/30'
+                            ? 'border-[3px] border-purple-500 bg-purple-500/20 scale-105 shadow-2xl shadow-purple-500/60 z-20'
+                            : 'border border-gray-700 hover:border-[3px] hover:border-purple-400 hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/50 hover:z-10'
                           }
                         `}
                       >
-                        {/* 9:16 Portrait Aspect Ratio Container */}
-                        <div className="aspect-[9/16] rounded-md bg-gradient-to-br from-gray-700 to-gray-900 opacity-20 flex items-center justify-center relative overflow-hidden">
+                        {/* 9:16 Portrait Aspect Ratio Container - 40% smaller */}
+                        <div className="aspect-[9/16] rounded-md bg-gradient-to-br from-gray-700 to-gray-900 opacity-20 flex items-center justify-center relative overflow-hidden max-h-[240px]">
                           {/* Show example images for templates */}
                           {template.id === 1 && (
                             <img 
@@ -558,7 +558,7 @@ const FashionPhotography = () => {
                         </div>
 
                         {/* Template Name */}
-                        <p className="text-sm text-foreground font-medium mt-3 text-center">
+                        <p className="text-sm text-foreground font-medium mt-2 text-center">
                           {template.name}
                         </p>
                       </div>
@@ -581,9 +581,11 @@ const FashionPhotography = () => {
                         `} onClick={() => setAspectRatio("9:16")}>
                           <div className="flex items-center">
                             <RadioGroupItem value="9:16" id="ratio-9-16" className="mr-3" />
-                            <Label htmlFor="ratio-9-16" className="cursor-pointer text-foreground font-medium">
-                              9:16
-                              <span className="block text-xs text-muted-foreground mt-0.5">Stories/Reels</span>
+                            <Label htmlFor="ratio-9-16" className="cursor-pointer flex-1">
+                              <span className="text-foreground font-medium block">9:16 - Stories/Reels</span>
+                              <span className="block text-[0.75rem] text-muted-foreground/70 mt-1.5 leading-relaxed">
+                                Instagram • TikTok • YouTube Shorts • Snapchat • Pinterest
+                              </span>
                             </Label>
                           </div>
                         </div>
@@ -599,9 +601,11 @@ const FashionPhotography = () => {
                         `} onClick={() => setAspectRatio("3:4")}>
                           <div className="flex items-center">
                             <RadioGroupItem value="3:4" id="ratio-3-4" className="mr-3" />
-                            <Label htmlFor="ratio-3-4" className="cursor-pointer text-foreground font-medium">
-                              3:4
-                              <span className="block text-xs text-muted-foreground mt-0.5">Feed Posts</span>
+                            <Label htmlFor="ratio-3-4" className="cursor-pointer flex-1">
+                              <span className="text-foreground font-medium block">3:4 - Feed Posts</span>
+                              <span className="block text-[0.75rem] text-muted-foreground/70 mt-1.5 leading-relaxed">
+                                Instagram Feed • Pinterest • Facebook
+                              </span>
                             </Label>
                           </div>
                         </div>
@@ -617,9 +621,11 @@ const FashionPhotography = () => {
                         `} onClick={() => setAspectRatio("1:1")}>
                           <div className="flex items-center">
                             <RadioGroupItem value="1:1" id="ratio-1-1" className="mr-3" />
-                            <Label htmlFor="ratio-1-1" className="cursor-pointer text-foreground font-medium">
-                              1:1
-                              <span className="block text-xs text-muted-foreground mt-0.5">Square</span>
+                            <Label htmlFor="ratio-1-1" className="cursor-pointer flex-1">
+                              <span className="text-foreground font-medium block">1:1 - Square</span>
+                              <span className="block text-[0.75rem] text-muted-foreground/70 mt-1.5 leading-relaxed">
+                                Instagram • Facebook • LinkedIn • Twitter/X
+                              </span>
                             </Label>
                           </div>
                         </div>
