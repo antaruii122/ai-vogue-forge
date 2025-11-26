@@ -4,6 +4,7 @@ import { UploadCloud, MapPin, Sparkles, Sun, Crown, Check, Loader2, Download, Sa
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { uploadImageToStorage } from "@/utils/uploadToStorage";
+import luxuryPremiumExample from "@/assets/luxury-premium-example.jpeg";
 
 const templates = [
   { id: 1, name: "Urban Lifestyle", gradient: "from-blue-500 to-purple-500", icon: MapPin },
@@ -498,14 +499,23 @@ const FashionPhotography = () => {
                           flex-1 rounded-md bg-gradient-to-br ${template.gradient} opacity-20
                           flex items-center justify-center relative overflow-hidden
                         `}>
+                          {/* Show example image for Luxury Premium template */}
+                          {template.id === 4 && (
+                            <img 
+                              src={luxuryPremiumExample} 
+                              alt="Luxury Premium example"
+                              className="absolute inset-0 w-full h-full object-cover opacity-100"
+                            />
+                          )}
+                          
                           {selectedTemplate === template.id ? (
                             // Large checkmark in center when selected
-                            <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                               <div className="bg-purple-500 rounded-full p-3">
                                 <Check className="w-8 h-8 text-white" />
                               </div>
                             </div>
-                          ) : (
+                          ) : template.id !== 4 && (
                             <IconComponent className="w-12 h-12 text-white/50" />
                           )}
                         </div>
