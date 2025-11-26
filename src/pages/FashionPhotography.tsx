@@ -499,11 +499,11 @@ const FashionPhotography = () => {
                           flex-1 rounded-md bg-gradient-to-br ${template.gradient} opacity-20
                           flex items-center justify-center relative overflow-hidden
                         `}>
-                          {/* Show example image for Luxury Premium template */}
-                          {template.id === 4 && (
+                          {/* Show example image for Urban Lifestyle template */}
+                          {template.id === 1 && (
                             <img 
                               src={luxuryPremiumExample} 
-                              alt="Luxury Premium example"
+                              alt="Urban Lifestyle example"
                               className="absolute inset-0 w-full h-full object-cover opacity-100"
                             />
                           )}
@@ -515,7 +515,7 @@ const FashionPhotography = () => {
                                 <Check className="w-8 h-8 text-white" />
                               </div>
                             </div>
-                          ) : template.id !== 4 && (
+                          ) : template.id !== 1 && (
                             <IconComponent className="w-12 h-12 text-white/50" />
                           )}
                         </div>
