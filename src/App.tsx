@@ -55,12 +55,14 @@ const App = () => (
               <Route path="/my-images" element={<ProtectedRoute><MyImages /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               
+              {/* Tool Routes - All Protected */}
+              <Route path="/tools/fashion-photography" element={<ProtectedRoute><FashionPhotography /></ProtectedRoute>} />
+              <Route path="/tools/video-generation" element={<ProtectedRoute><VideoGeneration /></ProtectedRoute>} />
+              <Route path="/tools/product-photography" element={<ProtectedRoute><ProductPhotography /></ProtectedRoute>} />
+              
               {/* Legacy Routes */}
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/tools/fashion-photography-old" element={<FashionPhotographyTool />} />
-              <Route path="/tools/fashion-photography" element={<ProtectedRoute><FashionPhotography /></ProtectedRoute>} />
-              <Route path="/tools/video-generation" element={<VideoGeneration />} />
-              <Route path="/tools/product-photography" element={<ProductPhotography />} />
               <Route path="/admin/videos" element={<AdminVideos />} />
               
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
