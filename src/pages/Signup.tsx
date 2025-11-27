@@ -61,10 +61,10 @@ const Signup = () => {
       });
 
       navigate("/generator");
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Sign up failed",
-        description: error.message || "An error occurred during sign up",
+        description: error instanceof Error ? error.message : "An error occurred during sign up",
         variant: "destructive",
       });
     } finally {

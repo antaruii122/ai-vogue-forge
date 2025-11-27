@@ -76,10 +76,10 @@ const MyImages = () => {
       // Sort by date, newest first
       allImages.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
       setImages(allImages);
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error loading images",
-        description: error.message,
+        description: error instanceof Error ? error.message : "Failed to load images",
         variant: "destructive",
       });
     } finally {

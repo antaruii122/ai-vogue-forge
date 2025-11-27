@@ -85,7 +85,7 @@ const Index = () => {
           const url = await uploadVideoToStorage();
           setVideoUrl(url);
         } catch (error) {
-          console.error('Failed to upload video:', error);
+          // Silently handle video upload error
         }
       };
       initVideo();
@@ -109,10 +109,10 @@ const Index = () => {
       });
 
       setUser(null);
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : "Failed to log out",
         variant: "destructive",
       });
     }
@@ -257,11 +257,11 @@ const Index = () => {
               <div className="flex-1 flex flex-col gap-4 animate-scroll-up">
                 {/* Slot 1 */}
                 <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                  {heroVideos.left1 ? (
+                {heroVideos.left1 ? (
                     heroVideos.left1.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                      <img src={heroVideos.left1} className="w-full h-full object-cover" alt="Hero Left 1" />
+                      <img src={heroVideos.left1} className="w-full h-full object-cover" alt="Product photography example showcasing fashion style" />
                     ) : (
-                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline aria-label="Product video example">
                         <source src={heroVideos.left1} type="video/mp4" />
                       </video>
                     )
@@ -273,11 +273,11 @@ const Index = () => {
                 </div>
                 {/* Slot 2 */}
                 <div className="aspect-[3/4] bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                  {heroVideos.left2 ? (
+                {heroVideos.left2 ? (
                     heroVideos.left2.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                      <img src={heroVideos.left2} className="w-full h-full object-cover" alt="Hero Left 2" />
+                      <img src={heroVideos.left2} className="w-full h-full object-cover" alt="Product lifestyle photography demonstration" />
                     ) : (
-                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline aria-label="Product showcase video">
                         <source src={heroVideos.left2} type="video/mp4" />
                       </video>
                     )
@@ -289,11 +289,11 @@ const Index = () => {
                 </div>
                 {/* Slot 3 */}
                 <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                  {heroVideos.left3 ? (
+                {heroVideos.left3 ? (
                     heroVideos.left3.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                      <img src={heroVideos.left3} className="w-full h-full object-cover" alt="Hero Left 3" />
+                      <img src={heroVideos.left3} className="w-full h-full object-cover" alt="Professional product photography sample" />
                     ) : (
-                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline aria-label="AI-generated product video">
                         <source src={heroVideos.left3} type="video/mp4" />
                       </video>
                     )
@@ -309,11 +309,11 @@ const Index = () => {
               <div className="flex-1 flex flex-col gap-4 animate-scroll-down pt-12">
                 {/* Slot 1 */}
                 <div className="aspect-square bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                  {heroVideos.right1 ? (
+                {heroVideos.right1 ? (
                     heroVideos.right1.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                      <img src={heroVideos.right1} className="w-full h-full object-cover" alt="Hero Right 1" />
+                      <img src={heroVideos.right1} className="w-full h-full object-cover" alt="Creative product display example" />
                     ) : (
-                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline aria-label="Dynamic product video example">
                         <source src={heroVideos.right1} type="video/mp4" />
                       </video>
                     )
@@ -325,11 +325,11 @@ const Index = () => {
                 </div>
                 {/* Slot 2 */}
                 <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                  {heroVideos.right2 ? (
+                {heroVideos.right2 ? (
                     heroVideos.right2.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                      <img src={heroVideos.right2} className="w-full h-full object-cover" alt="Hero Right 2" />
+                      <img src={heroVideos.right2} className="w-full h-full object-cover" alt="Stylized product presentation example" />
                     ) : (
-                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline aria-label="Promotional product video">
                         <source src={heroVideos.right2} type="video/mp4" />
                       </video>
                     )
@@ -341,11 +341,11 @@ const Index = () => {
                 </div>
                 {/* Slot 3 */}
                 <div className="aspect-square bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                  {heroVideos.right3 ? (
+                {heroVideos.right3 ? (
                     heroVideos.right3.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                      <img src={heroVideos.right3} className="w-full h-full object-cover" alt="Hero Right 3" />
+                      <img src={heroVideos.right3} className="w-full h-full object-cover" alt="High-quality product media example" />
                     ) : (
-                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline>
+                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline aria-label="Professional product video showcase">
                         <source src={heroVideos.right3} type="video/mp4" />
                       </video>
                     )
