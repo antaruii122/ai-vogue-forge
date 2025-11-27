@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Menu, ChevronDown, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -9,8 +9,8 @@ interface AppLayoutProps {
 
 const AppLayout = ({ children }: AppLayoutProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState("Fashion Photography");
 
   const menuItems = {
     dashboard: [
@@ -26,6 +26,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       { name: "Billing", badge: null, route: "#" },
       { name: "API Keys", badge: null, route: "#" },
     ],
+  };
+
+  // Helper function to check if a route is active
+  const isRouteActive = (route: string) => {
+    return location.pathname === route;
   };
 
   return (
@@ -100,14 +105,13 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           <div className="mb-6">
             <button
               onClick={() => {
-                setActiveItem("Dashboard");
                 setIsSidebarOpen(false);
                 navigate("/dashboard");
               }}
               className={`
                 block w-full text-left px-4 py-3 text-sm transition-colors
                 ${
-                  activeItem === "Dashboard"
+                  isRouteActive("/dashboard")
                     ? "bg-[#f5f5f5] text-[#000000] font-bold border-l-[3px] border-[#000000]"
                     : "text-[#666666] hover:bg-[#fafafa]"
                 }
@@ -121,14 +125,13 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               <button
                 key={item.name}
                 onClick={() => {
-                  setActiveItem(item.name);
                   setIsSidebarOpen(false);
                   navigate(item.route);
                 }}
                 className={`
                   w-full text-left pl-8 pr-4 py-3 text-sm transition-colors flex items-center justify-between
                   ${
-                    activeItem === item.name
+                    isRouteActive(item.route)
                       ? "bg-[#f5f5f5] text-[#000000] font-bold border-l-[3px] border-[#000000]"
                       : "text-[#666666] hover:bg-[#fafafa]"
                   }
@@ -153,13 +156,13 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               <button
                 key={item.name}
                 onClick={() => {
-                  setActiveItem(item.name);
                   setIsSidebarOpen(false);
+                  if (item.route !== "#") navigate(item.route);
                 }}
                 className={`
                   w-full text-left px-4 py-3 text-sm transition-colors
                   ${
-                    activeItem === item.name
+                    isRouteActive(item.route)
                       ? "bg-[#f5f5f5] text-[#000000] font-bold border-l-[3px] border-[#000000]"
                       : "text-[#666666] hover:bg-[#fafafa]"
                   }
@@ -179,13 +182,13 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               <button
                 key={item.name}
                 onClick={() => {
-                  setActiveItem(item.name);
                   setIsSidebarOpen(false);
+                  if (item.route !== "#") navigate(item.route);
                 }}
                 className={`
                   w-full text-left px-4 py-3 text-sm transition-colors
                   ${
-                    activeItem === item.name
+                    isRouteActive(item.route)
                       ? "bg-[#f5f5f5] text-[#000000] font-bold border-l-[3px] border-[#000000]"
                       : "text-[#666666] hover:bg-[#fafafa]"
                   }
@@ -200,17 +203,9 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           <div>
             <button
               onClick={() => {
-                setActiveItem("Contact Us");
                 setIsSidebarOpen(false);
               }}
-              className={`
-                w-full text-left px-4 py-3 text-sm transition-colors
-                ${
-                  activeItem === "Contact Us"
-                    ? "bg-[#f5f5f5] text-[#000000] font-bold border-l-[3px] border-[#000000]"
-                    : "text-[#666666] hover:bg-[#fafafa]"
-                }
-              `}
+              className="w-full text-left px-4 py-3 text-sm transition-colors text-[#666666] hover:bg-[#fafafa]"
             >
               Contact Us
             </button>
