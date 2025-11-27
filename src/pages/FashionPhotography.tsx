@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { uploadImageToStorage } from "@/utils/uploadToStorage";
+import { supabase } from "@/integrations/supabase/client";
 import luxuryPremiumExample from "@/assets/luxury-premium-example.jpeg";
 import studioCleanExample from "@/assets/studio-clean-example.jpeg";
 import outdoorNaturalExample from "@/assets/outdoor-natural-example.jpeg";
@@ -154,8 +155,19 @@ const FashionPhotography = () => {
         description: "Please wait while we upload your photo",
       });
       
+      // Get authenticated user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast({
+          title: "Authentication required",
+          description: "Please log in to upload images",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       // Upload to storage and get public URL
-      const publicUrl = await uploadImageToStorage(file);
+      const publicUrl = await uploadImageToStorage(file, user.id, 'uploads');
       
       setSelectedFile(file);
       setUploadedImageUrl(publicUrl);
