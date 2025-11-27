@@ -34,88 +34,63 @@ const PageLoader = () => (
   </div>
 );
 
-// Error component when Clerk key is missing
-const ClerkKeyMissing = () => (
-  <div className="min-h-screen bg-gradient-to-b from-[#1a0b2e] via-[#0f0728] to-background flex items-center justify-center p-4">
-    <div className="max-w-md bg-card/50 backdrop-blur-sm border border-border/50 rounded-lg p-6 text-center">
-      <h2 className="text-2xl font-bold mb-4">Setup Required</h2>
-      <p className="text-muted-foreground mb-4">
-        The Clerk authentication key is being configured. Please refresh the page in a moment.
-      </p>
-      <Button onClick={() => window.location.reload()}>
-        Refresh Page
-      </Button>
-    </div>
-  </div>
-);
-
-const App = () => {
-  // Show error UI if Clerk key is not configured yet
-  if (!clerkPubKey) {
-    return <ClerkKeyMissing />;
-  }
-
-  return (
-    <ErrorBoundary>
-      <ClerkProvider publishableKey={clerkPubKey}>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                
-                {/* Clerk Auth Routes */}
-                <Route path="/sign-in/*" element={
-                  <div className="min-h-screen bg-gradient-to-b from-[#1a0b2e] via-[#0f0728] to-background flex items-center justify-center p-4">
-                    <SignIn routing="path" path="/sign-in" />
+const App = () => (
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/tools/fashion-photography-old" element={<FashionPhotographyTool />} />
+              <Route path="/admin/videos" element={<AdminVideos />} />
+              
+              {/* Temporarily disable Clerk-protected routes */}
+              <Route path="/sign-in/*" element={
+                <div className="min-h-screen bg-gradient-to-b from-[#1a0b2e] via-[#0f0728] to-background flex items-center justify-center p-4">
+                  <div className="max-w-md bg-card/50 backdrop-blur-sm border border-border/50 rounded-lg p-6 text-center">
+                    <h2 className="text-2xl font-bold mb-4">Authentication Setup In Progress</h2>
+                    <p className="text-muted-foreground mb-4">
+                      Clerk authentication is being configured. The app will work with basic access for now.
+                    </p>
+                    <Button onClick={() => window.location.href = '/'}>
+                      Return Home
+                    </Button>
                   </div>
-                } />
-                <Route path="/sign-up/*" element={
-                  <div className="min-h-screen bg-gradient-to-b from-[#1a0b2e] via-[#0f0728] to-background flex items-center justify-center p-4">
-                    <SignUp routing="path" path="/sign-up" />
+                </div>
+              } />
+              <Route path="/sign-up/*" element={
+                <div className="min-h-screen bg-gradient-to-b from-[#1a0b2e] via-[#0f0728] to-background flex items-center justify-center p-4">
+                  <div className="max-w-md bg-card/50 backdrop-blur-sm border border-border/50 rounded-lg p-6 text-center">
+                    <h2 className="text-2xl font-bold mb-4">Authentication Setup In Progress</h2>
+                    <p className="text-muted-foreground mb-4">
+                      Clerk authentication is being configured. The app will work with basic access for now.
+                    </p>
+                    <Button onClick={() => window.location.href = '/'}>
+                      Return Home
+                    </Button>
                   </div>
-                } />
-                
-                {/* Protected Routes */}
-                <Route path="/generator" element={
-                  <><SignedIn><FashionPhotography /></SignedIn><SignedOut><RedirectToSignIn /></SignedOut></>
-                } />
-                <Route path="/my-images" element={
-                  <><SignedIn><MyImages /></SignedIn><SignedOut><RedirectToSignIn /></SignedOut></>
-                } />
-                <Route path="/profile" element={
-                  <><SignedIn><Profile /></SignedIn><SignedOut><RedirectToSignIn /></SignedOut></>
-                } />
-                
-                {/* Tool Routes - All Protected */}
-                <Route path="/tools/fashion-photography" element={
-                  <><SignedIn><FashionPhotography /></SignedIn><SignedOut><RedirectToSignIn /></SignedOut></>
-                } />
-                <Route path="/tools/video-generation" element={
-                  <><SignedIn><VideoGeneration /></SignedIn><SignedOut><RedirectToSignIn /></SignedOut></>
-                } />
-                <Route path="/tools/product-photography" element={
-                  <><SignedIn><ProductPhotography /></SignedIn><SignedOut><RedirectToSignIn /></SignedOut></>
-                } />
-                
-                {/* Legacy Routes */}
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/tools/fashion-photography-old" element={<FashionPhotographyTool />} />
-                <Route path="/admin/videos" element={<AdminVideos />} />
-                
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </ClerkProvider>
+                </div>
+              } />
+              
+              {/* Open access to tool routes temporarily */}
+              <Route path="/generator" element={<FashionPhotography />} />
+              <Route path="/my-images" element={<MyImages />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/tools/fashion-photography" element={<FashionPhotography />} />
+              <Route path="/tools/video-generation" element={<VideoGeneration />} />
+              <Route path="/tools/product-photography" element={<ProductPhotography />} />
+              
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   </ErrorBoundary>
-  );
-};
+);
 
 export default App;
