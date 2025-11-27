@@ -6,11 +6,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Loader2 } from "lucide-react";
+import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn, SignIn, SignUp } from "@clerk/clerk-react";
 
 // Eager load critical pages
 import Index from "./pages/Index";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
 
 // Lazy load other pages for better performance
 const Dashboard = lazy(() => import("./pages/Dashboard"));
@@ -19,12 +18,15 @@ const FashionPhotography = lazy(() => import("./pages/FashionPhotography"));
 const VideoGeneration = lazy(() => import("./pages/VideoGeneration"));
 const ProductPhotography = lazy(() => import("./pages/ProductPhotography"));
 const AdminVideos = lazy(() => import("./pages/AdminVideos"));
-const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
-const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const MyImages = lazy(() => import("./pages/MyImages"));
 const Profile = lazy(() => import("./pages/Profile"));
-const ProtectedRoute = lazy(() => import("@/components/ProtectedRoute"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+
+const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+if (!clerkPubKey) {
+  throw new Error("Missing Clerk Publishable Key");
+}
 
 const queryClient = new QueryClient();
 
@@ -37,41 +39,63 @@ const PageLoader = () => (
 
 const App = () => (
   <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              
-              {/* Protected Routes */}
-              <Route path="/generator" element={<ProtectedRoute><FashionPhotography /></ProtectedRoute>} />
-              <Route path="/my-images" element={<ProtectedRoute><MyImages /></ProtectedRoute>} />
-              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-              
-              {/* Tool Routes - All Protected */}
-              <Route path="/tools/fashion-photography" element={<ProtectedRoute><FashionPhotography /></ProtectedRoute>} />
-              <Route path="/tools/video-generation" element={<ProtectedRoute><VideoGeneration /></ProtectedRoute>} />
-              <Route path="/tools/product-photography" element={<ProtectedRoute><ProductPhotography /></ProtectedRoute>} />
-              
-              {/* Legacy Routes */}
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/tools/fashion-photography-old" element={<FashionPhotographyTool />} />
-              <Route path="/admin/videos" element={<AdminVideos />} />
-              
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <ClerkProvider publishableKey={clerkPubKey}>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                
+                {/* Clerk Auth Routes */}
+                <Route path="/sign-in/*" element={
+                  <div className="min-h-screen bg-gradient-to-b from-[#1a0b2e] via-[#0f0728] to-background flex items-center justify-center p-4">
+                    <SignIn routing="path" path="/sign-in" />
+                  </div>
+                } />
+                <Route path="/sign-up/*" element={
+                  <div className="min-h-screen bg-gradient-to-b from-[#1a0b2e] via-[#0f0728] to-background flex items-center justify-center p-4">
+                    <SignUp routing="path" path="/sign-up" />
+                  </div>
+                } />
+                
+                {/* Protected Routes */}
+                <Route path="/generator" element={
+                  <><SignedIn><FashionPhotography /></SignedIn><SignedOut><RedirectToSignIn /></SignedOut></>
+                } />
+                <Route path="/my-images" element={
+                  <><SignedIn><MyImages /></SignedIn><SignedOut><RedirectToSignIn /></SignedOut></>
+                } />
+                <Route path="/profile" element={
+                  <><SignedIn><Profile /></SignedIn><SignedOut><RedirectToSignIn /></SignedOut></>
+                } />
+                
+                {/* Tool Routes - All Protected */}
+                <Route path="/tools/fashion-photography" element={
+                  <><SignedIn><FashionPhotography /></SignedIn><SignedOut><RedirectToSignIn /></SignedOut></>
+                } />
+                <Route path="/tools/video-generation" element={
+                  <><SignedIn><VideoGeneration /></SignedIn><SignedOut><RedirectToSignIn /></SignedOut></>
+                } />
+                <Route path="/tools/product-photography" element={
+                  <><SignedIn><ProductPhotography /></SignedIn><SignedOut><RedirectToSignIn /></SignedOut></>
+                } />
+                
+                {/* Legacy Routes */}
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/tools/fashion-photography-old" element={<FashionPhotographyTool />} />
+                <Route path="/admin/videos" element={<AdminVideos />} />
+                
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </ClerkProvider>
   </ErrorBoundary>
 );
 
