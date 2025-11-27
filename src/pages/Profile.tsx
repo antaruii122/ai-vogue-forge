@@ -1,12 +1,61 @@
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useUser } from "@clerk/clerk-react";
-import { User, Mail } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { User, Loader2, LogOut } from "lucide-react";
 
 const Profile = () => {
-  const { user, isLoaded } = useUser();
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    loadUserProfile();
+  }, []);
+
+  const loadUserProfile = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setEmail(user.email || "");
+      }
+    } catch (error) {
+      toast({
+        title: "Error loading profile",
+        description: error instanceof Error ? error.message : "Failed to load profile",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      toast({
+        title: "Logged out",
+        description: "You've been successfully logged out",
+      });
+
+      navigate("/");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to log out",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <AppLayout>
@@ -17,9 +66,9 @@ const Profile = () => {
             <p className="text-muted-foreground">Manage your account settings and preferences</p>
           </div>
 
-          {!isLoaded ? (
+          {isLoading ? (
             <div className="flex items-center justify-center py-20">
-              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
           ) : (
             <div className="space-y-6">
@@ -30,40 +79,42 @@ const Profile = () => {
                     Account Information
                   </CardTitle>
                   <CardDescription>
-                    Your account details managed by Clerk
+                    Your account details and settings
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email" className="flex items-center gap-2">
-                      <Mail className="h-4 w-4" />
-                      Email
-                    </Label>
+                    <Label htmlFor="email">Email</Label>
                     <Input
                       id="email"
                       type="email"
-                      value={user?.primaryEmailAddress?.emailAddress || ""}
+                      value={email}
                       disabled
                       className="bg-gray-800/50"
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Email cannot be changed at this time
+                    </p>
                   </div>
-                  
-                  {user?.fullName && (
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Full Name</Label>
-                      <Input
-                        id="name"
-                        type="text"
-                        value={user.fullName}
-                        disabled
-                        className="bg-gray-800/50"
-                      />
-                    </div>
-                  )}
-                  
-                  <p className="text-xs text-muted-foreground">
-                    To update your account details, use the user menu in the top right corner.
-                  </p>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700">
+                <CardHeader>
+                  <CardTitle>Danger Zone</CardTitle>
+                  <CardDescription>
+                    Actions that affect your account
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button
+                    variant="destructive"
+                    onClick={handleLogout}
+                    className="w-full sm:w-auto"
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log Out
+                  </Button>
                 </CardContent>
               </Card>
             </div>

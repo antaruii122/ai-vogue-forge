@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Menu, ChevronDown, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { UserButton } from "@clerk/clerk-react";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -70,7 +69,9 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               <span className="text-sm hidden sm:inline">CreativeAgent</span>
             </button>
 
-            <UserButton afterSignOutUrl="/" />
+            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
+              <span className="text-xs font-bold text-[#1a1a1a]">U</span>
+            </div>
           </div>
         </div>
       </header>

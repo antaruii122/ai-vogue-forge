@@ -6,8 +6,8 @@ import { Upload, Wand2, Download, Camera, Video, Package, Sparkles, X, Star, Che
 import { uploadVideoToStorage } from "@/utils/uploadVideoToStorage";
 import tetesImage from "@/assets/tetes.png";
 import { VideoComparisonCard } from "@/components/VideoComparisonCard";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useUser, useClerk } from "@clerk/clerk-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,8 +18,7 @@ import {
 
 const Index = () => {
   const [showAnnouncement, setShowAnnouncement] = useState(true);
-  const { user } = useUser();
-  const { signOut } = useClerk();
+  const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const [videoUrl, setVideoUrl] = useState<string>('/videos/BOLD.mp4');
@@ -33,6 +32,20 @@ const Index = () => {
   });
 
   useEffect(() => {
+    // Check auth state
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    checkAuth();
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+
     // Function to load videos from localStorage
     const loadVideos = () => {
       setHeroVideos({
@@ -79,6 +92,7 @@ const Index = () => {
     }
 
     return () => {
+      subscription.unsubscribe();
       window.removeEventListener('focus', handleFocus);
       window.removeEventListener('storage', handleStorage);
     };
@@ -86,15 +100,19 @@ const Index = () => {
 
   const handleLogout = async () => {
     try {
-      await signOut();
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
       toast({
         title: "Logged out",
         description: "You've been successfully logged out",
       });
+
+      setUser(null);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to log out",
+        description: error instanceof Error ? error.message : "Failed to log out",
         variant: "destructive",
       });
     }
@@ -165,7 +183,7 @@ const Index = () => {
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" size="sm">
                         <User className="h-4 w-4 mr-2" />
-                        {user.primaryEmailAddress?.emailAddress?.split('@')[0] || user.firstName || "User"}
+                        {user.email?.split('@')[0]}
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-56">
@@ -191,10 +209,10 @@ const Index = () => {
                 </>
               ) : (
                 <>
-                  <Button variant="ghost" size="sm" onClick={() => navigate("/sign-in")}>
+                  <Button variant="ghost" size="sm" onClick={() => navigate("/login")}>
                     Log In
                   </Button>
-                  <Button size="sm" onClick={() => navigate("/sign-up")}>
+                  <Button size="sm" onClick={() => navigate("/signup")}>
                     Sign Up
                   </Button>
                 </>
@@ -223,7 +241,7 @@ const Index = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="text-lg" onClick={() => navigate(user ? "/generator" : "/sign-up")}>
+                <Button size="lg" className="text-lg" onClick={() => navigate(user ? "/generator" : "/signup")}>
                   {user ? "Go to Generator" : "Get Started"}
                 </Button>
                 <div className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-full">
