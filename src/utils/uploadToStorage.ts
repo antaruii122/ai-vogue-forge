@@ -39,7 +39,6 @@ export async function uploadImageToStorage(
     
     return publicUrl;
   } catch (error) {
-    console.error('Error uploading image:', error);
-    throw error;
+    throw error instanceof Error ? error : new Error('Upload failed');
   }
 }

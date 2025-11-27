@@ -26,10 +26,10 @@ const Profile = () => {
       if (user) {
         setEmail(user.email || "");
       }
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error loading profile",
-        description: error.message,
+        description: error instanceof Error ? error.message : "Failed to load profile",
         variant: "destructive",
       });
     } finally {
@@ -48,10 +48,10 @@ const Profile = () => {
       });
 
       navigate("/");
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error",
-        description: error.message,
+        description: error instanceof Error ? error.message : "Failed to log out",
         variant: "destructive",
       });
     }

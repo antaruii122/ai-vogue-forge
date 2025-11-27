@@ -12,7 +12,6 @@ import { supabase } from "@/integrations/supabase/client";
 import luxuryPremiumExample from "@/assets/luxury-premium-example.jpeg";
 import studioCleanExample from "@/assets/studio-clean-example.jpeg";
 import outdoorNaturalExample from "@/assets/outdoor-natural-example.jpeg";
-import luxuryPremiumExample2 from "@/assets/luxury-premium-example2.jpeg";
 
 const templates = [
   { id: 1, name: "Urban Lifestyle", gradient: "from-blue-500 to-purple-500", icon: MapPin },
@@ -183,10 +182,9 @@ const FashionPhotography = () => {
     } catch (error) {
       toast({
         title: "Upload failed",
-        description: "There was an error uploading your image. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to upload image",
         variant: "destructive",
       });
-      console.error("Upload error:", error);
     }
   };
 
@@ -263,10 +261,9 @@ const FashionPhotography = () => {
       setIsGenerating(false);
       toast({
         title: "Generation failed",
-        description: "There was an error sending your request. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to send generation request",
         variant: "destructive",
       });
-      console.error("Webhook error:", error);
     }
   };
 
@@ -626,8 +623,8 @@ const FashionPhotography = () => {
                           )}
                           {template.id === 4 && (
                             <img 
-                              src={luxuryPremiumExample2} 
-                              alt="Luxury Premium example"
+                              src={luxuryPremiumExample} 
+                              alt="Luxury Premium style example"
                               className="absolute inset-0 w-full h-full object-cover opacity-100"
                             />
                           )}

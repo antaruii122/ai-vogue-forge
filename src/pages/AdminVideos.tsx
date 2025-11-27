@@ -26,7 +26,6 @@ const AdminVideos = () => {
     const { data, error } = await supabase.storage.from(bucket).list('', { limit: 100, sortBy: { column: 'created_at', order: 'desc' } });
     setLoading(false);
     if (error) {
-      console.error(error);
       toast.error('Failed to load videos');
       return;
     }
@@ -61,7 +60,6 @@ const AdminVideos = () => {
     });
     setUploading(false);
     if (error) {
-      console.error(error);
       toast.error(error.message || 'Upload failed');
       return;
     }
@@ -74,7 +72,6 @@ const AdminVideos = () => {
     if (!confirm(`Delete ${name}?`)) return;
     const { error } = await supabase.storage.from(bucket).remove([name]);
     if (error) {
-      console.error(error);
       toast.error('Delete failed');
       return;
     }

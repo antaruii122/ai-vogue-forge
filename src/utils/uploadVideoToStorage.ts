@@ -23,7 +23,6 @@ export async function uploadVideoToStorage() {
     
     return publicUrl;
   } catch (error) {
-    console.error('Error uploading video:', error);
-    throw error;
+    throw error instanceof Error ? error : new Error('Video upload failed');
   }
 }

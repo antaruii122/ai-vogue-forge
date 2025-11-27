@@ -30,10 +30,10 @@ const ForgotPassword = () => {
         title: "Reset email sent!",
         description: "Check your inbox for password reset instructions",
       });
-    } catch (error: any) {
+    } catch (error) {
       toast({
         title: "Error",
-        description: error.message || "Failed to send reset email",
+        description: error instanceof Error ? error.message : "Failed to send reset email",
         variant: "destructive",
       });
     } finally {
