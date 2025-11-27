@@ -2,14 +2,25 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, Wand2, Download, Camera, Video, Package, Sparkles, X, Star, Check } from "lucide-react";
+import { Upload, Wand2, Download, Camera, Video, Package, Sparkles, X, Star, Check, User, LogOut } from "lucide-react";
 import { uploadVideoToStorage } from "@/utils/uploadVideoToStorage";
 import tetesImage from "@/assets/tetes.png";
 import { VideoComparisonCard } from "@/components/VideoComparisonCard";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Index = () => {
   const [showAnnouncement, setShowAnnouncement] = useState(true);
+  const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [videoUrl, setVideoUrl] = useState<string>('/videos/BOLD.mp4');
   const [heroVideos, setHeroVideos] = useState({
     left1: '',
@@ -21,6 +32,20 @@ const Index = () => {
   });
 
   useEffect(() => {
+    // Check auth state
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    checkAuth();
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+
     // Function to load videos from localStorage
     const loadVideos = () => {
       setHeroVideos({
@@ -67,10 +92,32 @@ const Index = () => {
     }
 
     return () => {
+      subscription.unsubscribe();
       window.removeEventListener('focus', handleFocus);
       window.removeEventListener('storage', handleStorage);
     };
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+
+      toast({
+        title: "Logged out",
+        description: "You've been successfully logged out",
+      });
+
+      setUser(null);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
   const categories = ["dresses", "pants", "tops", "graphic t-shirts", "outerwear", "baby & kids clothing", "men's clothing", "women's clothing", "jewellery", "handbags", "sunglasses", "hats", "skincare", "makeup", "beverage", "health & wellness", "pet products", "electronics"];
   const pricingPlans = [{
     name: "Essentials",
@@ -110,16 +157,66 @@ const Index = () => {
             <nav className="hidden md:flex items-center gap-8">
               <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Features</a>
               <a href="#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
-              
               <a href="#resources" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Resources</a>
             </nav>
 
             <div className="flex items-center gap-4">
-              <Button variant="outline" size="sm">Log In</Button>
-              <Button variant="outline" size="sm" onClick={() => navigate("/admin/videos")}>
-                Manage Videos
-              </Button>
-              <Button size="sm" onClick={() => navigate("/tools/fashion-photography")}>Try Now</Button>
+              {user ? (
+                <>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => navigate("/my-images")}
+                    className="hidden md:flex"
+                  >
+                    My Images
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => navigate("/generator")}
+                    className="hidden md:flex"
+                  >
+                    Generator
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <User className="h-4 w-4 mr-2" />
+                        {user.email?.split('@')[0]}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56">
+                      <DropdownMenuItem onClick={() => navigate("/my-images")}>
+                        <Camera className="mr-2 h-4 w-4" />
+                        My Images
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/generator")}>
+                        <Sparkles className="mr-2 h-4 w-4" />
+                        Generator
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/profile")}>
+                        <User className="mr-2 h-4 w-4" />
+                        Profile
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={handleLogout}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Log Out
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </>
+              ) : (
+                <>
+                  <Button variant="ghost" size="sm" onClick={() => navigate("/login")}>
+                    Log In
+                  </Button>
+                  <Button size="sm" onClick={() => navigate("/signup")}>
+                    Sign Up
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -144,8 +241,8 @@ const Index = () => {
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="text-lg" onClick={() => navigate("/tools/fashion-photography")}>
-                  Try Now
+                <Button size="lg" className="text-lg" onClick={() => navigate(user ? "/generator" : "/signup")}>
+                  {user ? "Go to Generator" : "Get Started"}
                 </Button>
                 <div className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-full">
                   <Check className="h-4 w-4 text-primary" />
