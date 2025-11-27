@@ -15,7 +15,20 @@ const Login = () => {
           appearance={{
             elements: {
               rootBox: "w-full",
-              card: "border-border/50 bg-card/50 backdrop-blur-sm shadow-xl",
+              card: "border-gray-700/50 bg-gray-900/90 backdrop-blur-xl shadow-2xl shadow-purple-500/10",
+              headerTitle: "text-2xl font-bold text-white",
+              headerSubtitle: "text-gray-400",
+              socialButtonsBlockButton: "bg-gray-800/80 border-gray-700 hover:bg-gray-700/80 text-white transition-all duration-200 hover:border-primary/50",
+              formFieldLabel: "text-gray-300",
+              formFieldInput: "bg-gray-800/50 border-gray-700 text-white placeholder:text-gray-500 focus:border-primary focus:ring-primary/20",
+              formButtonPrimary: "bg-gradient-to-r from-primary to-primary-purple hover:opacity-90 transition-all duration-200 shadow-lg shadow-primary/20",
+              footerActionLink: "text-primary hover:text-primary-purple transition-colors",
+              identityPreviewText: "text-gray-300",
+              identityPreviewEditButton: "text-primary hover:text-primary-purple",
+              formFieldInputShowPasswordButton: "text-gray-400 hover:text-primary",
+              dividerLine: "bg-gray-700",
+              dividerText: "text-gray-500",
+              otpCodeFieldInput: "bg-gray-800/50 border-gray-700 text-white",
             }
           }}
           routing="path"
