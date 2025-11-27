@@ -164,13 +164,14 @@ const VideoGeneration = () => {
               {/* Video Player */}
               <div className="flex justify-center mb-8">
                 <div className="w-full max-w-[400px]">
-                  <video
+                   <video
                     src={generatedVideoUrl}
                     controls
                     autoPlay
                     muted
                     loop
-                    className="w-full aspect-[9/16] rounded-xl border border-gray-700 shadow-2xl shadow-purple-500/50"
+                    className="w-full aspect-[9/16] rounded-xl border border-border shadow-2xl shadow-primary-purple/50"
+                    aria-label="Generated product video"
                   />
                 </div>
               </div>
@@ -179,7 +180,8 @@ const VideoGeneration = () => {
               <div className="flex flex-col sm:flex-row gap-4 mb-8 max-w-[500px] mx-auto">
                 <Button
                   onClick={handleDownload}
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-lg font-semibold"
+                  className="flex-1 px-6 py-3 bg-gradient-primary text-lg font-semibold"
+                  aria-label="Download generated video"
                 >
                   <Download className="mr-2 h-5 w-5" />
                   Download Video
@@ -187,7 +189,8 @@ const VideoGeneration = () => {
                 
                 <Button
                   variant="outline"
-                  className="px-6 py-3 border-2 border-purple-500 text-purple-400 hover:bg-purple-500/10"
+                  className="px-6 py-3 border-2 hover:bg-primary-purple/10"
+                  aria-label="Save video to portfolio"
                 >
                   <Save className="mr-2 h-5 w-5" />
                   Save to Portfolio
@@ -205,7 +208,7 @@ const VideoGeneration = () => {
               </div>
 
               {/* Video Info Card */}
-              <div className="max-w-[600px] mx-auto backdrop-blur-xl bg-white/5 rounded-lg p-6 border border-white/10">
+              <div className="max-w-[600px] mx-auto backdrop-blur-xl bg-card/50 rounded-lg p-6 border border-border" role="region" aria-label="Video generation details">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-muted-foreground text-sm mb-1">Template</p>
@@ -249,8 +252,8 @@ const VideoGeneration = () => {
             </p>
             
             {/* Progress bar */}
-            <div className="w-[300px] mx-auto h-2 bg-gray-800 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-purple-600 to-pink-600 animate-pulse" style={{ width: '70%' }} />
+            <div className="w-[300px] mx-auto h-2 bg-muted rounded-full overflow-hidden" role="progressbar" aria-label="Video generation progress">
+              <div className="h-full bg-gradient-primary animate-pulse" style={{ width: '70%' }} />
             </div>
           </div>
         </div>
@@ -293,15 +296,19 @@ const VideoGeneration = () => {
                       onDragLeave={handleDragLeave}
                       onDrop={handleDrop}
                       className={`
-                        h-[250px] rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-8
+                        h-[250px] rounded-xl bg-gradient-to-br from-background to-background-lighter p-8
                         border-2 border-dashed cursor-pointer
                         flex flex-col items-center justify-center
                         transition-all duration-300 ease-in-out
                         ${isDragging 
-                          ? 'border-purple-400 shadow-lg shadow-purple-500/30 scale-[1.01]' 
-                          : 'border-gray-500 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-[1.01]'
+                          ? 'border-primary-purple shadow-lg shadow-primary-purple/30 scale-[1.01]' 
+                          : 'border-border hover:border-primary-purple hover:shadow-lg hover:shadow-primary-purple/30 hover:scale-[1.01]'
                         }
                       `}
+                      role="button"
+                      aria-label="Upload product photo"
+                      tabIndex={0}
+                      onKeyDown={(e) => e.key === 'Enter' && handleClick()}
                     >
                       <UploadCloud className="w-12 h-12 text-muted-foreground" />
                       <p className="text-lg text-foreground mt-4 text-center">
@@ -328,16 +335,17 @@ const VideoGeneration = () => {
                 {/* Image Preview - Show after upload with glassmorphism */}
                 {selectedFile && previewUrl && (
                   <div className="max-w-[300px]">
-                    <div className="relative backdrop-blur-xl bg-white/5 rounded-lg p-4 border border-white/10 shadow-xl shadow-purple-500/10">
+                    <div className="relative backdrop-blur-xl bg-card/50 rounded-lg p-4 border border-border shadow-xl shadow-primary-purple/10">
                       <img
                         src={previewUrl}
-                        alt="Uploaded product"
+                        alt="Uploaded product photo preview"
                         className="w-full max-h-[300px] object-contain rounded-lg"
                       />
                     </div>
                     <button
                       onClick={handleChangePhoto}
-                      className="w-full mt-4 text-sm text-purple-400 hover:text-purple-300 cursor-pointer transition-colors"
+                      className="w-full mt-4 text-sm text-primary-purple hover:text-primary cursor-pointer transition-colors"
+                      aria-label="Change uploaded photo"
                     >
                       Change Photo
                     </button>
@@ -364,14 +372,19 @@ const VideoGeneration = () => {
                       onClick={() => setSelectedTemplate(template.id)}
                       className={`
                         h-[280px] cursor-pointer rounded-lg p-3
-                        bg-gradient-to-br from-gray-800 to-gray-900
+                        bg-gradient-to-br from-background to-background-lighter
                         transition-all duration-300 ease-out
                         relative flex flex-col
                         ${selectedTemplate === template.id
-                          ? 'border-[3px] border-purple-500 bg-purple-500/20 scale-105 shadow-xl shadow-purple-500/50'
-                          : 'border border-gray-700 opacity-70 hover:border-2 hover:border-purple-400 hover:opacity-100 hover:scale-[1.03] hover:shadow-lg hover:shadow-purple-500/30'
+                          ? 'border-[3px] border-primary-purple bg-primary-purple/20 scale-105 shadow-xl shadow-primary-purple/50'
+                          : 'border border-border opacity-70 hover:border-2 hover:border-primary-purple hover:opacity-100 hover:scale-[1.03] hover:shadow-lg hover:shadow-primary-purple/30'
                         }
                       `}
+                      role="button"
+                      aria-label={`Select ${template.name} template`}
+                      aria-pressed={selectedTemplate === template.id}
+                      tabIndex={0}
+                      onKeyDown={(e) => e.key === 'Enter' && setSelectedTemplate(template.id)}
                     >
                       {/* Gradient Thumbnail Placeholder */}
                       <div className={`
@@ -404,7 +417,8 @@ const VideoGeneration = () => {
                     <Button
                       onClick={handleGenerate}
                       disabled={isGenerating}
-                      className="px-8 py-4 text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                      className="px-8 py-4 text-lg font-semibold bg-gradient-primary rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                      aria-label="Generate video from uploaded photo"
                     >
                       {isGenerating ? (
                         <>

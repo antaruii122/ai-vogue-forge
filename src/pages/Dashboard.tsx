@@ -30,8 +30,8 @@ const Dashboard = () => {
     <AppLayout>
       {/* Dashboard Header Section */}
       <div className="mb-6">
-        <h1 className="text-4xl md:text-[36px] font-bold text-[#000000] mb-2">Dashboard</h1>
-        <p className="text-lg md:text-[18px] text-[#666666]">
+        <h1 className="text-4xl md:text-[36px] font-bold text-foreground mb-2">Dashboard</h1>
+        <p className="text-lg md:text-[18px] text-muted-foreground">
           Create an AI-generated photoshoot and video for your product
         </p>
       </div>
@@ -43,8 +43,8 @@ const Dashboard = () => {
             <button
               key={index}
               onClick={() => navigate(card.route)}
-              className="group bg-white rounded-lg overflow-hidden shadow-[0px_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0px_4px_16px_rgba(0,0,0,0.12)] hover:scale-[1.02] transition-all duration-300 ease-in-out cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-500/50 text-left w-full"
-              aria-label={`Click to open ${card.title} tool`}
+              className="group bg-card rounded-lg overflow-hidden border border-border hover:border-primary/50 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 ease-in-out cursor-pointer focus:outline-none focus:ring-4 focus:ring-primary/50 text-left w-full"
+              aria-label={`Navigate to ${card.title} tool`}
             >
               {/* Image Section */}
               <div 
@@ -74,15 +74,15 @@ const Dashboard = () => {
               {/* Text Section */}
               <div className="p-5 min-h-[120px] flex flex-col justify-between relative">
                 <div className="space-y-2">
-                  <h3 className="text-[20px] font-bold text-[#000000]">{card.title}</h3>
-                  <p className="text-[14px] text-[#666666] leading-[1.5]">
+                  <h3 className="text-[20px] font-bold text-foreground">{card.title}</h3>
+                  <p className="text-[14px] text-muted-foreground leading-[1.5]">
                     {card.description}
                   </p>
                 </div>
                 
                 {/* Arrow Icon */}
                 <div className="flex justify-end mt-3">
-                  <ChevronRight className="w-4 h-4 text-[#999999]" />
+                  <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
               </div>
             </button>
