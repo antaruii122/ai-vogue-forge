@@ -7,6 +7,7 @@ import { lazy, Suspense } from "react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Loader2 } from "lucide-react";
 import { ClerkProvider, SignedIn, SignedOut, RedirectToSignIn, SignIn, SignUp } from "@clerk/clerk-react";
+import { Button } from "@/components/ui/button";
 
 // Eager load critical pages
 import Index from "./pages/Index";
@@ -22,11 +23,7 @@ const MyImages = lazy(() => import("./pages/MyImages"));
 const Profile = lazy(() => import("./pages/Profile"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-
-if (!clerkPubKey) {
-  throw new Error("Missing Clerk Publishable Key");
-}
+const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '';
 
 const queryClient = new QueryClient();
 
@@ -37,9 +34,30 @@ const PageLoader = () => (
   </div>
 );
 
-const App = () => (
-  <ErrorBoundary>
-    <ClerkProvider publishableKey={clerkPubKey}>
+// Error component when Clerk key is missing
+const ClerkKeyMissing = () => (
+  <div className="min-h-screen bg-gradient-to-b from-[#1a0b2e] via-[#0f0728] to-background flex items-center justify-center p-4">
+    <div className="max-w-md bg-card/50 backdrop-blur-sm border border-border/50 rounded-lg p-6 text-center">
+      <h2 className="text-2xl font-bold mb-4">Setup Required</h2>
+      <p className="text-muted-foreground mb-4">
+        The Clerk authentication key is being configured. Please refresh the page in a moment.
+      </p>
+      <Button onClick={() => window.location.reload()}>
+        Refresh Page
+      </Button>
+    </div>
+  </div>
+);
+
+const App = () => {
+  // Show error UI if Clerk key is not configured yet
+  if (!clerkPubKey) {
+    return <ClerkKeyMissing />;
+  }
+
+  return (
+    <ErrorBoundary>
+      <ClerkProvider publishableKey={clerkPubKey}>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Toaster />
@@ -97,6 +115,7 @@ const App = () => (
       </QueryClientProvider>
     </ClerkProvider>
   </ErrorBoundary>
-);
+  );
+};
 
 export default App;
