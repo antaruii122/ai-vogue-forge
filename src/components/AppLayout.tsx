@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Menu, ChevronDown, X } from "lucide-react";
+import { Menu, ChevronDown, X, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -101,6 +102,23 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         </button>
 
         <nav className="py-4">
+          {/* Back to Home Link */}
+          <div className="mb-4 px-4">
+            <button
+              onClick={() => {
+                setIsSidebarOpen(false);
+                navigate("/");
+              }}
+              className="flex items-center gap-2 text-sm text-[#666666] hover:text-[#000000] transition-colors w-full py-2"
+            >
+              <Home className="w-4 h-4" />
+              <span>Back to Home</span>
+            </button>
+          </div>
+
+          {/* Separator */}
+          <div className="border-t border-[#e0e0e0] mb-6" />
+
           {/* Dashboard Section */}
           <div className="mb-6">
             <button
@@ -109,10 +127,10 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                 navigate("/dashboard");
               }}
               className={`
-                block w-full text-left px-4 py-3 text-sm transition-colors
+                block w-full text-left px-4 py-3 text-base font-bold transition-colors
                 ${
                   isRouteActive("/dashboard")
-                    ? "bg-[#f5f5f5] text-[#000000] font-bold border-l-[3px] border-[#000000]"
+                    ? "bg-[#f5f5f5] text-[#000000] border-l-[3px] border-[#000000]"
                     : "text-[#666666] hover:bg-[#fafafa]"
                 }
               `}
@@ -215,9 +233,18 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
       {/* Main Content Area */}
       <main className="pt-14 lg:ml-[280px] min-h-screen">
-        <div className="p-6 md:p-8 lg:p-6">
-          {children}
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="p-6 md:p-8 lg:p-6"
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
       </main>
     </div>
   );
