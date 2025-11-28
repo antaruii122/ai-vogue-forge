@@ -34,7 +34,7 @@ const Login = () => {
           routing="path"
           path="/login"
           signUpUrl="/signup"
-          afterSignInUrl="/generator"
+          afterSignInUrl="/tools/video-generation"
         />
       </div>
     </div>
