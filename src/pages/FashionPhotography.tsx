@@ -154,7 +154,7 @@ const FashionPhotography = () => {
         description: "Please wait while we upload your photo",
       });
       
-      // Get authenticated user
+      // Get authenticated user from Clerk
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         toast({

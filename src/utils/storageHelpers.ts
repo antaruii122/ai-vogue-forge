@@ -13,12 +13,6 @@ export interface StorageFile {
  */
 export async function getUserUploads(userId: string): Promise<StorageFile[]> {
   try {
-    // Verify authentication
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user || user.id !== userId) {
-      throw new Error('User must be authenticated');
-    }
-
     // List files from user's uploads folder
     const { data: files, error } = await supabase.storage
       .from('product-images')
@@ -55,12 +49,6 @@ export async function getUserUploads(userId: string): Promise<StorageFile[]> {
  */
 export async function getUserGenerated(userId: string): Promise<StorageFile[]> {
   try {
-    // Verify authentication
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user || user.id !== userId) {
-      throw new Error('User must be authenticated');
-    }
-
     // List files from user's generated folder
     const { data: files, error } = await supabase.storage
       .from('product-images')
@@ -120,12 +108,6 @@ export async function deleteUserFile(
   type: 'uploads' | 'generated'
 ): Promise<void> {
   try {
-    // Verify authentication
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user || user.id !== userId) {
-      throw new Error('User must be authenticated');
-    }
-
     const filePath = `${userId}/${type}/${fileName}`;
 
     const { error } = await supabase.storage

@@ -6,12 +6,6 @@ export async function uploadImageToStorage(
   uploadType: 'uploads' | 'generated' = 'uploads'
 ): Promise<string> {
   try {
-    // Check if user is authenticated
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user || user.id !== userId) {
-      throw new Error('User must be authenticated to upload files');
-    }
-
     // Generate unique filename
     const timestamp = Date.now();
     const fileExt = file.name.split('.').pop();
