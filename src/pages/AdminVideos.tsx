@@ -79,6 +79,11 @@ const AdminVideos = () => {
     await fetchFiles();
   };
 
+  const fetchSignedUrl = async (fileName: string): Promise<string> => {
+    const { data } = await supabase.storage.from(bucket).createSignedUrl(fileName, 3600);
+    return data?.signedUrl || '';
+  };
+
   const rows = useMemo(() => {
     const sections = [
       'hero-left-1', 'hero-left-2', 'hero-left-3',
@@ -89,6 +94,8 @@ const AdminVideos = () => {
     const sectionVideos = sections.map(s => localStorage.getItem(`video_${s}`));
     
     return files.map((f) => {
+      // For private bucket, we'll fetch signed URLs when needed
+      // For now, construct URL that will be replaced with signed URL
       const { data } = supabase.storage.from(bucket).getPublicUrl(f.name);
       const url = data.publicUrl;
       

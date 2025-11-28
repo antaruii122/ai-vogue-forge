@@ -121,9 +121,9 @@ const App = () => {
                   <Route path="/tools/product-photography" element={<ProtectedRoute><ProductPhotography /></ProtectedRoute>} />
                   
                   {/* Legacy Routes */}
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/tools/fashion-photography-old" element={<FashionPhotographyTool />} />
-                  <Route path="/admin/videos" element={<AdminVideos />} />
+                  <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                  <Route path="/tools/fashion-photography-old" element={<ProtectedRoute><FashionPhotographyTool /></ProtectedRoute>} />
+                  <Route path="/admin/videos" element={<ProtectedRoute><AdminVideos /></ProtectedRoute>} />
                   
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
