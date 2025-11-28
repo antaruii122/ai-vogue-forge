@@ -8,11 +8,10 @@ const templates = [
   { id: 1, name: "360° Spin", gradient: "from-purple-500 to-pink-500" },
   { id: 2, name: "Zoom In", gradient: "from-blue-500 to-cyan-500" },
   { id: 3, name: "Zoom Out", gradient: "from-cyan-500 to-blue-500" },
-  { id: 4, name: "Floating Product", gradient: "from-orange-500 to-red-500" },
-  { id: 5, name: "Dolly Push", gradient: "from-violet-500 to-purple-500" },
-  { id: 6, name: "Pan Reveal", gradient: "from-indigo-500 to-blue-500" },
-  { id: 7, name: "Model Showcase", gradient: "from-green-500 to-emerald-500" },
-  { id: 8, name: "Minimal Studio", gradient: "from-teal-500 to-cyan-500" },
+  { id: 4, name: "Dolly Push", gradient: "from-violet-500 to-purple-500" },
+  { id: 5, name: "Pan Reveal", gradient: "from-indigo-500 to-blue-500" },
+  { id: 6, name: "Model Showcase", gradient: "from-green-500 to-emerald-500" },
+  { id: 7, name: "Minimal Studio", gradient: "from-teal-500 to-cyan-500" },
 ];
 
 const VideoGeneration = () => {
@@ -362,7 +361,7 @@ const VideoGeneration = () => {
                   </p>
                 </div>
 
-                {/* Template grid - 2x4 layout */}
+                {/* Template grid - 4-3 layout (4 top row, 3 bottom centered) */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                   {templates.map((template) => (
                     <div
