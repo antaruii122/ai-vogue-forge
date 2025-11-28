@@ -28,6 +28,7 @@ const Dashboard = () => {
 
   return (
     <AppLayout>
+      <div className="animate-fade-in">
       {/* Dashboard Header Section */}
       <div className="mb-6">
         <h1 className="text-4xl md:text-[36px] font-bold text-foreground mb-2">Dashboard</h1>
@@ -88,6 +89,7 @@ const Dashboard = () => {
             </button>
           ))}
         </div>
+      </div>
       </div>
     </AppLayout>
   );

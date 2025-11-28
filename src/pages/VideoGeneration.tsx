@@ -261,7 +261,7 @@ const VideoGeneration = () => {
   return (
     <AppLayout>
       {/* Premium dark gradient background with animated mesh */}
-      <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 relative overflow-hidden animate-fade-in">
         {/* Animated gradient mesh overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-purple-500/5 animate-pulse pointer-events-none" />
         
