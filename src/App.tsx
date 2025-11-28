@@ -30,7 +30,13 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const queryClient = new QueryClient();
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
-if (!clerkPubKey) {
+// Detect if we're in Lovable preview/development environment
+const isPreviewEnvironment = 
+  window.location.hostname.includes('lovableproject.com') || 
+  window.location.hostname === 'localhost' ||
+  window.location.hostname === '127.0.0.1';
+
+if (!clerkPubKey && !isPreviewEnvironment) {
   throw new Error('Missing Clerk Publishable Key');
 }
 
@@ -41,46 +47,94 @@ const PageLoader = () => (
   </div>
 );
 
-const App = () => (
-  <ErrorBoundary>
-    <ClerkProvider publishableKey={clerkPubKey}>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              
-              {/* Protected Routes */}
-              <Route path="/generator" element={<ProtectedRoute><FashionPhotography /></ProtectedRoute>} />
-              <Route path="/my-images" element={<ProtectedRoute><MyImages /></ProtectedRoute>} />
-              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-              
-              {/* Tool Routes - All Protected */}
-              <Route path="/tools/fashion-photography" element={<ProtectedRoute><FashionPhotography /></ProtectedRoute>} />
-              <Route path="/tools/video-generation" element={<ProtectedRoute><VideoGeneration /></ProtectedRoute>} />
-              <Route path="/tools/product-photography" element={<ProtectedRoute><ProductPhotography /></ProtectedRoute>} />
-              
-              {/* Legacy Routes */}
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/tools/fashion-photography-old" element={<FashionPhotographyTool />} />
-              <Route path="/admin/videos" element={<AdminVideos />} />
-              
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-    </ClerkProvider>
-  </ErrorBoundary>
-);
+const App = () => {
+  // In preview environment, render without Clerk
+  if (isPreviewEnvironment) {
+    return (
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  
+                  {/* In preview, routes are not protected */}
+                  <Route path="/generator" element={<FashionPhotography />} />
+                  <Route path="/my-images" element={<MyImages />} />
+                  <Route path="/profile" element={<Profile />} />
+                  
+                  {/* Tool Routes */}
+                  <Route path="/tools/fashion-photography" element={<FashionPhotography />} />
+                  <Route path="/tools/video-generation" element={<VideoGeneration />} />
+                  <Route path="/tools/product-photography" element={<ProductPhotography />} />
+                  
+                  {/* Legacy Routes */}
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/tools/fashion-photography-old" element={<FashionPhotographyTool />} />
+                  <Route path="/admin/videos" element={<AdminVideos />} />
+                  
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </BrowserRouter>
+          </TooltipProvider>
+        </QueryClientProvider>
+      </ErrorBoundary>
+    );
+  }
+
+  // Production environment with Clerk authentication
+  return (
+    <ErrorBoundary>
+      <ClerkProvider 
+        publishableKey={clerkPubKey}
+        afterSignOutUrl="/"
+      >
+        <QueryClientProvider client={queryClient}>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  
+                  {/* Protected Routes */}
+                  <Route path="/generator" element={<ProtectedRoute><FashionPhotography /></ProtectedRoute>} />
+                  <Route path="/my-images" element={<ProtectedRoute><MyImages /></ProtectedRoute>} />
+                  <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                  
+                  {/* Tool Routes - All Protected */}
+                  <Route path="/tools/fashion-photography" element={<ProtectedRoute><FashionPhotography /></ProtectedRoute>} />
+                  <Route path="/tools/video-generation" element={<ProtectedRoute><VideoGeneration /></ProtectedRoute>} />
+                  <Route path="/tools/product-photography" element={<ProtectedRoute><ProductPhotography /></ProtectedRoute>} />
+                  
+                  {/* Legacy Routes */}
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/tools/fashion-photography-old" element={<FashionPhotographyTool />} />
+                  <Route path="/admin/videos" element={<AdminVideos />} />
+                  
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </BrowserRouter>
+          </TooltipProvider>
+        </QueryClientProvider>
+      </ClerkProvider>
+    </ErrorBoundary>
+  );
+};
 
 export default App;
