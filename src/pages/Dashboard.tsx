@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import AppLayout from "@/components/AppLayout";
+import { AdminSetup } from "@/components/AdminSetup";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -35,6 +36,11 @@ const Dashboard = () => {
         <p className="text-lg md:text-[18px] text-muted-foreground">
           Create an AI-generated photoshoot and video for your product
         </p>
+      </div>
+
+      {/* Admin Setup Card */}
+      <div className="mb-6 max-w-2xl">
+        <AdminSetup />
       </div>
 
       {/* Feature Cards Grid */}
