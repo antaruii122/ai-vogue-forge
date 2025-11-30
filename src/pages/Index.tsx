@@ -350,6 +350,49 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Scrolling Carousel */}
+      <section className="py-20 bg-background overflow-hidden">
+        <div className="container mx-auto px-4 mb-12">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold text-center">
+            See How Fashion Styles Look
+          </h2>
+        </div>
+        
+        {/* Top Row - Scroll Left */}
+        <div className="relative mb-6">
+          <div className="flex gap-6 animate-scroll-left">
+            {/* Duplicate images for seamless loop */}
+            {[...Array(14)].map((_, i) => (
+              <div 
+                key={i}
+                className="flex-shrink-0 w-[300px] h-[420px] bg-gradient-to-br from-primary/20 to-primary-purple/20 rounded-xl border border-border overflow-hidden"
+              >
+                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                  <Camera className="h-12 w-12" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        {/* Bottom Row - Scroll Right */}
+        <div className="relative">
+          <div className="flex gap-6 animate-scroll-right">
+            {/* Duplicate images for seamless loop */}
+            {[...Array(14)].map((_, i) => (
+              <div 
+                key={i}
+                className="flex-shrink-0 w-[300px] h-[420px] bg-gradient-to-br from-primary-purple/20 to-accent/20 rounded-xl border border-border overflow-hidden"
+              >
+                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                  <Camera className="h-12 w-12" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* How It Works */}
       <section className="py-20 bg-background-lighter">
         <div className="container mx-auto px-4">
