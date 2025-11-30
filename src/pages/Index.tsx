@@ -350,6 +350,67 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Turn Product Photos into Fashion Videos */}
+      <section className="py-20 bg-background-lighter">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              {/* Left Side: Phone Mockup */}
+              <div className="flex justify-center md:justify-start">
+                <div className="relative">
+                  {/* Phone Frame */}
+                  <div className="w-[320px] h-[640px] bg-gray-900 rounded-[3rem] border-[12px] border-gray-800 shadow-2xl overflow-hidden">
+                    {/* Notch */}
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-6 bg-gray-800 rounded-b-2xl z-10" />
+                    
+                    {/* Screen Content - Video Placeholder */}
+                    <div className="w-full h-full bg-gradient-to-br from-primary/30 to-primary-purple/30 flex items-center justify-center">
+                      <Video className="h-16 w-16 text-muted-foreground" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Right Side: Content */}
+              <div className="space-y-6">
+                <h2 className="text-4xl md:text-5xl font-heading font-bold">
+                  Turn Product Photos into Scroll-Stopping Fashion Videos
+                </h2>
+                
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <Check className="h-4 w-4 text-primary" />
+                    </div>
+                    <p className="text-lg text-muted-foreground">
+                      Choose from 360° spins, zoom effects, and dynamic transitions
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <Check className="h-4 w-4 text-primary" />
+                    </div>
+                    <p className="text-lg text-muted-foreground">
+                      Perfect for Instagram Reels, TikTok, and video ads
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <Check className="h-4 w-4 text-primary" />
+                    </div>
+                    <p className="text-lg text-muted-foreground">
+                      Generate professional videos in seconds, no editing needed
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Scrolling Carousel */}
       <section className="py-20 bg-background overflow-hidden">
         <div className="container mx-auto px-4 mb-12">
