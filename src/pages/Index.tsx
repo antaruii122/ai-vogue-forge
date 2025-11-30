@@ -229,131 +229,51 @@ const Index = () => {
       <section className="relative overflow-hidden py-20 md:py-32">
         <div className="absolute inset-0 bg-gradient-to-b from-[#1a0b2e] via-[#0f0728] to-background" />
         <div className="container mx-auto px-4 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="space-y-4">
-                <h1 className="text-5xl md:text-6xl font-heading font-bold leading-tight">
-                  Turn Product Photos Into Scroll-Stopping Video Ads
-                </h1>
-                <p className="text-lg md:text-xl text-muted-foreground">
-                  Choose a style template. Upload your product. Get professional videos in minutes—no AI prompts needed.
-                </p>
-              </div>
-              
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="text-lg" onClick={() => navigate(user ? "/generator" : "/signup")}>
-                  {user ? "Go to Generator" : "Get Started"}
-                </Button>
-                <div className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-full">
-                  <Check className="h-4 w-4 text-primary" />
-                  <span className="text-sm">Available on Shopify App Store</span>
-                </div>
-              </div>
+          <div className="max-w-5xl mx-auto text-center space-y-12">
+            {/* Text Content */}
+            <div className="space-y-6">
+              <h1 className="text-5xl md:text-7xl font-heading font-bold leading-tight">
+                Fashion Photography Made Easy
+              </h1>
+              <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
+                Transform your products into stunning professional photography with AI-powered precision and style
+              </p>
             </div>
 
-            {/* Staggered Photo Gallery */}
-            <div className="relative h-[600px] flex gap-4">
-              {/* Left Column - Moves Up */}
-              <div className="flex-1 flex flex-col gap-4 animate-scroll-up">
-                {/* Slot 1 */}
-                <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                {heroVideos.left1 ? (
-                    heroVideos.left1.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                      <img src={heroVideos.left1} className="w-full h-full object-cover" alt="Product photography example showcasing fashion style" />
-                    ) : (
-                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline aria-label="Product video example">
-                        <source src={heroVideos.left1} type="video/mp4" />
-                      </video>
-                    )
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                      <Camera className="h-12 w-12" />
-                    </div>
-                  )}
-                </div>
-                {/* Slot 2 */}
-                <div className="aspect-[3/4] bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                {heroVideos.left2 ? (
-                    heroVideos.left2.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                      <img src={heroVideos.left2} className="w-full h-full object-cover" alt="Product lifestyle photography demonstration" />
-                    ) : (
-                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline aria-label="Product showcase video">
-                        <source src={heroVideos.left2} type="video/mp4" />
-                      </video>
-                    )
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                      <Camera className="h-12 w-12" />
-                    </div>
-                  )}
-                </div>
-                {/* Slot 3 */}
-                <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                {heroVideos.left3 ? (
-                    heroVideos.left3.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                      <img src={heroVideos.left3} className="w-full h-full object-cover" alt="Professional product photography sample" />
-                    ) : (
-                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline aria-label="AI-generated product video">
-                        <source src={heroVideos.left3} type="video/mp4" />
-                      </video>
-                    )
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                      <Camera className="h-12 w-12" />
-                    </div>
-                  )}
+            {/* CTA Button */}
+            <div>
+              <Button size="lg" className="text-lg px-8 py-6" onClick={() => navigate(user ? "/dashboard" : "/signup")}>
+                Get Started
+              </Button>
+            </div>
+
+            {/* Horizontal Grid of 4 Product Photos */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+              {/* Photo 1 */}
+              <div className="w-full h-[420px] bg-gradient-to-br from-primary/20 to-primary-purple/20 rounded-lg border border-border overflow-hidden">
+                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                  <Camera className="h-12 w-12" />
                 </div>
               </div>
-
-              {/* Right Column - Moves Down */}
-              <div className="flex-1 flex flex-col gap-4 animate-scroll-down pt-12">
-                {/* Slot 1 */}
-                <div className="aspect-square bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                {heroVideos.right1 ? (
-                    heroVideos.right1.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                      <img src={heroVideos.right1} className="w-full h-full object-cover" alt="Creative product display example" />
-                    ) : (
-                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline aria-label="Dynamic product video example">
-                        <source src={heroVideos.right1} type="video/mp4" />
-                      </video>
-                    )
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                      <Camera className="h-12 w-12" />
-                    </div>
-                  )}
+              
+              {/* Photo 2 */}
+              <div className="w-full h-[420px] bg-gradient-to-br from-primary-purple/20 to-accent/20 rounded-lg border border-border overflow-hidden">
+                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                  <Camera className="h-12 w-12" />
                 </div>
-                {/* Slot 2 */}
-                <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary-purple/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                {heroVideos.right2 ? (
-                    heroVideos.right2.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                      <img src={heroVideos.right2} className="w-full h-full object-cover" alt="Stylized product presentation example" />
-                    ) : (
-                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline aria-label="Promotional product video">
-                        <source src={heroVideos.right2} type="video/mp4" />
-                      </video>
-                    )
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                      <Camera className="h-12 w-12" />
-                    </div>
-                  )}
+              </div>
+              
+              {/* Photo 3 */}
+              <div className="w-full h-[420px] bg-gradient-to-br from-accent/20 to-primary/20 rounded-lg border border-border overflow-hidden">
+                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                  <Camera className="h-12 w-12" />
                 </div>
-                {/* Slot 3 */}
-                <div className="aspect-square bg-gradient-to-br from-primary-purple/10 to-primary/10 rounded-lg border border-border overflow-hidden flex-shrink-0">
-                {heroVideos.right3 ? (
-                    heroVideos.right3.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
-                      <img src={heroVideos.right3} className="w-full h-full object-cover" alt="High-quality product media example" />
-                    ) : (
-                      <video className="w-full h-full object-cover" autoPlay loop muted playsInline aria-label="Professional product video showcase">
-                        <source src={heroVideos.right3} type="video/mp4" />
-                      </video>
-                    )
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                      <Camera className="h-12 w-12" />
-                    </div>
-                  )}
+              </div>
+              
+              {/* Photo 4 */}
+              <div className="w-full h-[420px] bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg border border-border overflow-hidden">
+                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                  <Camera className="h-12 w-12" />
                 </div>
               </div>
             </div>
