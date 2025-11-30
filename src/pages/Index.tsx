@@ -281,6 +281,75 @@ const Index = () => {
         </div>
       </section>
 
+      {/* From Product Shot to Campaign-Ready */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              {/* Left Side: Content */}
+              <div className="space-y-8">
+                <h2 className="text-4xl md:text-5xl font-heading font-bold">
+                  From Product Shot to Campaign-Ready in Minutes
+                </h2>
+                
+                <div className="space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <Check className="h-4 w-4 text-primary" />
+                    </div>
+                    <p className="text-lg text-muted-foreground">
+                      Upload your product photo—no studio setup required
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <Check className="h-4 w-4 text-primary" />
+                    </div>
+                    <p className="text-lg text-muted-foreground">
+                      AI transforms it into professional fashion photography
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <Check className="h-4 w-4 text-primary" />
+                    </div>
+                    <p className="text-lg text-muted-foreground">
+                      Choose from multiple styles, backgrounds, and lighting
+                    </p>
+                  </div>
+                  
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
+                      <Check className="h-4 w-4 text-primary" />
+                    </div>
+                    <p className="text-lg text-muted-foreground">
+                      Download and share—ready for Instagram, ads, and more
+                    </p>
+                  </div>
+                </div>
+                
+                <div>
+                  <Button size="lg" className="text-lg px-8 py-6" onClick={() => navigate(user ? "/dashboard" : "/signup")}>
+                    Try It Now
+                  </Button>
+                </div>
+              </div>
+              
+              {/* Right Side: Product Photo Placeholder */}
+              <div className="flex justify-center md:justify-end">
+                <div className="w-[300px] h-[420px] bg-gradient-to-br from-primary-purple/20 to-accent/20 rounded-lg border border-border overflow-hidden">
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                    <Camera className="h-12 w-12" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* How It Works */}
       <section className="py-20 bg-background-lighter">
         <div className="container mx-auto px-4">
