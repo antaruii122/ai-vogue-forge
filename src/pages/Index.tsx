@@ -247,33 +247,73 @@ const Index = () => {
               </Button>
             </div>
 
-            {/* Horizontal Grid of 4 Product Photos */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            {/* Horizontal Grid of 4 Polaroid-Style Photos */}
+            <div className="flex justify-center items-center gap-2 md:gap-4 max-w-5xl mx-auto -space-x-8 md:-space-x-12">
               {/* Photo 1 */}
-              <div className="w-full h-[420px] bg-gradient-to-br from-primary/20 to-primary-purple/20 rounded-lg border border-border overflow-hidden">
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                  <Camera className="h-12 w-12" />
+              <div 
+                className="relative bg-white p-3 md:p-4 rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-10"
+                style={{ transform: 'rotate(-5deg)' }}
+              >
+                <div className="w-[140px] md:w-[200px] h-[180px] md:h-[260px] bg-gradient-to-br from-primary/30 to-primary-purple/30 rounded-sm overflow-hidden">
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground/50" />
+                </div>
+                {/* Thumbnail Slot */}
+                <div 
+                  className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg"
+                  style={{ transform: 'rotate(8deg)' }}
+                >
+                  <div className="w-full h-full bg-gradient-to-br from-muted/50 to-muted rounded-sm" />
                 </div>
               </div>
               
               {/* Photo 2 */}
-              <div className="w-full h-[420px] bg-gradient-to-br from-primary-purple/20 to-accent/20 rounded-lg border border-border overflow-hidden">
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                  <Camera className="h-12 w-12" />
+              <div 
+                className="relative bg-white p-3 md:p-4 rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-20"
+                style={{ transform: 'rotate(3deg)' }}
+              >
+                <div className="w-[140px] md:w-[200px] h-[180px] md:h-[260px] bg-gradient-to-br from-primary-purple/30 to-accent/30 rounded-sm overflow-hidden">
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground/50" />
+                </div>
+                {/* Thumbnail Slot */}
+                <div 
+                  className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg"
+                  style={{ transform: 'rotate(-6deg)' }}
+                >
+                  <div className="w-full h-full bg-gradient-to-br from-muted/50 to-muted rounded-sm" />
                 </div>
               </div>
               
               {/* Photo 3 */}
-              <div className="w-full h-[420px] bg-gradient-to-br from-accent/20 to-primary/20 rounded-lg border border-border overflow-hidden">
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                  <Camera className="h-12 w-12" />
+              <div 
+                className="relative bg-white p-3 md:p-4 rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-30"
+                style={{ transform: 'rotate(-4deg)' }}
+              >
+                <div className="w-[140px] md:w-[200px] h-[180px] md:h-[260px] bg-gradient-to-br from-accent/30 to-primary/30 rounded-sm overflow-hidden">
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground/50" />
+                </div>
+                {/* Thumbnail Slot */}
+                <div 
+                  className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg"
+                  style={{ transform: 'rotate(10deg)' }}
+                >
+                  <div className="w-full h-full bg-gradient-to-br from-muted/50 to-muted rounded-sm" />
                 </div>
               </div>
               
               {/* Photo 4 */}
-              <div className="w-full h-[420px] bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg border border-border overflow-hidden">
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                  <Camera className="h-12 w-12" />
+              <div 
+                className="relative bg-white p-3 md:p-4 rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-40"
+                style={{ transform: 'rotate(6deg)' }}
+              >
+                <div className="w-[140px] md:w-[200px] h-[180px] md:h-[260px] bg-gradient-to-br from-primary/30 to-accent/30 rounded-sm overflow-hidden">
+                  <div className="w-full h-full flex items-center justify-center text-muted-foreground/50" />
+                </div>
+                {/* Thumbnail Slot */}
+                <div 
+                  className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg"
+                  style={{ transform: 'rotate(-5deg)' }}
+                >
+                  <div className="w-full h-full bg-gradient-to-br from-muted/50 to-muted rounded-sm" />
                 </div>
               </div>
             </div>
