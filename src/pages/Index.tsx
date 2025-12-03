@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Upload, Wand2, Download, Camera, Video, Package, Sparkles, X, Star, Check, User, LogOut } from "lucide-react";
 import { uploadVideoToStorage } from "@/utils/uploadVideoToStorage";
 import tetesImage from "@/assets/tetes.png";
+import heroPhoto1 from "@/assets/hero-photo-1.png";
 import { VideoComparisonCard } from "@/components/VideoComparisonCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -255,7 +256,7 @@ const Index = () => {
                 style={{ transform: 'rotate(-5deg)' }}
               >
                 <div className="w-[140px] md:w-[200px] h-[180px] md:h-[260px] bg-gradient-to-br from-primary/30 to-primary-purple/30 rounded-sm overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground/50" />
+                  <img src={heroPhoto1} alt="Fashion photo 1" className="w-full h-full object-cover" />
                 </div>
                 {/* Thumbnail Slot */}
                 <div 
