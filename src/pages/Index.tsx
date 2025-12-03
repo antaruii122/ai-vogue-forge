@@ -6,6 +6,9 @@ import { Upload, Wand2, Download, Camera, Video, Package, Sparkles, X, Star, Che
 import { uploadVideoToStorage } from "@/utils/uploadVideoToStorage";
 import tetesImage from "@/assets/tetes.png";
 import heroPhoto1 from "@/assets/hero-photo-1.png";
+import heroPhoto2 from "@/assets/hero-photo-2.png";
+import heroPhoto3 from "@/assets/hero-photo-3.png";
+import heroPhoto4 from "@/assets/hero-photo-4.png";
 import heroThumbnail1 from "@/assets/hero-thumbnail-1.png";
 import heroThumbnail2 from "@/assets/hero-thumbnail-2.png";
 import heroThumbnail3 from "@/assets/hero-thumbnail-3.png";
@@ -277,7 +280,7 @@ const Index = () => {
                 style={{ transform: 'rotate(3deg)' }}
               >
                 <div className="w-[140px] md:w-[200px] h-[180px] md:h-[260px] bg-gradient-to-br from-primary-purple/30 to-accent/30 rounded-sm overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground/50" />
+                  <img src={heroPhoto2} alt="Fashion photo 2" className="w-full h-full object-cover" />
                 </div>
                 {/* Thumbnail Slot */}
                 <div 
@@ -294,7 +297,7 @@ const Index = () => {
                 style={{ transform: 'rotate(-4deg)' }}
               >
                 <div className="w-[140px] md:w-[200px] h-[180px] md:h-[260px] bg-gradient-to-br from-accent/30 to-primary/30 rounded-sm overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground/50" />
+                  <img src={heroPhoto3} alt="Fashion photo 3" className="w-full h-full object-cover" />
                 </div>
                 {/* Thumbnail Slot */}
                 <div 
@@ -311,7 +314,7 @@ const Index = () => {
                 style={{ transform: 'rotate(6deg)' }}
               >
                 <div className="w-[140px] md:w-[200px] h-[180px] md:h-[260px] bg-gradient-to-br from-primary/30 to-accent/30 rounded-sm overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground/50" />
+                  <img src={heroPhoto4} alt="Fashion photo 4" className="w-full h-full object-cover" />
                 </div>
                 {/* Thumbnail Slot */}
                 <div 
