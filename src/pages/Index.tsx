@@ -7,6 +7,9 @@ import { uploadVideoToStorage } from "@/utils/uploadVideoToStorage";
 import tetesImage from "@/assets/tetes.png";
 import heroPhoto1 from "@/assets/hero-photo-1.png";
 import heroThumbnail1 from "@/assets/hero-thumbnail-1.png";
+import heroThumbnail2 from "@/assets/hero-thumbnail-2.png";
+import heroThumbnail3 from "@/assets/hero-thumbnail-3.png";
+import heroThumbnail4 from "@/assets/hero-thumbnail-4.png";
 import { VideoComparisonCard } from "@/components/VideoComparisonCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -281,7 +284,7 @@ const Index = () => {
                   className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg"
                   style={{ transform: 'rotate(-6deg)' }}
                 >
-                  <div className="w-full h-full bg-gradient-to-br from-muted/50 to-muted rounded-sm" />
+                  <img src={heroThumbnail2} alt="Product thumbnail 2" className="w-full h-full object-cover rounded-sm" />
                 </div>
               </div>
               
@@ -298,7 +301,7 @@ const Index = () => {
                   className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg"
                   style={{ transform: 'rotate(10deg)' }}
                 >
-                  <div className="w-full h-full bg-gradient-to-br from-muted/50 to-muted rounded-sm" />
+                  <img src={heroThumbnail3} alt="Product thumbnail 3" className="w-full h-full object-cover rounded-sm" />
                 </div>
               </div>
               
@@ -315,7 +318,7 @@ const Index = () => {
                   className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg"
                   style={{ transform: 'rotate(-5deg)' }}
                 >
-                  <div className="w-full h-full bg-gradient-to-br from-muted/50 to-muted rounded-sm" />
+                  <img src={heroThumbnail4} alt="Product thumbnail 4" className="w-full h-full object-cover rounded-sm" />
                 </div>
               </div>
             </div>
