@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Loader2 } from "lucide-react";
-import { ClerkProvider } from '@clerk/clerk-react';
+import { ClerkProvider, ClerkLoaded, ClerkLoading } from '@clerk/clerk-react';
 
 // Eager load critical pages
 import Index from "./pages/Index";
@@ -24,21 +24,13 @@ const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const MyImages = lazy(() => import("./pages/MyImages"));
 const Profile = lazy(() => import("./pages/Profile"));
+const Billing = lazy(() => import("./pages/Billing"));
+const Portfolio = lazy(() => import("./pages/Portfolio"));
 const ProtectedRoute = lazy(() => import("@/components/ProtectedRoute"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-
-// Detect if we're in Lovable preview/development environment
-const isPreviewEnvironment = 
-  window.location.hostname.includes('lovableproject.com') || 
-  window.location.hostname === 'localhost' ||
-  window.location.hostname === '127.0.0.1';
-
-if (!clerkPubKey && !isPreviewEnvironment) {
-  throw new Error('Missing Clerk Publishable Key');
-}
 
 // Loading component for Suspense fallback
 const PageLoader = () => (
@@ -47,50 +39,56 @@ const PageLoader = () => (
   </div>
 );
 
+// App routes component
+const AppRoutes = () => (
+  <BrowserRouter>
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<Index />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        
+        {/* Protected Routes */}
+        <Route path="/generator" element={<ProtectedRoute><FashionPhotography /></ProtectedRoute>} />
+        <Route path="/my-images" element={<ProtectedRoute><MyImages /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/billing" element={<ProtectedRoute><Billing /></ProtectedRoute>} />
+        <Route path="/portfolio" element={<ProtectedRoute><Portfolio /></ProtectedRoute>} />
+        
+        {/* Tool Routes - All Protected */}
+        <Route path="/tools/fashion-photography" element={<ProtectedRoute><FashionPhotography /></ProtectedRoute>} />
+        <Route path="/tools/video-generation" element={<ProtectedRoute><VideoGeneration /></ProtectedRoute>} />
+        <Route path="/tools/product-photography" element={<ProtectedRoute><ProductPhotography /></ProtectedRoute>} />
+        
+        {/* Legacy Routes */}
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/tools/fashion-photography-old" element={<ProtectedRoute><FashionPhotographyTool /></ProtectedRoute>} />
+        <Route path="/admin/videos" element={<ProtectedRoute><AdminVideos /></ProtectedRoute>} />
+        
+        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Suspense>
+  </BrowserRouter>
+);
+
 const App = () => {
-  // In preview environment, render without Clerk
-  if (isPreviewEnvironment) {
+  // Check if Clerk key is available
+  if (!clerkPubKey) {
+    console.error('Missing VITE_CLERK_PUBLISHABLE_KEY environment variable');
     return (
-      <ErrorBoundary>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/signup" element={<Signup />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/forgot-password" element={<ForgotPassword />} />
-                  <Route path="/reset-password" element={<ResetPassword />} />
-                  
-                  {/* In preview, routes are not protected */}
-                  <Route path="/generator" element={<FashionPhotography />} />
-                  <Route path="/my-images" element={<MyImages />} />
-                  <Route path="/profile" element={<Profile />} />
-                  
-                  {/* Tool Routes */}
-                  <Route path="/tools/fashion-photography" element={<FashionPhotography />} />
-                  <Route path="/tools/video-generation" element={<VideoGeneration />} />
-                  <Route path="/tools/product-photography" element={<ProductPhotography />} />
-                  
-                  {/* Legacy Routes */}
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/tools/fashion-photography-old" element={<FashionPhotographyTool />} />
-                  <Route path="/admin/videos" element={<AdminVideos />} />
-                  
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </BrowserRouter>
-          </TooltipProvider>
-        </QueryClientProvider>
-      </ErrorBoundary>
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-foreground mb-2">Configuration Error</h1>
+          <p className="text-muted-foreground">Clerk publishable key is missing. Please add VITE_CLERK_PUBLISHABLE_KEY to your environment.</p>
+        </div>
+      </div>
     );
   }
 
-  // Production environment with Clerk authentication
   return (
     <ErrorBoundary>
       <ClerkProvider 
@@ -101,35 +99,12 @@ const App = () => {
           <TooltipProvider>
             <Toaster />
             <Sonner />
-            <BrowserRouter>
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/signup" element={<Signup />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/forgot-password" element={<ForgotPassword />} />
-                  <Route path="/reset-password" element={<ResetPassword />} />
-                  
-                  {/* Protected Routes */}
-                  <Route path="/generator" element={<ProtectedRoute><FashionPhotography /></ProtectedRoute>} />
-                  <Route path="/my-images" element={<ProtectedRoute><MyImages /></ProtectedRoute>} />
-                  <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                  
-                  {/* Tool Routes - All Protected */}
-                  <Route path="/tools/fashion-photography" element={<ProtectedRoute><FashionPhotography /></ProtectedRoute>} />
-                  <Route path="/tools/video-generation" element={<ProtectedRoute><VideoGeneration /></ProtectedRoute>} />
-                  <Route path="/tools/product-photography" element={<ProtectedRoute><ProductPhotography /></ProtectedRoute>} />
-                  
-                  {/* Legacy Routes */}
-                  <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                  <Route path="/tools/fashion-photography-old" element={<ProtectedRoute><FashionPhotographyTool /></ProtectedRoute>} />
-                  <Route path="/admin/videos" element={<ProtectedRoute><AdminVideos /></ProtectedRoute>} />
-                  
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </BrowserRouter>
+            <ClerkLoading>
+              <PageLoader />
+            </ClerkLoading>
+            <ClerkLoaded>
+              <AppRoutes />
+            </ClerkLoaded>
           </TooltipProvider>
         </QueryClientProvider>
       </ClerkProvider>
