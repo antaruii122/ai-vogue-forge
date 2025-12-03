@@ -96,9 +96,8 @@ const FashionPhotography = () => {
   const [styleChangeWarning, setStyleChangeWarning] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-
-  // Hardcoded webhook URL
-  const WEBHOOK_URL = "https://n8n.quicklyandgood.com/webhook/662d6440-b0e1-4c5e-9c71-11e077a84e39";
+  // Edge function URL for webhook proxy
+  const WEBHOOK_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fashion-webhook`;
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
