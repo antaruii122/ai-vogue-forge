@@ -330,66 +330,101 @@ const Index = () => {
       </section>
 
       {/* From Product Shot to Campaign-Ready */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
+      <section className="py-20 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #0a0a1f 0%, #0f1b2e 100%)' }}>
+        {/* Decorative dots */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute top-20 left-10 w-1 h-1 bg-emerald-500 rounded-full" />
+          <div className="absolute top-40 left-20 w-1.5 h-1.5 bg-blue-500 rounded-full" />
+          <div className="absolute bottom-40 left-16 w-1 h-1 bg-purple-500 rounded-full" />
+          <div className="absolute top-32 right-1/3 w-1 h-1 bg-emerald-400 rounded-full" />
+        </div>
+        
+        <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="grid md:grid-cols-2 gap-12 items-start">
               {/* Left Side: Content */}
               <div className="space-y-8">
-                <h2 className="text-4xl md:text-5xl font-heading font-bold">
-                  From Product Shot to Campaign-Ready in Minutes
-                </h2>
+                <div>
+                  <p className="text-muted-foreground text-sm mb-4">How it works</p>
+                  <h2 className="text-4xl md:text-5xl font-heading font-bold leading-tight">
+                    From product shot to campaign-ready in minutes.
+                  </h2>
+                </div>
                 
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <Check className="h-4 w-4 text-primary" />
+                <div className="space-y-0">
+                  {/* Step 1 */}
+                  <div className="flex gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center flex-shrink-0 text-white font-semibold text-sm ring-4 ring-emerald-500/20">
+                        1
+                      </div>
+                      <div className="w-0.5 h-16 bg-gradient-to-b from-emerald-500 to-emerald-500/0 mt-2" />
                     </div>
-                    <p className="text-lg text-muted-foreground">
-                      Upload your product photo—no studio setup required
-                    </p>
+                    <div className="pb-6">
+                      <h3 className="text-emerald-400 font-semibold text-lg mb-1">Upload your product photo</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        Shoot on a simple background, then drag & drop your flat lay image to start.
+                      </p>
+                    </div>
                   </div>
                   
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <Check className="h-4 w-4 text-primary" />
+                  {/* Step 2 */}
+                  <div className="flex gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0 text-white font-semibold text-sm ring-4 ring-blue-500/20">
+                        2
+                      </div>
+                      <div className="w-0.5 h-16 bg-gradient-to-b from-blue-500 to-blue-500/0 mt-2" />
                     </div>
-                    <p className="text-lg text-muted-foreground">
-                      AI transforms it into professional fashion photography
-                    </p>
+                    <div className="pb-6">
+                      <h3 className="text-blue-400 font-semibold text-lg mb-1">Choose model, pose & setting</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        Pick body type, skin tone, location and camera style that match your brand guidelines.
+                      </p>
+                    </div>
                   </div>
                   
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <Check className="h-4 w-4 text-primary" />
+                  {/* Step 3 */}
+                  <div className="flex gap-4">
+                    <div className="flex flex-col items-center">
+                      <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center flex-shrink-0 text-white font-semibold text-sm ring-4 ring-purple-500/20">
+                        3
+                      </div>
                     </div>
-                    <p className="text-lg text-muted-foreground">
-                      Choose from multiple styles, backgrounds, and lighting
-                    </p>
-                  </div>
-                  
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <Check className="h-4 w-4 text-primary" />
+                    <div>
+                      <h3 className="text-purple-400 font-semibold text-lg mb-1">Generate, review & export</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        Create entire campaigns in a few clicks, then export ready-to-ship images for your store and ads.
+                      </p>
                     </div>
-                    <p className="text-lg text-muted-foreground">
-                      Download and share—ready for Instagram, ads, and more
-                    </p>
                   </div>
                 </div>
                 
-                <div>
-                  <Button size="lg" className="text-lg px-8 py-6" onClick={() => navigate(user ? "/dashboard" : "/signup")}>
-                    Try It Now
+                <div className="pt-4 space-y-3">
+                  <h3 className="text-foreground font-semibold">Replace weeks of shoots with one upload.</h3>
+                  <p className="text-muted-foreground text-sm">
+                    No model bookings, no studio fees. Just on-brand, production-ready imagery that scales with your catalog.
+                  </p>
+                  <Button size="lg" className="mt-4 bg-emerald-500 hover:bg-emerald-600 text-white" onClick={() => navigate(user ? "/dashboard" : "/signup")}>
+                    See it in action
                   </Button>
                 </div>
               </div>
               
-              {/* Right Side: Product Photo Placeholder */}
+              {/* Right Side: Product Photo with Floating Thumbnail */}
               <div className="flex justify-center md:justify-end">
-                <div className="w-[300px] h-[420px] bg-gradient-to-br from-primary-purple/20 to-accent/20 rounded-lg border border-border overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                    <Camera className="h-12 w-12" />
+                <div className="relative">
+                  {/* Main Photo */}
+                  <div className="w-[320px] h-[420px] bg-gradient-to-br from-gray-200 to-gray-100 rounded-lg overflow-hidden shadow-2xl">
+                    <img src={heroPhoto2} alt="Fashion model" className="w-full h-full object-cover" />
+                  </div>
+                  
+                  {/* Floating Product Thumbnail */}
+                  <div 
+                    className="absolute -top-4 -right-4 w-[100px] h-[120px] bg-black rounded-lg shadow-2xl p-2 transition-transform hover:scale-105"
+                    style={{ transform: 'rotate(8deg)' }}
+                  >
+                    <img src={heroThumbnail2} alt="Product thumbnail" className="w-full h-full object-contain rounded" />
                   </div>
                 </div>
               </div>
