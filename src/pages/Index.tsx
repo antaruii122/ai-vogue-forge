@@ -6,6 +6,7 @@ import { Upload, Wand2, Download, Camera, Video, Package, Sparkles, X, Star, Che
 import { uploadVideoToStorage } from "@/utils/uploadVideoToStorage";
 import tetesImage from "@/assets/tetes.png";
 import heroPhoto1 from "@/assets/hero-photo-1.png";
+import heroThumbnail1 from "@/assets/hero-thumbnail-1.png";
 import { VideoComparisonCard } from "@/components/VideoComparisonCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -263,7 +264,7 @@ const Index = () => {
                   className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg"
                   style={{ transform: 'rotate(8deg)' }}
                 >
-                  <div className="w-full h-full bg-gradient-to-br from-muted/50 to-muted rounded-sm" />
+                  <img src={heroThumbnail1} alt="Product thumbnail 1" className="w-full h-full object-cover rounded-sm" />
                 </div>
               </div>
               
