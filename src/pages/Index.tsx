@@ -499,9 +499,22 @@ const Index = () => {
                     <div className="text-gray-500">•••</div>
                   </div>
                   
-                  {/* Main Image */}
-                  <div className="aspect-square bg-gradient-to-br from-gray-700 to-gray-800 overflow-hidden">
-                    <img src={heroPhoto2} alt="Fashion content" className="w-full h-full object-cover" />
+                  {/* Main Video */}
+                  <div className="aspect-square bg-gradient-to-br from-gray-700 to-gray-800 overflow-hidden relative">
+                    <video 
+                      src="/videos/BOLD.mp4" 
+                      autoPlay 
+                      loop 
+                      muted 
+                      playsInline
+                      className="w-full h-full object-cover"
+                    />
+                    {/* Play indicator overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                      <div className="w-16 h-16 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                        <Video className="w-8 h-8 text-white" />
+                      </div>
+                    </div>
                   </div>
                   
                   {/* CTA Button */}
