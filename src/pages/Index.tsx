@@ -256,13 +256,13 @@ const Index = () => {
             </div>
 
             {/* Horizontal Grid of 4 Polaroid-Style Photos */}
-            <div className="flex justify-center items-center gap-2 md:gap-4 max-w-5xl mx-auto -space-x-8 md:-space-x-12">
+            <div className="flex justify-center items-center gap-4 md:gap-6 max-w-6xl mx-auto">
               {/* Photo 1 */}
               <div 
-                className="relative bg-white p-3 md:p-4 rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-10"
+                className="relative bg-white p-1 rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-10"
                 style={{ transform: 'rotate(-5deg)' }}
               >
-                <div className="w-[140px] md:w-[200px] h-[180px] md:h-[260px] bg-gradient-to-br from-primary/30 to-primary-purple/30 rounded-sm overflow-hidden">
+                <div className="w-[180px] md:w-[260px] h-[230px] md:h-[340px] rounded-sm overflow-hidden">
                   <img src={heroPhoto1} alt="Fashion photo 1" className="w-full h-full object-cover" />
                 </div>
                 {/* Thumbnail Slot */}
@@ -276,10 +276,10 @@ const Index = () => {
               
               {/* Photo 2 */}
               <div 
-                className="relative bg-white p-3 md:p-4 rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-20"
+                className="relative bg-white p-1 rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-20"
                 style={{ transform: 'rotate(3deg)' }}
               >
-                <div className="w-[140px] md:w-[200px] h-[180px] md:h-[260px] bg-gradient-to-br from-primary-purple/30 to-accent/30 rounded-sm overflow-hidden">
+                <div className="w-[180px] md:w-[260px] h-[230px] md:h-[340px] rounded-sm overflow-hidden">
                   <img src={heroPhoto2} alt="Fashion photo 2" className="w-full h-full object-cover" />
                 </div>
                 {/* Thumbnail Slot */}
@@ -293,10 +293,10 @@ const Index = () => {
               
               {/* Photo 3 */}
               <div 
-                className="relative bg-white p-3 md:p-4 rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-30"
+                className="relative bg-white p-1 rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-30"
                 style={{ transform: 'rotate(-4deg)' }}
               >
-                <div className="w-[140px] md:w-[200px] h-[180px] md:h-[260px] bg-gradient-to-br from-accent/30 to-primary/30 rounded-sm overflow-hidden">
+                <div className="w-[180px] md:w-[260px] h-[230px] md:h-[340px] rounded-sm overflow-hidden">
                   <img src={heroPhoto3} alt="Fashion photo 3" className="w-full h-full object-cover" />
                 </div>
                 {/* Thumbnail Slot */}
@@ -310,10 +310,10 @@ const Index = () => {
               
               {/* Photo 4 */}
               <div 
-                className="relative bg-white p-3 md:p-4 rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-40"
+                className="relative bg-white p-1 rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-40"
                 style={{ transform: 'rotate(6deg)' }}
               >
-                <div className="w-[140px] md:w-[200px] h-[180px] md:h-[260px] bg-gradient-to-br from-primary/30 to-accent/30 rounded-sm overflow-hidden">
+                <div className="w-[180px] md:w-[260px] h-[230px] md:h-[340px] rounded-sm overflow-hidden">
                   <img src={heroPhoto4} alt="Fashion photo 4" className="w-full h-full object-cover" />
                 </div>
                 {/* Thumbnail Slot */}
