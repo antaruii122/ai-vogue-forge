@@ -434,59 +434,157 @@ const Index = () => {
       </section>
 
       {/* Turn Product Photos into Fashion Videos */}
-      <section className="py-20 bg-background-lighter">
+      <section className="py-20" style={{ background: 'linear-gradient(135deg, #0a0a12 0%, #0d1117 100%)' }}>
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="grid md:grid-cols-2 gap-12 items-center">
-              {/* Left Side: Phone Mockup */}
+              {/* Left Side: Social Media Mockup */}
               <div className="flex justify-center md:justify-start">
-                <div className="relative">
-                  {/* Phone Frame */}
-                  <div className="w-[320px] h-[640px] bg-gray-900 rounded-[3rem] border-[12px] border-gray-800 shadow-2xl overflow-hidden">
-                    {/* Notch */}
-                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-1/3 h-6 bg-gray-800 rounded-b-2xl z-10" />
-                    
-                    {/* Screen Content - Video Placeholder */}
-                    <div className="w-full h-full bg-gradient-to-br from-primary/30 to-primary-purple/30 flex items-center justify-center">
-                      <Video className="h-16 w-16 text-muted-foreground" />
+                <div className="w-[380px] bg-[#1a1a1a] rounded-2xl shadow-2xl overflow-hidden border border-gray-800">
+                  {/* Top Header */}
+                  <div className="px-4 py-3 flex items-center justify-between border-b border-gray-800">
+                    <div className="flex items-center gap-2">
+                      <span className="text-white font-semibold">FashionAI</span>
+                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
                     </div>
+                    <div className="flex items-center gap-1 text-gray-400 text-sm">
+                      <span>9:41</span>
+                      <div className="w-6 h-3 bg-gray-600 rounded-sm ml-1" />
+                    </div>
+                  </div>
+                  
+                  {/* Stories Row */}
+                  <div className="px-4 py-3 flex gap-4 border-b border-gray-800">
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 p-0.5">
+                        <div className="w-full h-full rounded-full bg-[#1a1a1a] flex items-center justify-center text-cyan-400 text-xs font-bold">
+                          FA
+                        </div>
+                      </div>
+                      <span className="text-gray-400 text-xs">You</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 p-0.5 overflow-hidden">
+                        <img src={heroPhoto1} alt="Story" className="w-full h-full rounded-full object-cover" />
+                      </div>
+                      <span className="text-gray-400 text-xs">Luma</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-yellow-500 to-orange-500 p-0.5 overflow-hidden">
+                        <img src={heroPhoto3} alt="Story" className="w-full h-full rounded-full object-cover" />
+                      </div>
+                      <span className="text-gray-400 text-xs">Radius</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-1">
+                      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-green-500 to-teal-500 p-0.5 overflow-hidden">
+                        <img src={heroPhoto4} alt="Story" className="w-full h-full rounded-full object-cover" />
+                      </div>
+                      <span className="text-gray-400 text-xs">Halo</span>
+                    </div>
+                  </div>
+                  
+                  {/* Post Header */}
+                  <div className="px-4 py-3 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white text-sm font-bold">
+                        FA
+                      </div>
+                      <div>
+                        <p className="text-white font-semibold text-sm">FashionAI Studio</p>
+                        <p className="text-gray-500 text-xs">Sponsored • Fashion</p>
+                      </div>
+                    </div>
+                    <div className="text-gray-500">•••</div>
+                  </div>
+                  
+                  {/* Main Image */}
+                  <div className="aspect-square bg-gradient-to-br from-gray-700 to-gray-800 overflow-hidden">
+                    <img src={heroPhoto2} alt="Fashion content" className="w-full h-full object-cover" />
+                  </div>
+                  
+                  {/* CTA Button */}
+                  <div className="px-4 py-3">
+                    <button className="w-full bg-cyan-500 hover:bg-cyan-600 text-white py-2.5 rounded-lg font-medium flex items-center justify-between px-4 transition-colors">
+                      <span>Launch your visual campaign</span>
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                      </svg>
+                    </button>
+                  </div>
+                  
+                  {/* Stats */}
+                  <div className="px-4 py-3 flex items-center justify-between text-sm border-t border-gray-800">
+                    <span className="text-gray-400">312 likes • 8 comments</span>
+                    <span className="text-cyan-400 hover:text-cyan-300 cursor-pointer">View insights</span>
                   </div>
                 </div>
               </div>
               
               {/* Right Side: Content */}
-              <div className="space-y-6">
-                <h2 className="text-4xl md:text-5xl font-heading font-bold">
-                  Turn Product Photos into Scroll-Stopping Fashion Videos
-                </h2>
+              <div className="space-y-8">
+                <div>
+                  <p className="text-gray-500 text-sm tracking-widest uppercase mb-4">Motion from stills</p>
+                  <h2 className="text-4xl md:text-5xl font-heading font-bold leading-tight mb-6">
+                    Turn Product Photos into Scroll-Stopping Fashion Videos.
+                  </h2>
+                  <p className="text-muted-foreground text-lg leading-relaxed">
+                    Feed any still into our motion engine, describe the mood in a sentence, and generate vertical-ready videos that feel like full productions – without reshoots.
+                  </p>
+                </div>
                 
-                <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <Check className="h-4 w-4 text-primary" />
+                <div className="space-y-6">
+                  {/* Step 1 */}
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full bg-blue-900/50 border border-blue-700/50 flex items-center justify-center flex-shrink-0 text-white font-semibold text-sm">
+                      1
                     </div>
-                    <p className="text-lg text-muted-foreground">
-                      Choose from 360° spins, zoom effects, and dynamic transitions
-                    </p>
+                    <div>
+                      <h3 className="text-white font-semibold mb-1">Pick your hero still</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        Start from any shot you love – a lookbook pose, e-commerce angle, or campaign hero image.
+                      </p>
+                    </div>
                   </div>
                   
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <Check className="h-4 w-4 text-primary" />
+                  {/* Step 2 */}
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full bg-blue-900/50 border border-blue-700/50 flex items-center justify-center flex-shrink-0 text-white font-semibold text-sm">
+                      2
                     </div>
-                    <p className="text-lg text-muted-foreground">
-                      Perfect for Instagram Reels, TikTok, and video ads
-                    </p>
+                    <div>
+                      <h3 className="text-white font-semibold mb-1">Type a motion prompt</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        Describe the movement you want – e.g. "slow pan down, soft camera shake, studio lights pulsing to the beat".
+                      </p>
+                    </div>
                   </div>
                   
-                  <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
-                      <Check className="h-4 w-4 text-primary" />
+                  {/* Step 3 */}
+                  <div className="flex gap-4">
+                    <div className="w-8 h-8 rounded-full bg-blue-900/50 border border-blue-700/50 flex items-center justify-center flex-shrink-0 text-white font-semibold text-sm">
+                      3
                     </div>
-                    <p className="text-lg text-muted-foreground">
-                      Generate professional videos in seconds, no editing needed
-                    </p>
+                    <div>
+                      <h3 className="text-white font-semibold mb-1">Export ready-to-post clips</h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        Download vertical videos in the right aspect ratios for Reels, TikTok, and Stories – no extra editing needed.
+                      </p>
+                    </div>
                   </div>
+                </div>
+                
+                <div className="flex items-center gap-4 pt-4">
+                  <Button 
+                    variant="outline" 
+                    size="lg" 
+                    className="border-gray-600 text-white hover:bg-gray-800"
+                    onClick={() => navigate(user ? "/video-generation" : "/signup")}
+                  >
+                    Generate a sample video
+                  </Button>
+                  <span className="text-gray-500 text-sm">Built for AI models, optimized for social feeds.</span>
                 </div>
               </div>
             </div>
