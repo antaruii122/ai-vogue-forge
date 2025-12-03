@@ -259,7 +259,7 @@ const Index = () => {
             <div className="flex justify-center items-center gap-4 md:gap-6 max-w-6xl mx-auto">
               {/* Photo 1 */}
               <div 
-                className="relative bg-white p-1 rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-10"
+                className="relative rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-10"
                 style={{ transform: 'rotate(-5deg)' }}
               >
                 <div className="w-[180px] md:w-[260px] h-[230px] md:h-[340px] rounded-sm overflow-hidden">
@@ -276,7 +276,7 @@ const Index = () => {
               
               {/* Photo 2 */}
               <div 
-                className="relative bg-white p-1 rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-20"
+                className="relative rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-20"
                 style={{ transform: 'rotate(3deg)' }}
               >
                 <div className="w-[180px] md:w-[260px] h-[230px] md:h-[340px] rounded-sm overflow-hidden">
@@ -293,7 +293,7 @@ const Index = () => {
               
               {/* Photo 3 */}
               <div 
-                className="relative bg-white p-1 rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-30"
+                className="relative rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-30"
                 style={{ transform: 'rotate(-4deg)' }}
               >
                 <div className="w-[180px] md:w-[260px] h-[230px] md:h-[340px] rounded-sm overflow-hidden">
@@ -310,7 +310,7 @@ const Index = () => {
               
               {/* Photo 4 */}
               <div 
-                className="relative bg-white p-1 rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-40"
+                className="relative rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-40"
                 style={{ transform: 'rotate(6deg)' }}
               >
                 <div className="w-[180px] md:w-[260px] h-[230px] md:h-[340px] rounded-sm overflow-hidden">
