@@ -20,12 +20,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       { name: "Product Photography", badge: null, route: "/tools/product-photography" },
     ],
     resources: [
-      { name: "Portfolio", badge: null, route: "#" },
+      { name: "Portfolio", badge: null, route: "/portfolio" },
     ],
     profile: [
-      { name: "Profile", badge: null, route: "#" },
-      { name: "Billing", badge: null, route: "#" },
-      { name: "API Keys", badge: null, route: "#" },
+      { name: "Profile", badge: null, route: "/profile" },
+      { name: "Billing", badge: null, route: "/billing" },
     ],
   };
 

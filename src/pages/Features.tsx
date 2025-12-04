@@ -327,7 +327,7 @@ const Features = () => {
           {/* Bottom */}
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-border">
             <p className="text-sm text-muted-foreground">
-              © 2024 AI Fashion Studio. All rights reserved.
+              © 2025 AI Fashion Studio. All rights reserved.
             </p>
             <div className="flex items-center gap-4">
               <Twitter className="w-5 h-5 text-muted-foreground hover:text-foreground transition-colors cursor-pointer" />
