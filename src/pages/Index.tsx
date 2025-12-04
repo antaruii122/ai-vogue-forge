@@ -603,8 +603,8 @@ const Index = () => {
         {/* Top Row - Scroll Left */}
         <div className="relative mb-6">
           <div className="flex gap-6 animate-scroll-left">
-            {/* Duplicate images for seamless loop */}
-            {[...Array(3)].map((_, loop) => [carousel1, carousel6, carousel3, carousel8, carousel5, carousel7, carousel2].map((img, i) => <div key={`top-${loop}-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
+            {/* Duplicate images for seamless loop - TOP ROW ONLY */}
+            {[...Array(4)].map((_, loop) => [carousel1, carousel2, carousel3, carousel4].map((img, i) => <div key={`top-${loop}-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
                 <img src={img} alt={`Fashion photo ${i + 1}`} className="w-full h-full object-cover" />
               </div>))}
           </div>
@@ -613,8 +613,8 @@ const Index = () => {
         {/* Bottom Row - Scroll Right */}
         <div className="relative">
           <div className="flex gap-6 animate-scroll-right">
-            {/* Duplicate images for seamless loop */}
-            {[...Array(3)].map((_, loop) => [carousel9, carousel4, carousel7, carousel2, carousel8, carousel3, carousel6, carousel1].map((img, i) => <div key={`bottom-${loop}-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
+            {/* Duplicate images for seamless loop - BOTTOM ROW ONLY (different images) */}
+            {[...Array(4)].map((_, loop) => [carousel5, carousel6, carousel7, carousel8, carousel9].map((img, i) => <div key={`bottom-${loop}-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
                 <img src={img} alt={`Fashion photo ${i + 1}`} className="w-full h-full object-cover" />
               </div>))}
           </div>
