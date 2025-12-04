@@ -128,29 +128,41 @@ const Index = () => {
 
   const categories = ["dresses", "pants", "tops", "graphic t-shirts", "outerwear", "baby & kids clothing", "men's clothing", "women's clothing", "jewellery", "handbags", "sunglasses", "hats", "skincare", "makeup", "beverage", "health & wellness", "pet products", "electronics"];
   const pricingPlans = [{
-    name: "Essentials",
-    price: "$9",
-    credits: "10 credits",
+    number: "01",
+    name: "Trial",
+    subtitle: "Try risk-free",
+    price: "$6",
+    priceLabel: "One time payment",
+    saveBadge: null,
     popular: false,
-    features: ["Up to 5 images", "Or up to 2 videos", "Unlimited fashion model customization from ethnicity, poses, and sizes", "Catalogue of templates, props, and avatars to choose from"]
+    features: ["20 credits = 20 images", "1K resolution"]
   }, {
-    name: "Starter",
-    price: "$30",
-    credits: "30 credits",
+    number: "02",
+    name: "Basic",
+    subtitle: "The essentials to get started",
+    price: "$35",
+    priceLabel: "One time payment",
+    saveBadge: "Save 7.4%",
     popular: false,
-    features: ["Up to 15 images", "Or up to 7 videos", "Unlimited fashion model customization from ethnicity, poses, and sizes", "Catalogue of templates, props, and avatars to choose from", "Unlimited access to CreativeAgent"]
+    features: ["140 credits = 140 images", "1K resolution", "Image editing with prompts"]
   }, {
-    name: "Advanced",
-    price: "$100",
-    credits: "200 credits",
+    number: "03",
+    name: "Professional",
+    subtitle: "For growing businesses",
+    price: "$99",
+    priceLabel: "One time payment",
+    saveBadge: "Save 18.5%",
     popular: true,
-    features: ["Up to 100 images", "Or up to 50 videos", "Unlimited fashion model customization from ethnicity, poses, and sizes", "Catalogue of templates, props, and avatars to choose from", "Unlimited access to CreativeAgent"]
+    features: ["450 credits = 450 images", "1K resolution", "Video generation", "Image editing with prompts"]
   }, {
-    name: "Pro",
-    price: "$199",
-    credits: "400 credits",
+    number: "04",
+    name: "Enterprise",
+    subtitle: "For large businesses",
+    price: "$450",
+    priceLabel: "One time payment",
+    saveBadge: "Save 27.5%",
     popular: false,
-    features: ["Up to 200 images", "Or up to 100 videos", "Unlimited fashion model customization from ethnicity, poses, and sizes", "Catalogue of templates, props, and avatars to choose from", "Unlimited access to CreativeAgent"]
+    features: ["2300 credits = 2300 images", "2K resolution", "Video generation", "Image editing with prompts"]
   }];
   return <div className="min-h-screen bg-background">
       {/* Header */}
@@ -730,50 +742,104 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12 space-y-4">
             <h2 className="text-4xl font-heading font-bold">Pricing</h2>
-            <p className="text-2xl text-muted-foreground">Replace $100,000 shoots for $9/month.</p>
+            <p className="text-2xl text-muted-foreground">Replace $100,000 shoots with one-time credit packs.</p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            {pricingPlans.map((plan, i) => <Card key={i} className={`relative overflow-hidden ${plan.popular ? "border-2 border-primary bg-gradient-to-b from-primary/5 via-primary-purple/5 to-transparent" : "border border-border"}`}>
-                {plan.popular && <div className="absolute -top-3 right-4">
-                    <span className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-xs font-medium">
-                      Most popular
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+            {pricingPlans.map((plan, i) => (
+              <div 
+                key={i} 
+                className={`relative rounded-2xl p-6 ${
+                  plan.popular 
+                    ? "bg-gradient-to-br from-[#0c1a2e] to-[#0f2847] border border-cyan-500/30" 
+                    : "bg-gradient-to-br from-[#0d1117] to-[#161b22] border border-gray-700/50"
+                }`}
+              >
+                {/* Top row: Number, dots, Popular badge / Get started */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <span className="text-gray-500 text-sm font-medium">{plan.number}</span>
+                    <div className="flex gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
+                    </div>
+                  </div>
+                  {plan.popular ? (
+                    <span className="bg-cyan-500/20 text-cyan-400 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5">
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Popular
                     </span>
-                  </div>}
-                <CardHeader className="space-y-6 pb-8">
-                  <div className="space-y-2">
-                    <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-5xl font-bold">{plan.price}</span>
-                      <span className="text-muted-foreground">/month</span>
-                    </div>
-                  </div>
-                  
-                  <Button className={`w-full ${plan.popular ? "" : "bg-secondary hover:bg-secondary/80"}`} variant={plan.popular ? "default" : "secondary"}>
-                    Get Started
-                  </Button>
-                  
-                  <div className="space-y-4 pt-4">
-                    <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                        <Check className="h-3 w-3 text-primary" />
-                      </div>
-                      <span className="font-semibold">{plan.credits}</span>
-                    </div>
-                    
-                    {plan.features.map((feature, j) => <div key={j} className="flex items-start gap-3">
-                        <div className="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Check className="h-3 w-3 text-primary" />
+                  ) : (
+                    <button className="text-gray-400 hover:text-white text-xs flex items-center gap-1 transition-colors">
+                      <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Get started
+                    </button>
+                  )}
+                </div>
+
+                {/* Plan name and subtitle */}
+                <div className="mb-4">
+                  <h3 className="text-2xl font-bold text-white mb-1">{plan.name}</h3>
+                  <p className="text-gray-400 text-sm">{plan.subtitle}</p>
+                </div>
+
+                {/* Price */}
+                <div className="mb-2">
+                  <span className="text-4xl font-bold text-white">{plan.price}</span>
+                  <span className="text-gray-400 text-sm ml-2">{plan.priceLabel}</span>
+                  {plan.saveBadge && (
+                    <span className="ml-3 bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded text-xs font-medium">
+                      {plan.saveBadge}
+                    </span>
+                  )}
+                </div>
+
+                {/* Refill text */}
+                <p className="text-gray-500 text-sm mb-6">Refill as needed</p>
+
+                {/* CTA Button */}
+                <Button 
+                  className={`w-full mb-8 ${
+                    plan.popular 
+                      ? "bg-cyan-500 hover:bg-cyan-600 text-white" 
+                      : "bg-gray-800 hover:bg-gray-700 text-white border border-gray-600"
+                  }`}
+                >
+                  Get Started
+                  <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Button>
+
+                {/* What's included */}
+                <div>
+                  <p className={`text-xs font-semibold tracking-wider mb-4 ${plan.popular ? "text-cyan-400" : "text-gray-400"}`}>
+                    WHAT'S INCLUDED
+                  </p>
+                  <div className="space-y-3">
+                    {plan.features.map((feature, j) => (
+                      <div key={j} className="flex items-center gap-3">
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
+                          plan.popular ? "bg-cyan-500/20" : "bg-cyan-500/10"
+                        }`}>
+                          <Check className="h-3 w-3 text-cyan-400" />
                         </div>
-                        <span className="text-sm text-muted-foreground leading-relaxed">{feature}</span>
-                      </div>)}
+                        <span className="text-gray-300 text-sm">{feature}</span>
+                      </div>
+                    ))}
                   </div>
-                </CardHeader>
-              </Card>)}
+                </div>
+              </div>
+            ))}
           </div>
 
           <div className="text-center space-y-4">
-            <p className="text-muted-foreground">Need more than 400 credits? Contact us to learn about our enterprise plans.</p>
+            <p className="text-muted-foreground">Need custom volume? Contact us for tailored solutions.</p>
             <Button variant="default" size="lg">Contact Sales</Button>
           </div>
         </div>
