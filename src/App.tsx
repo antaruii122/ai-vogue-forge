@@ -26,6 +26,7 @@ const MyImages = lazy(() => import("./pages/MyImages"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Billing = lazy(() => import("./pages/Billing"));
 const Portfolio = lazy(() => import("./pages/Portfolio"));
+const Features = lazy(() => import("./pages/Features"));
 const ProtectedRoute = lazy(() => import("@/components/ProtectedRoute"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -46,6 +47,7 @@ const AppRoutes = () => (
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Index />} />
+        <Route path="/features" element={<Features />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
