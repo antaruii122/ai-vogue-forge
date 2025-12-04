@@ -16,19 +16,14 @@ import heroThumbnail4 from "@/assets/hero-thumbnail-4.png";
 import { VideoComparisonCard } from "@/components/VideoComparisonCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 const Index = () => {
   const [showAnnouncement, setShowAnnouncement] = useState(true);
   const [user, setUser] = useState<any>(null);
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [videoUrl, setVideoUrl] = useState<string>('/videos/BOLD.mp4');
   const [heroVideos, setHeroVideos] = useState({
     left1: '',
@@ -38,21 +33,26 @@ const Index = () => {
     right2: '',
     right3: ''
   });
-
   useEffect(() => {
     // Check auth state
     const checkAuth = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: {
+          user
+        }
+      } = await supabase.auth.getUser();
       setUser(user);
     };
     checkAuth();
 
     // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setUser(session?.user ?? null);
+    const {
+      data: {
+        subscription
       }
-    );
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
 
     // Function to load videos from localStorage
     const loadVideos = () => {
@@ -82,7 +82,7 @@ const Index = () => {
       }
     };
     window.addEventListener('storage', handleStorage);
-    
+
     // Legacy support for old video upload
     const savedHeroVideo = localStorage.getItem('video_hero');
     if (savedHeroVideo) {
@@ -98,34 +98,31 @@ const Index = () => {
       };
       initVideo();
     }
-
     return () => {
       subscription.unsubscribe();
       window.removeEventListener('focus', handleFocus);
       window.removeEventListener('storage', handleStorage);
     };
   }, []);
-
   const handleLogout = async () => {
     try {
-      const { error } = await supabase.auth.signOut();
+      const {
+        error
+      } = await supabase.auth.signOut();
       if (error) throw error;
-
       toast({
         title: "Logged out",
-        description: "You've been successfully logged out",
+        description: "You've been successfully logged out"
       });
-
       setUser(null);
     } catch (error) {
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to log out",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const categories = ["dresses", "pants", "tops", "graphic t-shirts", "outerwear", "baby & kids clothing", "men's clothing", "women's clothing", "jewellery", "handbags", "sunglasses", "hats", "skincare", "makeup", "beverage", "health & wellness", "pet products", "electronics"];
   const pricingPlans = [{
     number: "01",
@@ -181,22 +178,11 @@ const Index = () => {
             </nav>
 
             <div className="flex items-center gap-4">
-              {user ? (
-                <>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => navigate("/my-images")}
-                    className="hidden md:flex"
-                  >
+              {user ? <>
+                  <Button variant="ghost" size="sm" onClick={() => navigate("/my-images")} className="hidden md:flex">
                     My Images
                   </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => navigate("/generator")}
-                    className="hidden md:flex"
-                  >
+                  <Button variant="ghost" size="sm" onClick={() => navigate("/generator")} className="hidden md:flex">
                     Generator
                   </Button>
                   <DropdownMenu>
@@ -226,17 +212,14 @@ const Index = () => {
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                </>
-              ) : (
-                <>
+                </> : <>
                   <Button variant="ghost" size="sm" onClick={() => navigate("/login")}>
                     Log In
                   </Button>
                   <Button size="sm" onClick={() => navigate("/signup")}>
                     Sign Up
                   </Button>
-                </>
-              )}
+                </>}
             </div>
           </div>
         </div>
@@ -270,69 +253,61 @@ const Index = () => {
             {/* Horizontal Grid of 4 Polaroid-Style Photos */}
             <div className="flex justify-center items-center gap-4 md:gap-6 max-w-6xl mx-auto">
               {/* Photo 1 */}
-              <div 
-                className="relative rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-10"
-                style={{ transform: 'rotate(-5deg)' }}
-              >
+              <div className="relative rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-10" style={{
+              transform: 'rotate(-5deg)'
+            }}>
                 <div className="w-[180px] md:w-[260px] h-[230px] md:h-[340px] rounded-sm overflow-hidden">
                   <img src={heroPhoto1} alt="Fashion photo 1" className="w-full h-full object-cover" />
                 </div>
                 {/* Thumbnail Slot */}
-                <div 
-                  className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg"
-                  style={{ transform: 'rotate(8deg)' }}
-                >
+                <div className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg" style={{
+                transform: 'rotate(8deg)'
+              }}>
                   <img src={heroThumbnail1} alt="Product thumbnail 1" className="w-full h-full object-cover rounded-sm" />
                 </div>
               </div>
               
               {/* Photo 2 */}
-              <div 
-                className="relative rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-20"
-                style={{ transform: 'rotate(3deg)' }}
-              >
+              <div className="relative rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-20" style={{
+              transform: 'rotate(3deg)'
+            }}>
                 <div className="w-[180px] md:w-[260px] h-[230px] md:h-[340px] rounded-sm overflow-hidden">
                   <img src={heroPhoto2} alt="Fashion photo 2" className="w-full h-full object-cover" />
                 </div>
                 {/* Thumbnail Slot */}
-                <div 
-                  className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg"
-                  style={{ transform: 'rotate(-6deg)' }}
-                >
+                <div className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg" style={{
+                transform: 'rotate(-6deg)'
+              }}>
                   <img src={heroThumbnail2} alt="Product thumbnail 2" className="w-full h-full object-cover rounded-sm" />
                 </div>
               </div>
               
               {/* Photo 3 */}
-              <div 
-                className="relative rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-30"
-                style={{ transform: 'rotate(-4deg)' }}
-              >
+              <div className="relative rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-30" style={{
+              transform: 'rotate(-4deg)'
+            }}>
                 <div className="w-[180px] md:w-[260px] h-[230px] md:h-[340px] rounded-sm overflow-hidden">
                   <img src={heroPhoto3} alt="Fashion photo 3" className="w-full h-full object-cover" />
                 </div>
                 {/* Thumbnail Slot */}
-                <div 
-                  className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg"
-                  style={{ transform: 'rotate(10deg)' }}
-                >
+                <div className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg" style={{
+                transform: 'rotate(10deg)'
+              }}>
                   <img src={heroThumbnail3} alt="Product thumbnail 3" className="w-full h-full object-cover rounded-sm" />
                 </div>
               </div>
               
               {/* Photo 4 */}
-              <div 
-                className="relative rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-40"
-                style={{ transform: 'rotate(6deg)' }}
-              >
+              <div className="relative rounded-sm shadow-2xl transition-all duration-300 hover:-translate-y-4 hover:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)] cursor-pointer z-40" style={{
+              transform: 'rotate(6deg)'
+            }}>
                 <div className="w-[180px] md:w-[260px] h-[230px] md:h-[340px] rounded-sm overflow-hidden">
                   <img src={heroPhoto4} alt="Fashion photo 4" className="w-full h-full object-cover" />
                 </div>
                 {/* Thumbnail Slot */}
-                <div 
-                  className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg"
-                  style={{ transform: 'rotate(-5deg)' }}
-                >
+                <div className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg" style={{
+                transform: 'rotate(-5deg)'
+              }}>
                   <img src={heroThumbnail4} alt="Product thumbnail 4" className="w-full h-full object-cover rounded-sm" />
                 </div>
               </div>
@@ -342,7 +317,9 @@ const Index = () => {
       </section>
 
       {/* From Product Shot to Campaign-Ready */}
-      <section className="py-20 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #0a0a1f 0%, #0f1b2e 100%)' }}>
+      <section className="py-20 relative overflow-hidden" style={{
+      background: 'linear-gradient(135deg, #0a0a1f 0%, #0f1b2e 100%)'
+    }}>
         {/* Decorative dots */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-20 left-10 w-1 h-1 bg-emerald-500 rounded-full" />
@@ -428,15 +405,14 @@ const Index = () => {
                 <div className="relative">
                   {/* Main Photo */}
                   <div className="w-[320px] h-[420px] bg-gradient-to-br from-gray-200 to-gray-100 rounded-lg overflow-hidden shadow-2xl">
-                    <img src={heroPhoto2} alt="Fashion model" className="w-full h-full object-cover" />
+                    <img alt="Fashion model" className="w-full h-full object-cover" src="/lovable-uploads/04190a85-64ac-4f4c-b621-55747c404a91.png" />
                   </div>
                   
                   {/* Floating Product Thumbnail */}
-                  <div 
-                    className="absolute -top-4 -right-4 w-[100px] h-[120px] bg-black rounded-lg shadow-2xl p-2 transition-transform hover:scale-105"
-                    style={{ transform: 'rotate(8deg)' }}
-                  >
-                    <img src={heroThumbnail2} alt="Product thumbnail" className="w-full h-full object-contain rounded" />
+                  <div className="absolute -top-4 -right-4 w-[100px] h-[120px] bg-black rounded-lg shadow-2xl p-2 transition-transform hover:scale-105" style={{
+                  transform: 'rotate(8deg)'
+                }}>
+                    <img alt="Product thumbnail" className="w-full h-full object-contain rounded" src="/lovable-uploads/213a398e-4463-42ed-833e-1bd09f0cc715.jpg" />
                   </div>
                 </div>
               </div>
@@ -446,7 +422,9 @@ const Index = () => {
       </section>
 
       {/* Turn Product Photos into Fashion Videos */}
-      <section className="py-20" style={{ background: 'linear-gradient(135deg, #0a0a12 0%, #0d1117 100%)' }}>
+      <section className="py-20" style={{
+      background: 'linear-gradient(135deg, #0a0a12 0%, #0d1117 100%)'
+    }}>
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -513,14 +491,7 @@ const Index = () => {
                   
                   {/* Main Video */}
                   <div className="aspect-square bg-gradient-to-br from-gray-700 to-gray-800 overflow-hidden relative">
-                    <video 
-                      src="/videos/BOLD.mp4" 
-                      autoPlay 
-                      loop 
-                      muted 
-                      playsInline
-                      className="w-full h-full object-cover"
-                    />
+                    <video src="/videos/BOLD.mp4" autoPlay loop muted playsInline className="w-full h-full object-cover" />
                     {/* Play indicator overlay */}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                       <div className="w-16 h-16 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
@@ -601,12 +572,7 @@ const Index = () => {
                 </div>
                 
                 <div className="flex items-center gap-4 pt-4">
-                  <Button 
-                    variant="outline" 
-                    size="lg" 
-                    className="border-gray-600 text-white hover:bg-gray-800"
-                    onClick={() => navigate(user ? "/video-generation" : "/signup")}
-                  >
+                  <Button variant="outline" size="lg" className="border-gray-600 text-white hover:bg-gray-800" onClick={() => navigate(user ? "/video-generation" : "/signup")}>
                     Generate a sample video
                   </Button>
                   <span className="text-gray-500 text-sm">Built for AI models, optimized for social feeds.</span>
@@ -629,16 +595,11 @@ const Index = () => {
         <div className="relative mb-6">
           <div className="flex gap-6 animate-scroll-left">
             {/* Duplicate images for seamless loop */}
-            {[...Array(14)].map((_, i) => (
-              <div 
-                key={i}
-                className="flex-shrink-0 w-[300px] h-[420px] bg-gradient-to-br from-primary/20 to-primary-purple/20 rounded-xl border border-border overflow-hidden"
-              >
+            {[...Array(14)].map((_, i) => <div key={i} className="flex-shrink-0 w-[300px] h-[420px] bg-gradient-to-br from-primary/20 to-primary-purple/20 rounded-xl border border-border overflow-hidden">
                 <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                   <Camera className="h-12 w-12" />
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
         
@@ -646,16 +607,11 @@ const Index = () => {
         <div className="relative">
           <div className="flex gap-6 animate-scroll-right">
             {/* Duplicate images for seamless loop */}
-            {[...Array(14)].map((_, i) => (
-              <div 
-                key={i}
-                className="flex-shrink-0 w-[300px] h-[420px] bg-gradient-to-br from-primary-purple/20 to-accent/20 rounded-xl border border-border overflow-hidden"
-              >
+            {[...Array(14)].map((_, i) => <div key={i} className="flex-shrink-0 w-[300px] h-[420px] bg-gradient-to-br from-primary-purple/20 to-accent/20 rounded-xl border border-border overflow-hidden">
                 <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                   <Camera className="h-12 w-12" />
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -703,36 +659,12 @@ const Index = () => {
             <h2 className="text-4xl md:text-5xl font-heading font-bold mb-4">See What You Can Create</h2>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-[400px] sm:max-w-none mx-auto">
-            <VideoComparisonCard
-              imageSrc="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800"
-              videoSrc="/videos/BOLD.mp4"
-              templateName="360° Spin"
-            />
-            <VideoComparisonCard
-              imageSrc="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800"
-              videoSrc="/videos/BOLD.mp4"
-              templateName="Zoom In"
-            />
-            <VideoComparisonCard
-              imageSrc="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=800"
-              videoSrc="/videos/BOLD.mp4"
-              templateName="Model Reveal"
-            />
-            <VideoComparisonCard
-              imageSrc="https://images.unsplash.com/photo-1560343090-f0409e92791a?w=800"
-              videoSrc="/videos/BOLD.mp4"
-              templateName="Lifestyle Scene"
-            />
-            <VideoComparisonCard
-              imageSrc="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=800"
-              videoSrc="/videos/BOLD.mp4"
-              templateName="Product Focus"
-            />
-            <VideoComparisonCard
-              imageSrc="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800"
-              videoSrc="/videos/BOLD.mp4"
-              templateName="Dynamic Motion"
-            />
+            <VideoComparisonCard imageSrc="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800" videoSrc="/videos/BOLD.mp4" templateName="360° Spin" />
+            <VideoComparisonCard imageSrc="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=800" videoSrc="/videos/BOLD.mp4" templateName="Zoom In" />
+            <VideoComparisonCard imageSrc="https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=800" videoSrc="/videos/BOLD.mp4" templateName="Model Reveal" />
+            <VideoComparisonCard imageSrc="https://images.unsplash.com/photo-1560343090-f0409e92791a?w=800" videoSrc="/videos/BOLD.mp4" templateName="Lifestyle Scene" />
+            <VideoComparisonCard imageSrc="https://images.unsplash.com/photo-1491553895911-0055eca6402d?w=800" videoSrc="/videos/BOLD.mp4" templateName="Product Focus" />
+            <VideoComparisonCard imageSrc="https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800" videoSrc="/videos/BOLD.mp4" templateName="Dynamic Motion" />
           </div>
         </div>
       </section>
@@ -746,15 +678,7 @@ const Index = () => {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-            {pricingPlans.map((plan, i) => (
-              <div 
-                key={i} 
-                className={`relative rounded-2xl p-6 ${
-                  plan.popular 
-                    ? "bg-gradient-to-br from-[#0c1a2e] to-[#0f2847] border border-cyan-500/30" 
-                    : "bg-gradient-to-br from-[#0d1117] to-[#161b22] border border-gray-700/50"
-                }`}
-              >
+            {pricingPlans.map((plan, i) => <div key={i} className={`relative rounded-2xl p-6 ${plan.popular ? "bg-gradient-to-br from-[#0c1a2e] to-[#0f2847] border border-cyan-500/30" : "bg-gradient-to-br from-[#0d1117] to-[#161b22] border border-gray-700/50"}`}>
                 {/* Top row: Number, dots, Popular badge / Get started */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
@@ -765,21 +689,17 @@ const Index = () => {
                       <span className="w-1.5 h-1.5 rounded-full bg-cyan-400"></span>
                     </div>
                   </div>
-                  {plan.popular ? (
-                    <span className="bg-cyan-500/20 text-cyan-400 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5">
+                  {plan.popular ? <span className="bg-cyan-500/20 text-cyan-400 px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5">
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       Popular
-                    </span>
-                  ) : (
-                    <button className="text-gray-400 hover:text-white text-xs flex items-center gap-1 transition-colors">
+                    </span> : <button className="text-gray-400 hover:text-white text-xs flex items-center gap-1 transition-colors">
                       <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       Get started
-                    </button>
-                  )}
+                    </button>}
                 </div>
 
                 {/* Plan name and subtitle */}
@@ -792,24 +712,16 @@ const Index = () => {
                 <div className="mb-2">
                   <span className="text-4xl font-bold text-white">{plan.price}</span>
                   <span className="text-gray-400 text-sm ml-2">{plan.priceLabel}</span>
-                  {plan.saveBadge && (
-                    <span className="ml-3 bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded text-xs font-medium">
+                  {plan.saveBadge && <span className="ml-3 bg-emerald-500/20 text-emerald-400 px-2 py-0.5 rounded text-xs font-medium">
                       {plan.saveBadge}
-                    </span>
-                  )}
+                    </span>}
                 </div>
 
                 {/* Refill text */}
                 <p className="text-gray-500 text-sm mb-6">Refill as needed</p>
 
                 {/* CTA Button */}
-                <Button 
-                  className={`w-full mb-8 ${
-                    plan.popular 
-                      ? "bg-cyan-500 hover:bg-cyan-600 text-white" 
-                      : "bg-gray-800 hover:bg-gray-700 text-white border border-gray-600"
-                  }`}
-                >
+                <Button className={`w-full mb-8 ${plan.popular ? "bg-cyan-500 hover:bg-cyan-600 text-white" : "bg-gray-800 hover:bg-gray-700 text-white border border-gray-600"}`}>
                   Get Started
                   <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -822,20 +734,15 @@ const Index = () => {
                     WHAT'S INCLUDED
                   </p>
                   <div className="space-y-3">
-                    {plan.features.map((feature, j) => (
-                      <div key={j} className="flex items-center gap-3">
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center ${
-                          plan.popular ? "bg-cyan-500/20" : "bg-cyan-500/10"
-                        }`}>
+                    {plan.features.map((feature, j) => <div key={j} className="flex items-center gap-3">
+                        <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.popular ? "bg-cyan-500/20" : "bg-cyan-500/10"}`}>
                           <Check className="h-3 w-3 text-cyan-400" />
                         </div>
                         <span className="text-gray-300 text-sm">{feature}</span>
-                      </div>
-                    ))}
+                      </div>)}
                   </div>
                 </div>
-              </div>
-            ))}
+              </div>)}
           </div>
 
           <div className="text-center space-y-4">
