@@ -22,6 +22,7 @@ import carousel6 from "@/assets/carousel-6.png";
 import carousel7 from "@/assets/carousel-7.png";
 import carousel8 from "@/assets/carousel-8.png";
 import carousel9 from "@/assets/carousel-9.png";
+import carousel10 from "@/assets/carousel-10.png";
 import { VideoComparisonCard } from "@/components/VideoComparisonCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -603,8 +604,8 @@ const Index = () => {
         {/* Top Row - Scroll Left */}
         <div className="relative mb-6">
           <div className="flex gap-6 animate-scroll-left">
-            {/* Duplicate images for seamless loop - TOP ROW ONLY */}
-            {[...Array(4)].map((_, loop) => [carousel1, carousel2, carousel3, carousel4].map((img, i) => <div key={`top-${loop}-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
+            {/* TOP ROW - unique images */}
+            {[...Array(3)].map((_, loop) => [carousel1, carousel2, carousel3, carousel4, carousel10].map((img, i) => <div key={`top-${loop}-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
                 <img src={img} alt={`Fashion photo ${i + 1}`} className="w-full h-full object-cover" />
               </div>))}
           </div>
