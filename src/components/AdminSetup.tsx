@@ -3,11 +3,11 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Copy, CheckCircle, UserCog } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { createAuthenticatedClient } from "@/hooks/useSupabaseAuth";
 import { toast } from "sonner";
 
 export function AdminSetup() {
-  const { userId } = useAuth();
+  const { userId, getToken } = useAuth();
   const [copied, setCopied] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
 
@@ -28,6 +28,10 @@ export function AdminSetup() {
 
     setIsAdding(true);
     try {
+      // Get Clerk token for authenticated request
+      const clerkToken = await getToken({ template: 'supabase' });
+      const supabase = createAuthenticatedClient(clerkToken);
+      
       // Call the create_first_admin function
       const { error } = await supabase.rpc('create_first_admin', {
         _user_id: userId

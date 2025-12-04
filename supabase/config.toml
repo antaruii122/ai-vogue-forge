@@ -1,4 +1,4 @@
 project_id = "syaauhmujhosskdpeiii"
 
 [functions.fashion-webhook]
-verify_jwt = false
+verify_jwt = true
