@@ -25,6 +25,7 @@ import carousel9 from "@/assets/carousel-9.png";
 import carousel10 from "@/assets/carousel-10.png";
 import carousel11 from "@/assets/carousel-11.png";
 import carousel12 from "@/assets/carousel-12.png";
+import carousel13 from "@/assets/carousel-13.png";
 import { VideoComparisonCard } from "@/components/VideoComparisonCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -611,7 +612,7 @@ const Index = () => {
             <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel2} alt="Top 2" className="w-full h-full object-cover" /></div>
             <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel3} alt="Top 3" className="w-full h-full object-cover" /></div>
             <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel4} alt="Top 4" className="w-full h-full object-cover" /></div>
-            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel10} alt="Top 5" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel13} alt="Top 5" className="w-full h-full object-cover" /></div>
             <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel1} alt="Top 6" className="w-full h-full object-cover" /></div>
             <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel2} alt="Top 7" className="w-full h-full object-cover" /></div>
             <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel11} alt="Top 8" className="w-full h-full object-cover" /></div>
