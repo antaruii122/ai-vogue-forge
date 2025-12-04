@@ -602,58 +602,45 @@ const Index = () => {
         </div>
         
         {/* Top Row - Scroll Left */}
+        {/* Top Row - Scroll Left */}
         <div className="relative mb-6">
           <div className="flex gap-6 animate-scroll-left">
-            {/* TOP ROW - Each slot is individually editable */}
-            {[
-              carousel1,   // Slot 1
-              carousel2,   // Slot 2
-              carousel3,   // Slot 3
-              carousel4,   // Slot 4
-              carousel10,  // Slot 5
-              carousel1,   // Slot 6
-              carousel2,   // Slot 7
-              carousel3,   // Slot 8
-              carousel4,   // Slot 9
-              carousel10,  // Slot 10
-              carousel1,   // Slot 11
-              carousel2,   // Slot 12
-              carousel3,   // Slot 13
-              carousel4,   // Slot 14
-              carousel10,  // Slot 15
-            ].map((img, i) => (
-              <div key={`top-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
-                <img src={img} alt={`Fashion photo top ${i + 1}`} className="w-full h-full object-cover" />
-              </div>
-            ))}
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel1} alt="Top 1" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel2} alt="Top 2" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel3} alt="Top 3" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel4} alt="Top 4" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel10} alt="Top 5" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel1} alt="Top 6" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel2} alt="Top 7" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel3} alt="Top 8" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel4} alt="Top 9" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel10} alt="Top 10" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel1} alt="Top 11" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel2} alt="Top 12" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel3} alt="Top 13" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel4} alt="Top 14" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel10} alt="Top 15" className="w-full h-full object-cover" /></div>
           </div>
         </div>
         
         {/* Bottom Row - Scroll Right */}
         <div className="relative">
           <div className="flex gap-6 animate-scroll-right">
-            {/* BOTTOM ROW - Each slot is individually editable */}
-            {[
-              carousel5,   // Slot 1
-              carousel6,   // Slot 2
-              carousel7,   // Slot 3
-              carousel8,   // Slot 4
-              carousel9,   // Slot 5
-              carousel5,   // Slot 6
-              carousel6,   // Slot 7
-              carousel7,   // Slot 8
-              carousel8,   // Slot 9
-              carousel9,   // Slot 10
-              carousel5,   // Slot 11
-              carousel6,   // Slot 12
-              carousel7,   // Slot 13
-              carousel8,   // Slot 14
-              carousel9,   // Slot 15
-            ].map((img, i) => (
-              <div key={`bottom-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
-                <img src={img} alt={`Fashion photo bottom ${i + 1}`} className="w-full h-full object-cover" />
-              </div>
-            ))}
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel5} alt="Bottom 1" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel6} alt="Bottom 2" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel7} alt="Bottom 3" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel8} alt="Bottom 4" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel9} alt="Bottom 5" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel5} alt="Bottom 6" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel6} alt="Bottom 7" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel7} alt="Bottom 8" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel8} alt="Bottom 9" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel9} alt="Bottom 10" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel5} alt="Bottom 11" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel6} alt="Bottom 12" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel7} alt="Bottom 13" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel8} alt="Bottom 14" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel9} alt="Bottom 15" className="w-full h-full object-cover" /></div>
           </div>
         </div>
       </section>
