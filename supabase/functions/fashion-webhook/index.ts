@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.76.1";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -14,15 +15,57 @@ serve(async (req) => {
   }
 
   try {
+    // Verify JWT and get user info
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader) {
+      console.error('No authorization header provided');
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Extract JWT token
+    const token = authHeader.replace('Bearer ', '');
+    
+    // Decode JWT to get user info (Clerk JWT contains user ID in 'sub' claim)
+    // Note: Full JWT verification is handled by Supabase when verify_jwt is enabled
+    let userId: string | null = null;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      userId = payload.sub;
+      console.log('Request from user:', userId);
+    } catch (e) {
+      console.error('Failed to decode JWT:', e);
+      return new Response(
+        JSON.stringify({ error: 'Invalid token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ error: 'User ID not found in token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     const body = await req.json();
-    console.log('Forwarding to webhook:', JSON.stringify(body));
+    console.log('Forwarding to webhook for user:', userId, 'body:', JSON.stringify(body));
+
+    // Add user ID to the webhook payload for tracking
+    const webhookPayload = {
+      ...body,
+      userId,
+      timestamp: new Date().toISOString(),
+    };
 
     const response = await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify(webhookPayload),
     });
 
     const responseText = await response.text();

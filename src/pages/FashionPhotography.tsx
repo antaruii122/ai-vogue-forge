@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { uploadImageToStorage } from "@/utils/uploadToStorage";
-import { useUser } from "@clerk/clerk-react";
+import { useUser, useAuth } from "@clerk/clerk-react";
 import luxuryPremiumExample from "@/assets/luxury-premium-example.jpeg";
 import studioCleanExample from "@/assets/studio-clean-example.jpeg";
 import outdoorNaturalExample from "@/assets/outdoor-natural-example.jpeg";
@@ -77,6 +77,7 @@ const getBackgroundOptions = (styleId: number | null) => {
 
 const FashionPhotography = () => {
   const { user } = useUser();
+  const { getToken } = useAuth();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -163,8 +164,11 @@ const FashionPhotography = () => {
         description: "Please wait while we upload your photo",
       });
       
-      // Upload to storage and get public URL
-      const publicUrl = await uploadImageToStorage(file, user.id, 'uploads');
+      // Get Clerk token for authenticated upload
+      const clerkToken = await getToken({ template: 'supabase' });
+      
+      // Upload to storage and get public URL with Clerk authentication
+      const publicUrl = await uploadImageToStorage(file, user.id, 'uploads', clerkToken || undefined);
       
       setSelectedFile(file);
       setUploadedImageUrl(publicUrl);
@@ -210,11 +214,15 @@ const FashionPhotography = () => {
     setIsGenerating(true);
     
     try {
-      // Send POST request to hardcoded webhook
+      // Get Clerk token for authenticated webhook call
+      const clerkToken = await getToken({ template: 'supabase' });
+      
+      // Send POST request to webhook with authentication
       const response = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': clerkToken ? `Bearer ${clerkToken}` : '',
         },
         body: JSON.stringify({
           image_url: uploadedImageUrl,
