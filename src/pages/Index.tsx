@@ -604,20 +604,56 @@ const Index = () => {
         {/* Top Row - Scroll Left */}
         <div className="relative mb-6">
           <div className="flex gap-6 animate-scroll-left">
-            {/* TOP ROW - unique images */}
-            {[...Array(3)].map((_, loop) => [carousel1, carousel2, carousel3, carousel4, carousel10].map((img, i) => <div key={`top-${loop}-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
-                <img src={img} alt={`Fashion photo ${i + 1}`} className="w-full h-full object-cover" />
-              </div>))}
+            {/* TOP ROW - Each slot is individually editable */}
+            {[
+              carousel1,   // Slot 1
+              carousel2,   // Slot 2
+              carousel3,   // Slot 3
+              carousel4,   // Slot 4
+              carousel10,  // Slot 5
+              carousel1,   // Slot 6
+              carousel2,   // Slot 7
+              carousel3,   // Slot 8
+              carousel4,   // Slot 9
+              carousel10,  // Slot 10
+              carousel1,   // Slot 11
+              carousel2,   // Slot 12
+              carousel3,   // Slot 13
+              carousel4,   // Slot 14
+              carousel10,  // Slot 15
+            ].map((img, i) => (
+              <div key={`top-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
+                <img src={img} alt={`Fashion photo top ${i + 1}`} className="w-full h-full object-cover" />
+              </div>
+            ))}
           </div>
         </div>
         
         {/* Bottom Row - Scroll Right */}
         <div className="relative">
           <div className="flex gap-6 animate-scroll-right">
-            {/* Duplicate images for seamless loop - BOTTOM ROW ONLY (different images) */}
-            {[...Array(4)].map((_, loop) => [carousel5, carousel6, carousel7, carousel8, carousel9].map((img, i) => <div key={`bottom-${loop}-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
-                <img src={img} alt={`Fashion photo ${i + 1}`} className="w-full h-full object-cover" />
-              </div>))}
+            {/* BOTTOM ROW - Each slot is individually editable */}
+            {[
+              carousel5,   // Slot 1
+              carousel6,   // Slot 2
+              carousel7,   // Slot 3
+              carousel8,   // Slot 4
+              carousel9,   // Slot 5
+              carousel5,   // Slot 6
+              carousel6,   // Slot 7
+              carousel7,   // Slot 8
+              carousel8,   // Slot 9
+              carousel9,   // Slot 10
+              carousel5,   // Slot 11
+              carousel6,   // Slot 12
+              carousel7,   // Slot 13
+              carousel8,   // Slot 14
+              carousel9,   // Slot 15
+            ].map((img, i) => (
+              <div key={`bottom-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
+                <img src={img} alt={`Fashion photo bottom ${i + 1}`} className="w-full h-full object-cover" />
+              </div>
+            ))}
           </div>
         </div>
       </section>
