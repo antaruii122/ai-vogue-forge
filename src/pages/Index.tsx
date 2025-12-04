@@ -24,6 +24,7 @@ import carousel8 from "@/assets/carousel-8.png";
 import carousel9 from "@/assets/carousel-9.png";
 import carousel10 from "@/assets/carousel-10.png";
 import carousel11 from "@/assets/carousel-11.png";
+import carousel12 from "@/assets/carousel-12.png";
 import { VideoComparisonCard } from "@/components/VideoComparisonCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -630,7 +631,7 @@ const Index = () => {
             <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel5} alt="Bottom 1" className="w-full h-full object-cover" /></div>
             <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel6} alt="Bottom 2" className="w-full h-full object-cover" /></div>
             <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel7} alt="Bottom 3" className="w-full h-full object-cover" /></div>
-            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel8} alt="Bottom 4" className="w-full h-full object-cover" /></div>
+            <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel12} alt="Bottom 4" className="w-full h-full object-cover" /></div>
             <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel9} alt="Bottom 5" className="w-full h-full object-cover" /></div>
             <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel5} alt="Bottom 6" className="w-full h-full object-cover" /></div>
             <div className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden"><img src={carousel6} alt="Bottom 7" className="w-full h-full object-cover" /></div>
