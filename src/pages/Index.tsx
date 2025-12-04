@@ -18,6 +18,10 @@ import carousel2 from "@/assets/carousel-2.png";
 import carousel3 from "@/assets/carousel-3.png";
 import carousel4 from "@/assets/carousel-4.png";
 import carousel5 from "@/assets/carousel-5.png";
+import carousel6 from "@/assets/carousel-6.png";
+import carousel7 from "@/assets/carousel-7.png";
+import carousel8 from "@/assets/carousel-8.png";
+import carousel9 from "@/assets/carousel-9.png";
 import { VideoComparisonCard } from "@/components/VideoComparisonCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -600,7 +604,7 @@ const Index = () => {
         <div className="relative mb-6">
           <div className="flex gap-6 animate-scroll-left">
             {/* Duplicate images for seamless loop */}
-            {[...Array(3)].map((_, loop) => [carousel1, carousel2, carousel3, carousel4, carousel5].map((img, i) => <div key={`top-${loop}-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
+            {[...Array(3)].map((_, loop) => [carousel1, carousel6, carousel3, carousel8, carousel5, carousel7, carousel2].map((img, i) => <div key={`top-${loop}-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
                 <img src={img} alt={`Fashion photo ${i + 1}`} className="w-full h-full object-cover" />
               </div>))}
           </div>
@@ -610,7 +614,7 @@ const Index = () => {
         <div className="relative">
           <div className="flex gap-6 animate-scroll-right">
             {/* Duplicate images for seamless loop */}
-            {[...Array(3)].map((_, loop) => [carousel3, carousel5, carousel1, carousel4, carousel2].map((img, i) => <div key={`bottom-${loop}-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
+            {[...Array(3)].map((_, loop) => [carousel9, carousel4, carousel7, carousel2, carousel8, carousel3, carousel6, carousel1].map((img, i) => <div key={`bottom-${loop}-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
                 <img src={img} alt={`Fashion photo ${i + 1}`} className="w-full h-full object-cover" />
               </div>))}
           </div>
