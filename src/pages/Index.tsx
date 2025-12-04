@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, Wand2, Download, Camera, Video, Package, Sparkles, X, Star, Check, User, LogOut } from "lucide-react";
+import { Upload, Wand2, Download, Camera, Video, Sparkles, Star, Check, User, LogOut } from "lucide-react";
 import { uploadVideoToStorage } from "@/utils/uploadVideoToStorage";
 import tetesImage from "@/assets/tetes.png";
 import heroPhoto1 from "@/assets/hero-photo-1.png";
@@ -238,8 +238,7 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Announcement Bar */}
-      {showAnnouncement}
+      {/* Announcement Bar - currently hidden */}
 
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 md:py-32">
