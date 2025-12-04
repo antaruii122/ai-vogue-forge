@@ -13,6 +13,11 @@ import heroThumbnail1 from "@/assets/hero-thumbnail-1.png";
 import heroThumbnail2 from "@/assets/hero-thumbnail-2.png";
 import heroThumbnail3 from "@/assets/hero-thumbnail-3.png";
 import heroThumbnail4 from "@/assets/hero-thumbnail-4.png";
+import carousel1 from "@/assets/carousel-1.png";
+import carousel2 from "@/assets/carousel-2.png";
+import carousel3 from "@/assets/carousel-3.png";
+import carousel4 from "@/assets/carousel-4.png";
+import carousel5 from "@/assets/carousel-5.png";
 import { VideoComparisonCard } from "@/components/VideoComparisonCard";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -595,11 +600,9 @@ const Index = () => {
         <div className="relative mb-6">
           <div className="flex gap-6 animate-scroll-left">
             {/* Duplicate images for seamless loop */}
-            {[...Array(14)].map((_, i) => <div key={i} className="flex-shrink-0 w-[300px] h-[420px] bg-gradient-to-br from-primary/20 to-primary-purple/20 rounded-xl border border-border overflow-hidden">
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                  <Camera className="h-12 w-12" />
-                </div>
-              </div>)}
+            {[...Array(3)].map((_, loop) => [carousel1, carousel2, carousel3, carousel4, carousel5].map((img, i) => <div key={`top-${loop}-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
+                <img src={img} alt={`Fashion photo ${i + 1}`} className="w-full h-full object-cover" />
+              </div>))}
           </div>
         </div>
         
@@ -607,11 +610,9 @@ const Index = () => {
         <div className="relative">
           <div className="flex gap-6 animate-scroll-right">
             {/* Duplicate images for seamless loop */}
-            {[...Array(14)].map((_, i) => <div key={i} className="flex-shrink-0 w-[300px] h-[420px] bg-gradient-to-br from-primary-purple/20 to-accent/20 rounded-xl border border-border overflow-hidden">
-                <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                  <Camera className="h-12 w-12" />
-                </div>
-              </div>)}
+            {[...Array(3)].map((_, loop) => [carousel3, carousel5, carousel1, carousel4, carousel2].map((img, i) => <div key={`bottom-${loop}-${i}`} className="flex-shrink-0 w-[200px] h-[356px] rounded-xl border border-border overflow-hidden">
+                <img src={img} alt={`Fashion photo ${i + 1}`} className="w-full h-full object-cover" />
+              </div>))}
           </div>
         </div>
       </section>
