@@ -378,14 +378,14 @@ const Index = () => {
               
               {/* Right Side: Product Photo Placeholder */}
               <div className="relative mt-8 md:mt-0">
-                <div className="w-[300px] md:w-[420px] h-[400px] md:h-[560px] mx-auto rounded-lg overflow-hidden shadow-2xl">
-                  <img alt="Product photography example" className="w-full h-full object-cover" src="/lovable-uploads/c505d9bf-13b2-4dfd-af4a-b3db4f22f6e1.png" />
+              <div className="w-[300px] md:w-[420px] h-[400px] md:h-[560px] mx-auto rounded-lg overflow-hidden shadow-2xl">
+                  <img alt="Product photography example" className="w-full h-full object-cover" src="/lovable-uploads/c505d9bf-13b2-4dfd-af4a-b3db4f22f6e1.png" loading="lazy" />
                 </div>
                 {/* Floating product thumbnail */}
                 <div className="absolute -bottom-4 -right-4 md:bottom-8 md:-right-8 w-[100px] h-[120px] bg-black rounded-lg shadow-xl overflow-hidden" style={{
                 transform: 'rotate(8deg)'
               }}>
-                  <img alt="Product thumbnail" className="w-full h-full object-cover" src="/lovable-uploads/2666c21d-84ba-4e59-a500-d7d2309e4406.jpg" />
+                  <img alt="Product thumbnail" className="w-full h-full object-cover" src="/lovable-uploads/2666c21d-84ba-4e59-a500-d7d2309e4406.jpg" loading="lazy" />
                 </div>
               </div>
             </div>
@@ -407,49 +407,49 @@ const Index = () => {
             {/* First set of images */}
             <div className="flex gap-6 flex-shrink-0">
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel1} alt="Fashion style 1" className="w-full h-full object-cover" />
+                <img src={carousel1} alt="Fashion style 1" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel2} alt="Fashion style 2" className="w-full h-full object-cover" />
+                <img src={carousel2} alt="Fashion style 2" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel3} alt="Fashion style 3" className="w-full h-full object-cover" />
+                <img src={carousel3} alt="Fashion style 3" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel4} alt="Fashion style 4" className="w-full h-full object-cover" />
+                <img src={carousel4} alt="Fashion style 4" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel5} alt="Fashion style 5" className="w-full h-full object-cover" />
+                <img src={carousel5} alt="Fashion style 5" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel6} alt="Fashion style 6" className="w-full h-full object-cover" />
+                <img src={carousel6} alt="Fashion style 6" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel7} alt="Fashion style 7" className="w-full h-full object-cover" />
+                <img src={carousel7} alt="Fashion style 7" className="w-full h-full object-cover" loading="lazy" />
               </div>
             </div>
             {/* Duplicate set for seamless loop */}
             <div className="flex gap-6 flex-shrink-0">
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel1} alt="Fashion style 1" className="w-full h-full object-cover" />
+                <img src={carousel1} alt="Fashion style 1" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel2} alt="Fashion style 2" className="w-full h-full object-cover" />
+                <img src={carousel2} alt="Fashion style 2" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel3} alt="Fashion style 3" className="w-full h-full object-cover" />
+                <img src={carousel3} alt="Fashion style 3" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel4} alt="Fashion style 4" className="w-full h-full object-cover" />
+                <img src={carousel4} alt="Fashion style 4" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel5} alt="Fashion style 5" className="w-full h-full object-cover" />
+                <img src={carousel5} alt="Fashion style 5" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel6} alt="Fashion style 6" className="w-full h-full object-cover" />
+                <img src={carousel6} alt="Fashion style 6" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel7} alt="Fashion style 7" className="w-full h-full object-cover" />
+                <img src={carousel7} alt="Fashion style 7" className="w-full h-full object-cover" loading="lazy" />
               </div>
             </div>
           </div>
@@ -461,49 +461,49 @@ const Index = () => {
             {/* First set of images */}
             <div className="flex gap-6 flex-shrink-0">
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel8} alt="Fashion style 8" className="w-full h-full object-cover" />
+                <img src={carousel8} alt="Fashion style 8" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel9} alt="Fashion style 9" className="w-full h-full object-cover" />
+                <img src={carousel9} alt="Fashion style 9" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel10} alt="Fashion style 10" className="w-full h-full object-cover" />
+                <img src={carousel10} alt="Fashion style 10" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel11} alt="Fashion style 11" className="w-full h-full object-cover" />
+                <img src={carousel11} alt="Fashion style 11" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel12} alt="Fashion style 12" className="w-full h-full object-cover" />
+                <img src={carousel12} alt="Fashion style 12" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel13} alt="Fashion style 13" className="w-full h-full object-cover" />
+                <img src={carousel13} alt="Fashion style 13" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel1} alt="Fashion style 1" className="w-full h-full object-cover" />
+                <img src={carousel1} alt="Fashion style 1" className="w-full h-full object-cover" loading="lazy" />
               </div>
             </div>
             {/* Duplicate set for seamless loop */}
             <div className="flex gap-6 flex-shrink-0">
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel8} alt="Fashion style 8" className="w-full h-full object-cover" />
+                <img src={carousel8} alt="Fashion style 8" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel9} alt="Fashion style 9" className="w-full h-full object-cover" />
+                <img src={carousel9} alt="Fashion style 9" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel10} alt="Fashion style 10" className="w-full h-full object-cover" />
+                <img src={carousel10} alt="Fashion style 10" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel11} alt="Fashion style 11" className="w-full h-full object-cover" />
+                <img src={carousel11} alt="Fashion style 11" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel12} alt="Fashion style 12" className="w-full h-full object-cover" />
+                <img src={carousel12} alt="Fashion style 12" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel13} alt="Fashion style 13" className="w-full h-full object-cover" />
+                <img src={carousel13} alt="Fashion style 13" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="w-[300px] h-[420px] rounded-xl overflow-hidden">
-                <img src={carousel1} alt="Fashion style 1" className="w-full h-full object-cover" />
+                <img src={carousel1} alt="Fashion style 1" className="w-full h-full object-cover" loading="lazy" />
               </div>
             </div>
           </div>
@@ -544,19 +544,19 @@ const Index = () => {
                     </div>
                     <div className="flex flex-col items-center gap-1">
                       <div className="w-14 h-14 rounded-full bg-gray-600 overflow-hidden">
-                        <img src={heroThumbnail1} alt="Luma" className="w-full h-full object-cover" />
+                        <img src={heroThumbnail1} alt="Luma" className="w-full h-full object-cover" loading="lazy" />
                       </div>
                       <span className="text-gray-400 text-xs">Luma</span>
                     </div>
                     <div className="flex flex-col items-center gap-1">
                       <div className="w-14 h-14 rounded-full bg-gray-600 overflow-hidden">
-                        <img src={heroThumbnail2} alt="Radius" className="w-full h-full object-cover" />
+                        <img src={heroThumbnail2} alt="Radius" className="w-full h-full object-cover" loading="lazy" />
                       </div>
                       <span className="text-gray-400 text-xs">Radius</span>
                     </div>
                     <div className="flex flex-col items-center gap-1">
                       <div className="w-14 h-14 rounded-full bg-gray-600 overflow-hidden">
-                        <img src={heroThumbnail3} alt="Halo" className="w-full h-full object-cover" />
+                        <img src={heroThumbnail3} alt="Halo" className="w-full h-full object-cover" loading="lazy" />
                       </div>
                       <span className="text-gray-400 text-xs">Halo</span>
                     </div>
