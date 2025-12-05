@@ -239,7 +239,7 @@ const Index = () => {
               transform: 'rotate(-5deg)'
             }}>
                 <div className="w-[180px] md:w-[260px] h-[230px] md:h-[340px] rounded-sm overflow-hidden">
-                  <img src={heroPhoto1} alt="Fashion photo 1" className="w-full h-full object-cover" />
+                  <img src={heroPhoto1} alt="Fashion photo 1" className="w-full h-full object-cover" fetchPriority="high" />
                 </div>
                 {/* Thumbnail Slot */}
                 <div className="absolute -top-2 -right-2 md:-top-3 md:-right-3 w-[60px] h-[60px] md:w-[80px] md:h-[80px] bg-white p-1 md:p-1.5 rounded-sm shadow-lg" style={{
