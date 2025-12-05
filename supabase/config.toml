@@ -1,7 +1,7 @@
 project_id = "syaauhmujhosskdpeiii"
 
 [functions.fashion-webhook]
-verify_jwt = true
+verify_jwt = false
 
 [functions.storage-upload]
 verify_jwt = false

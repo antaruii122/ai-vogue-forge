@@ -1,10 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.76.1";
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { validateClerkToken, corsHeaders } from "../_shared/clerk-auth.ts";
 
 const WEBHOOK_URL = "https://n8n.quicklyandgood.com/webhook/662d6440-b0e1-4c5e-9c71-11e077a84e39";
 
@@ -15,40 +10,20 @@ serve(async (req) => {
   }
 
   try {
-    // Verify JWT and get user info
+    // Validate Clerk token using shared module with proper verification
     const authHeader = req.headers.get('authorization');
-    if (!authHeader) {
-      console.error('No authorization header provided');
-      return new Response(
-        JSON.stringify({ error: 'Authentication required' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Extract JWT token
-    const token = authHeader.replace('Bearer ', '');
+    const validation = await validateClerkToken(authHeader);
     
-    // Decode JWT to get user info (Clerk JWT contains user ID in 'sub' claim)
-    // Note: Full JWT verification is handled by Supabase when verify_jwt is enabled
-    let userId: string | null = null;
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      userId = payload.sub;
-      console.log('Request from user:', userId);
-    } catch (e) {
-      console.error('Failed to decode JWT:', e);
+    if (!validation.valid || !validation.userId) {
+      console.error('Authentication failed:', validation.error);
       return new Response(
-        JSON.stringify({ error: 'Invalid token' }),
+        JSON.stringify({ error: validation.error || 'Authentication required' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    if (!userId) {
-      return new Response(
-        JSON.stringify({ error: 'User ID not found in token' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    const userId = validation.userId;
+    console.log('Request from user:', userId);
 
     const body = await req.json();
     console.log('Forwarding to webhook for user:', userId, 'body:', JSON.stringify(body));
