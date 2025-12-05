@@ -1,8 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
-import type { Database } from '@/integrations/supabase/types';
-
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
 export interface StorageFile {
   name: string;
@@ -13,118 +9,85 @@ export interface StorageFile {
 }
 
 /**
- * Create an authenticated Supabase client with Clerk token
- */
-function createAuthClient(clerkToken?: string) {
-  return createClient<Database>(supabaseUrl, supabaseAnonKey, {
-    auth: {
-      persistSession: false,
-      autoRefreshToken: false,
-      detectSessionInUrl: false,
-    },
-    global: {
-      headers: clerkToken ? {
-        Authorization: `Bearer ${clerkToken}`,
-      } : {},
-    },
-  });
-}
-
-/**
- * Get all uploaded images for a user
+ * Get all uploaded images for a user via edge function
  */
 export async function getUserUploads(userId: string, clerkToken?: string): Promise<StorageFile[]> {
-  const supabase = createAuthClient(clerkToken);
-  
-  try {
-    const { data: files, error } = await supabase.storage
-      .from('product-images')
-      .list(`${userId}/uploads`, {
-        sortBy: { column: 'created_at', order: 'desc' }
-      });
-
-    if (error) throw error;
-    if (!files) return [];
-
-    return files
-      .filter(file => file.name !== '.emptyFolderPlaceholder')
-      .map(file => {
-        const { data: { publicUrl } } = supabase.storage
-          .from('product-images')
-          .getPublicUrl(`${userId}/uploads/${file.name}`);
-        
-        return {
-          name: file.name,
-          url: publicUrl,
-          created_at: file.created_at || new Date().toISOString(),
-          size: file.metadata?.size || 0,
-          type: 'uploads' as const
-        };
-      });
-  } catch (error) {
-    console.error('Error fetching uploads:', error);
-    throw error instanceof Error ? error : new Error('Failed to fetch uploads');
+  if (!clerkToken) {
+    throw new Error('Authentication required');
   }
+
+  const response = await fetch(
+    `${supabaseUrl}/functions/v1/storage-list?bucket=product-images&type=uploads`,
+    {
+      headers: {
+        'Authorization': `Bearer ${clerkToken}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to fetch uploads');
+  }
+
+  const result = await response.json();
+  return result.files.filter((f: StorageFile) => f.type === 'uploads');
 }
 
 /**
- * Get all generated images for a user
+ * Get all generated images for a user via edge function
  */
 export async function getUserGenerated(userId: string, clerkToken?: string): Promise<StorageFile[]> {
-  const supabase = createAuthClient(clerkToken);
-  
-  try {
-    const { data: files, error } = await supabase.storage
-      .from('product-images')
-      .list(`${userId}/generated`, {
-        sortBy: { column: 'created_at', order: 'desc' }
-      });
-
-    if (error) throw error;
-    if (!files) return [];
-
-    return files
-      .filter(file => file.name !== '.emptyFolderPlaceholder')
-      .map(file => {
-        const { data: { publicUrl } } = supabase.storage
-          .from('product-images')
-          .getPublicUrl(`${userId}/generated/${file.name}`);
-        
-        return {
-          name: file.name,
-          url: publicUrl,
-          created_at: file.created_at || new Date().toISOString(),
-          size: file.metadata?.size || 0,
-          type: 'generated' as const
-        };
-      });
-  } catch (error) {
-    console.error('Error fetching generated:', error);
-    throw error instanceof Error ? error : new Error('Failed to fetch generated images');
+  if (!clerkToken) {
+    throw new Error('Authentication required');
   }
+
+  const response = await fetch(
+    `${supabaseUrl}/functions/v1/storage-list?bucket=product-images&type=generated`,
+    {
+      headers: {
+        'Authorization': `Bearer ${clerkToken}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to fetch generated images');
+  }
+
+  const result = await response.json();
+  return result.files.filter((f: StorageFile) => f.type === 'generated');
 }
 
 /**
- * Get all images (uploads + generated) for a user
+ * Get all images (uploads + generated) for a user via edge function
  */
 export async function getAllUserImages(userId: string, clerkToken?: string): Promise<StorageFile[]> {
-  try {
-    const [uploads, generated] = await Promise.all([
-      getUserUploads(userId, clerkToken),
-      getUserGenerated(userId, clerkToken)
-    ]);
-
-    return [...uploads, ...generated].sort(
-      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
-  } catch (error) {
-    console.error('Error fetching all images:', error);
-    throw error instanceof Error ? error : new Error('Failed to fetch all images');
+  if (!clerkToken) {
+    throw new Error('Authentication required');
   }
+
+  const response = await fetch(
+    `${supabaseUrl}/functions/v1/storage-list?bucket=product-images&type=all`,
+    {
+      headers: {
+        'Authorization': `Bearer ${clerkToken}`,
+      },
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to fetch images');
+  }
+
+  const result = await response.json();
+  return result.files;
 }
 
 /**
- * Delete a user's file from storage
+ * Delete a user's file from storage via edge function
  */
 export async function deleteUserFile(
   userId: string,
@@ -132,18 +95,25 @@ export async function deleteUserFile(
   type: 'uploads' | 'generated',
   clerkToken?: string
 ): Promise<void> {
-  const supabase = createAuthClient(clerkToken);
-  
-  try {
-    const filePath = `${userId}/${type}/${fileName}`;
-    
-    const { error } = await supabase.storage
-      .from('product-images')
-      .remove([filePath]);
+  if (!clerkToken) {
+    throw new Error('Authentication required');
+  }
 
-    if (error) throw error;
-  } catch (error) {
-    console.error('Error deleting file:', error);
-    throw error instanceof Error ? error : new Error('Failed to delete file');
+  const response = await fetch(`${supabaseUrl}/functions/v1/storage-delete`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${clerkToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      fileName,
+      fileType: type,
+      bucket: 'product-images',
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to delete file');
   }
 }
