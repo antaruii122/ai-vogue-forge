@@ -585,7 +585,7 @@ const Index = () => {
                   {/* Video Content */}
                   <div className="aspect-[4/5] bg-black overflow-hidden">
                     <video 
-                      src={videoUrl}
+                      src="/videos/social-mockup.mp4"
                       className="w-full h-full object-cover"
                       autoPlay
                       loop
