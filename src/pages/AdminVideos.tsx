@@ -1,35 +1,62 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { Trash2, Upload as UploadIcon, RefreshCcw, ExternalLink, ArrowLeft } from "lucide-react";
+import { Trash2, Upload as UploadIcon, RefreshCcw, ExternalLink, ArrowLeft, Loader2 } from "lucide-react";
 
 const AdminVideos = () => {
   const navigate = useNavigate();
-  const [files, setFiles] = useState<Array<{ name: string; created_at?: string; updated_at?: string; id?: string; size?: number }>>([]);
+  const { getToken } = useAuth();
+  const [files, setFiles] = useState<Array<{ name: string; created_at?: string; updated_at?: string; id?: string; size?: number; publicUrl?: string }>>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [targetSection, setTargetSection] = useState<string>("hero-left-1");
 
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
   const bucket = 'videos';
 
   const fetchFiles = async () => {
     setLoading(true);
-    const { data, error } = await supabase.storage.from(bucket).list('', { limit: 100, sortBy: { column: 'created_at', order: 'desc' } });
-    setLoading(false);
-    if (error) {
+    try {
+      const token = await getToken();
+      if (!token) {
+        toast.error('Authentication required');
+        setLoading(false);
+        return;
+      }
+
+      const response = await fetch(
+        `${supabaseUrl}/functions/v1/admin-storage?operation=list&bucket=${bucket}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        if (response.status === 403) {
+          toast.error('Admin access required');
+        } else {
+          toast.error(error.error || 'Failed to load videos');
+        }
+        setLoading(false);
+        return;
+      }
+
+      const data = await response.json();
+      setFiles(data.files || []);
+    } catch (error) {
       toast.error('Failed to load videos');
-      return;
     }
-    setFiles(data || []);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -42,46 +69,78 @@ const AdminVideos = () => {
       return;
     }
     
-    // Detect content type
-    let contentType = file.type;
-    if (!contentType) {
-      if (file.name.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
-        contentType = 'image/' + file.name.split('.').pop()?.toLowerCase();
-      } else if (file.name.match(/\.(mp4|webm|mov)$/i)) {
-        contentType = 'video/' + file.name.split('.').pop()?.toLowerCase();
-      }
-    }
-    
     setUploading(true);
-    const { error } = await supabase.storage.from(bucket).upload(file.name, file, {
-      cacheControl: '3600',
-      upsert: true,
-      contentType: contentType || 'application/octet-stream',
-    });
-    setUploading(false);
-    if (error) {
-      toast.error(error.message || 'Upload failed');
-      return;
+    try {
+      const token = await getToken();
+      if (!token) {
+        toast.error('Authentication required');
+        setUploading(false);
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch(
+        `${supabaseUrl}/functions/v1/admin-storage?operation=upload&bucket=${bucket}`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        toast.error(error.error || 'Upload failed');
+        setUploading(false);
+        return;
+      }
+
+      toast.success(file.type.startsWith('image/') ? 'Image uploaded' : 'Video uploaded');
+      setFile(null);
+      await fetchFiles();
+    } catch (error) {
+      toast.error('Upload failed');
     }
-    toast.success(file.type.startsWith('image/') ? 'Image uploaded' : 'Video uploaded');
-    setFile(null);
-    await fetchFiles();
+    setUploading(false);
   };
 
   const onDelete = async (name: string) => {
     if (!confirm(`Delete ${name}?`)) return;
-    const { error } = await supabase.storage.from(bucket).remove([name]);
-    if (error) {
-      toast.error('Delete failed');
-      return;
-    }
-    toast.success('Video deleted');
-    await fetchFiles();
-  };
+    
+    try {
+      const token = await getToken();
+      if (!token) {
+        toast.error('Authentication required');
+        return;
+      }
 
-  const fetchSignedUrl = async (fileName: string): Promise<string> => {
-    const { data } = await supabase.storage.from(bucket).createSignedUrl(fileName, 3600);
-    return data?.signedUrl || '';
+      const response = await fetch(
+        `${supabaseUrl}/functions/v1/admin-storage?operation=delete&bucket=${bucket}`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ fileName: name }),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json();
+        toast.error(error.error || 'Delete failed');
+        return;
+      }
+
+      toast.success('Video deleted');
+      await fetchFiles();
+    } catch (error) {
+      toast.error('Delete failed');
+    }
   };
 
   const rows = useMemo(() => {
@@ -94,10 +153,7 @@ const AdminVideos = () => {
     const sectionVideos = sections.map(s => localStorage.getItem(`video_${s}`));
     
     return files.map((f) => {
-      // For private bucket, we'll fetch signed URLs when needed
-      // For now, construct URL that will be replaced with signed URL
-      const { data } = supabase.storage.from(bucket).getPublicUrl(f.name);
-      const url = data.publicUrl;
+      const url = f.publicUrl || '';
       
       const usedIn: string[] = [];
       sections.forEach((section, idx) => {
@@ -112,7 +168,7 @@ const AdminVideos = () => {
         }
       });
       
-      return { ...f, publicUrl: url, usedIn } as typeof f & { publicUrl: string; usedIn: string[] };
+      return { ...f, usedIn } as typeof f & { usedIn: string[] };
     });
   }, [files]);
 
@@ -214,13 +270,14 @@ const AdminVideos = () => {
       
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>Upload & Manage Media</CardTitle>
+          <CardTitle>Upload & Manage Media (Admin Only)</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
           <Input type="file" accept="video/*,image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} className="max-w-xs" />
           <div className="flex gap-2">
             <Button onClick={onUpload} disabled={uploading || !file}>
-              <UploadIcon className="h-4 w-4 mr-2" /> {uploading ? 'Uploading...' : 'Upload'}
+              {uploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UploadIcon className="h-4 w-4 mr-2" />}
+              {uploading ? 'Uploading...' : 'Upload'}
             </Button>
             <Button variant="outline" onClick={fetchFiles} disabled={loading}>
               <RefreshCcw className="h-4 w-4 mr-2" /> Refresh
@@ -311,67 +368,73 @@ const AdminVideos = () => {
           <CardTitle>All Media Files</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-12">Select</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead>Size (bytes)</TableHead>
-                <TableHead>Used In</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.length === 0 && (
+          {loading ? (
+            <div className="flex items-center justify-center py-10">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={6}>No files yet</TableCell>
+                  <TableHead className="w-12">Select</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead>Size (bytes)</TableHead>
+                  <TableHead>Used In</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              )}
-              {rows.map((f) => (
-                <TableRow 
-                  key={f.name}
-                  className={selectedFile === f.name ? "bg-primary/10" : ""}
-                >
-                  <TableCell>
-                    <input
-                      type="radio"
-                      name="selectedFile"
-                      checked={selectedFile === f.name}
-                      onChange={() => setSelectedFile(f.name)}
-                      className="h-4 w-4 cursor-pointer"
-                    />
-                  </TableCell>
-                  <TableCell className="font-medium break-all">
-                    <a href={f.publicUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:underline">
-                      {f.name}
-                      <ExternalLink className="h-3.5 w-3.5" />
-                    </a>
-                  </TableCell>
-                  <TableCell>{f.created_at ? new Date(f.created_at).toLocaleString() : '-'}</TableCell>
-                  <TableCell>{typeof f.size === 'number' ? f.size : '-'}</TableCell>
-                  <TableCell>
-                    {f.usedIn.length > 0 ? (
-                      <div className="flex flex-wrap gap-1">
-                        {f.usedIn.map(section => (
-                          <span key={section} className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
-                            {section}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="text-muted-foreground text-sm">Not used</span>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="destructive" size="sm" onClick={() => onDelete(f.name)}>
-                      <Trash2 className="h-4 w-4 mr-1" /> Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {rows.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6}>No files yet</TableCell>
+                  </TableRow>
+                )}
+                {rows.map((f) => (
+                  <TableRow 
+                    key={f.name}
+                    className={selectedFile === f.name ? "bg-primary/10" : ""}
+                  >
+                    <TableCell>
+                      <input
+                        type="radio"
+                        name="selectedFile"
+                        checked={selectedFile === f.name}
+                        onChange={() => setSelectedFile(f.name)}
+                        className="h-4 w-4 cursor-pointer"
+                      />
+                    </TableCell>
+                    <TableCell className="font-medium break-all">
+                      <a href={f.publicUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 hover:underline">
+                        {f.name}
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </a>
+                    </TableCell>
+                    <TableCell>{f.created_at ? new Date(f.created_at).toLocaleString() : '-'}</TableCell>
+                    <TableCell>{typeof f.size === 'number' ? f.size : '-'}</TableCell>
+                    <TableCell>
+                      {f.usedIn && f.usedIn.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {f.usedIn.map(section => (
+                            <span key={section} className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                              {section}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground text-sm">Not used</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="destructive" size="sm" onClick={() => onDelete(f.name)}>
+                        <Trash2 className="h-4 w-4 mr-1" /> Delete
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
     </main>

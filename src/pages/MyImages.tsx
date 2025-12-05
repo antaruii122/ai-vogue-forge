@@ -24,11 +24,21 @@ const MyImages = () => {
         return;
       }
 
-      // Get Clerk token for authenticated storage access
-      const clerkToken = await getToken({ template: 'supabase' });
+      // Get Clerk token for authenticated storage access via edge function
+      const clerkToken = await getToken();
       
-      // Fetch all images using authenticated helper
-      const allImages = await getAllUserImages(user.id, clerkToken || undefined);
+      if (!clerkToken) {
+        toast({
+          title: "Authentication error",
+          description: "Please log in again",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+      
+      // Fetch all images using edge function
+      const allImages = await getAllUserImages(user.id, clerkToken);
       setImages(allImages);
     } catch (error) {
       toast({

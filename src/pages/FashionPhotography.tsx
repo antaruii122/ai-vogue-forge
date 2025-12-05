@@ -164,11 +164,20 @@ const FashionPhotography = () => {
         description: "Please wait while we upload your photo",
       });
       
-      // Get Clerk token for authenticated upload
-      const clerkToken = await getToken({ template: 'supabase' });
+      // Get Clerk token for authenticated upload via edge function
+      const clerkToken = await getToken();
       
-      // Upload to storage and get public URL with Clerk authentication
-      const publicUrl = await uploadImageToStorage(file, user.id, 'uploads', clerkToken || undefined);
+      if (!clerkToken) {
+        toast({
+          title: "Authentication error",
+          description: "Please log in again",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Upload via edge function
+      const publicUrl = await uploadImageToStorage(file, user.id, 'uploads', clerkToken);
       
       setSelectedFile(file);
       setUploadedImageUrl(publicUrl);
@@ -215,14 +224,24 @@ const FashionPhotography = () => {
     
     try {
       // Get Clerk token for authenticated webhook call
-      const clerkToken = await getToken({ template: 'supabase' });
+      const clerkToken = await getToken();
       
-      // Send POST request to webhook with authentication
+      if (!clerkToken) {
+        toast({
+          title: "Authentication error",
+          description: "Please log in again",
+          variant: "destructive",
+        });
+        setIsGenerating(false);
+        return;
+      }
+      
+      // Send POST request to webhook via edge function
       const response = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': clerkToken ? `Bearer ${clerkToken}` : '',
+          'Authorization': `Bearer ${clerkToken}`,
         },
         body: JSON.stringify({
           image_url: uploadedImageUrl,
@@ -446,12 +465,10 @@ const FashionPhotography = () => {
               Generating your fashion photos...
             </h2>
             <p className="text-muted-foreground mb-8">
-              Creating 4 stunning images (30-45 seconds)
+              This usually takes about 30 seconds
             </p>
-            
-            {/* Progress bar */}
-            <div className="w-[300px] mx-auto h-2 bg-gray-800 rounded-full overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-purple-600 to-pink-600 animate-pulse" style={{ width: '70%' }} />
+            <div className="w-64 h-2 bg-gray-800 rounded-full mx-auto overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-purple-600 to-pink-600 animate-pulse rounded-full w-2/3" />
             </div>
           </div>
         </div>
@@ -459,360 +476,273 @@ const FashionPhotography = () => {
     );
   }
 
+  // Style thumbnail mapping
+  const getStyleThumbnail = (styleId: number) => {
+    switch (styleId) {
+      case 2: return studioCleanExample;
+      case 3: return outdoorNaturalExample;
+      case 4: return luxuryPremiumExample;
+      default: return luxuryPremiumExample;
+    }
+  };
+
+  // Handle style selection with warning
+  const handleStyleSelect = (templateId: number) => {
+    const previousTemplate = selectedTemplate;
+    setSelectedTemplate(templateId);
+    
+    // Show warning if background was set and style changed
+    if (previousTemplate !== null && previousTemplate !== templateId) {
+      if (background === "custom") {
+        setStyleChangeWarning("Style changed - Custom background preserved");
+      } else if (background !== "auto") {
+        setBackground("auto");
+        setStyleChangeWarning("Style changed - Background reset to Auto");
+      }
+      
+      // Auto-dismiss warning after 3 seconds
+      if (styleChangeWarning === null) {
+        setTimeout(() => setStyleChangeWarning(null), 3000);
+      }
+    }
+  };
+
   return (
     <AppLayout>
-      {/* Premium dark gradient background with animated mesh */}
       <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 relative overflow-hidden">
-        {/* Animated gradient mesh overlay */}
+        {/* Animated gradient mesh background */}
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-purple-500/5 animate-pulse pointer-events-none" />
         
         <div className="relative z-10 p-6">
-          {/* Main page title */}
-          <div className="mt-[60px] mb-8">
-            <h1 className="text-3xl font-bold text-foreground text-center">
-              Fashion Photography
-            </h1>
-            <p className="text-muted-foreground text-center mt-2">
-              Transform your products into stunning lifestyle photos
-            </p>
-          </div>
+          <div className="max-w-7xl mx-auto">
+            {/* Header */}
+            <div className="text-center mb-10 mt-8">
+              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3 tracking-tight">
+                AI Fashion Photography
+              </h1>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Transform your product photos into stunning fashion imagery with AI
+              </p>
+            </div>
 
-          {/* 2-column layout on desktop */}
-          <div className="max-w-[1400px] mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-              
-              {/* LEFT COLUMN - Upload & Preview (35% width) */}
-              <div className="lg:col-span-4">
-                {/* Subtitle */}
-                <p className="text-muted-foreground text-sm mb-6">
-                  Upload your product → Pick a style → Get your photos
-                </p>
-
-                {/* Upload Section - Show if no image uploaded */}
-                {!selectedFile && (
-                  <div>
-                    <div
-                      onClick={() => fileInputRef.current?.click()}
-                      onDragOver={handleDragOver}
-                      onDragLeave={handleDragLeave}
-                      onDrop={handleDrop}
-                      className={`
-                        h-[250px] rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-8
-                        border-2 border-dashed cursor-pointer
-                        flex flex-col items-center justify-center
-                        transition-all duration-300 ease-in-out
-                        ${isDragging 
-                          ? 'border-purple-400 shadow-lg shadow-purple-500/30 scale-[1.01]' 
-                          : 'border-gray-500 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/30 hover:scale-[1.01]'
-                        }
-                      `}
-                    >
-                      <UploadCloud className="w-12 h-12 text-muted-foreground" />
-                      <p className="text-lg text-foreground mt-4 text-center">
-                        Drag & drop your product photo
-                      </p>
-                      <p className="text-sm text-muted-foreground mt-2">
-                        or click to browse
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-4">
-                        Supports: JPG, PNG, WEBP • Max 10MB
-                      </p>
-                    </div>
-
+            {/* Main content - 2 column layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-[35%_65%] gap-8">
+              {/* Left Column - Upload */}
+              <div className="space-y-6">
+                {!previewUrl ? (
+                  <div
+                    className={`relative h-[250px] rounded-xl border-2 border-dashed transition-all duration-300 cursor-pointer backdrop-blur-sm
+                      ${isDragging 
+                        ? 'border-purple-400 bg-purple-500/10 shadow-lg shadow-purple-500/30' 
+                        : 'border-gray-500 bg-gray-900/50 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/20'
+                      }`}
+                    style={{
+                      background: 'linear-gradient(135deg, rgba(17,24,39,0.9) 0%, rgba(31,41,55,0.8) 100%)'
+                    }}
+                    onDragOver={handleDragOver}
+                    onDragLeave={handleDragLeave}
+                    onDrop={handleDrop}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
                     <input
                       ref={fileInputRef}
                       type="file"
-                      accept="image/jpeg,image/jpg,image/png,image/webp"
+                      accept="image/*"
                       onChange={handleFileInput}
                       className="hidden"
                     />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
+                      <UploadCloud className="w-16 h-16 text-gray-400 mb-4" />
+                      <p className="text-xl text-foreground font-medium mb-1">
+                        Drag & drop your product photo
+                      </p>
+                      <p className="text-sm text-gray-400 mb-3">
+                        or click to browse
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Supports: JPG, PNG, WEBP • Max 10MB
+                      </p>
+                    </div>
                   </div>
-                )}
-
-                {/* Image Preview - Show after upload with glassmorphism */}
-                {selectedFile && previewUrl && (
-                  <div className="max-w-[300px]">
-                    <div className="relative backdrop-blur-xl bg-white/5 rounded-lg p-4 border border-white/10 shadow-xl shadow-purple-500/10">
+                ) : (
+                  <div className="space-y-3">
+                    <div className="max-w-[300px] mx-auto">
                       <img
                         src={previewUrl}
-                        alt="Uploaded product"
-                        className="w-full max-h-[300px] object-contain rounded-lg"
+                        alt="Preview"
+                        className="w-full rounded-lg shadow-lg border border-gray-700"
+                        style={{ maxHeight: '300px', objectFit: 'contain' }}
                       />
                     </div>
-                    <button
-                      onClick={handleChangePhoto}
-                      className="w-full mt-4 text-sm text-purple-400 hover:text-purple-300 cursor-pointer transition-colors"
-                    >
-                      Change Photo
-                    </button>
-                    {uploadedImageUrl && (
-                      <p className="text-xs text-green-400 mt-2 text-center">
-                        ✓ Uploaded to storage
-                      </p>
-                    )}
+                    <div className="text-center">
+                      <button
+                        onClick={handleChangePhoto}
+                        className="text-sm text-purple-400 hover:text-purple-300 transition-colors"
+                      >
+                        Change Photo
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
 
-              {/* RIGHT COLUMN - Style Gallery (65% width) */}
-              <div className="lg:col-span-8">
-                <div className="mb-6">
-                  <h2 className="text-2xl font-bold text-foreground mb-2">
-                    Choose Your Style
-                  </h2>
-                  <p className="text-muted-foreground text-sm">
-                    Select a photography style (1 credit = 4 photos)
-                  </p>
-                </div>
-
-                {/* Style grid - 2 columns with 9:16 aspect ratio - Smaller cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-[600px]">
-                  {templates.map((template) => {
-                    const IconComponent = template.icon;
-                    return (
-                      <div
-                         key={template.id}
-                        onClick={() => {
-                          // Check if background was previously set (and not auto)
-                          if (selectedTemplate !== null && background !== "auto") {
-                            if (background === "custom") {
-                              // Preserve custom background
-                              setStyleChangeWarning("Style changed - Custom background preserved");
-                            } else {
-                              // Reset to auto
-                              setBackground("auto");
-                              setStyleChangeWarning("Style changed - Background reset to Auto");
-                            }
-                            
-                            // Auto-dismiss warning after 3 seconds
-                            setTimeout(() => {
-                              setStyleChangeWarning(null);
-                            }, 3000);
-                          }
-                          
-                          setSelectedTemplate(template.id);
-                        }}
-                        className={`
-                          cursor-pointer rounded-lg p-3
-                          bg-gradient-to-br from-gray-800 to-gray-900
-                          transition-all duration-300 ease-out
-                          relative flex flex-col
-                          ${selectedTemplate === template.id
-                            ? 'border-[3px] border-purple-500 bg-purple-500/20 scale-105 shadow-2xl shadow-purple-500/60 z-20'
-                            : 'border border-gray-700 hover:border-[3px] hover:border-purple-400 hover:scale-105 hover:-translate-y-2 hover:shadow-2xl hover:shadow-purple-500/50 hover:z-10'
-                          }
-                        `}
-                      >
-                        {/* 9:16 Portrait Aspect Ratio Container - Vertical/Portrait */}
-                        <div className="w-full rounded-md bg-gradient-to-br from-gray-700 to-gray-900 opacity-20 flex items-center justify-center relative overflow-hidden" style={{ aspectRatio: '9/16', maxHeight: '360px' }}>
-                          {/* Show example images for templates */}
-                          {template.id === 1 && (
-                            <img 
-                              src={luxuryPremiumExample} 
-                              alt="Urban Lifestyle example"
-                              className="absolute inset-0 w-full h-full object-cover opacity-100"
-                            />
-                          )}
-                          {template.id === 2 && (
-                            <img 
-                              src={studioCleanExample} 
-                              alt="Studio Clean example"
-                              className="absolute inset-0 w-full h-full object-cover opacity-100"
-                            />
-                          )}
-                          {template.id === 3 && (
-                            <img 
-                              src={outdoorNaturalExample} 
-                              alt="Outdoor Natural example"
-                              className="absolute inset-0 w-full h-full object-cover opacity-100"
-                            />
-                          )}
-                          {template.id === 4 && (
-                            <img 
-                              src={luxuryPremiumExample} 
-                              alt="Luxury Premium style example"
-                              className="absolute inset-0 w-full h-full object-cover opacity-100"
-                            />
-                          )}
-                          
-                          {selectedTemplate === template.id ? (
-                            // Large checkmark in center when selected
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                              <div className="bg-purple-500 rounded-full p-3">
-                                <Check className="w-8 h-8 text-white" />
-                              </div>
+              {/* Right Column - Templates & Options */}
+              <div className="space-y-6">
+                {/* Style Templates */}
+                <div>
+                  <h2 className="text-lg font-semibold text-foreground mb-4">Choose a Style</h2>
+                  <div className="grid grid-cols-2 gap-3">
+                    {templates.map((template) => {
+                      const Icon = template.icon;
+                      const isSelected = selectedTemplate === template.id;
+                      
+                      return (
+                        <div
+                          key={template.id}
+                          onClick={() => handleStyleSelect(template.id)}
+                          className={`relative cursor-pointer rounded-xl overflow-hidden transition-all duration-300 ease-out
+                            ${isSelected 
+                              ? 'ring-3 ring-purple-500 scale-105 shadow-xl shadow-purple-500/50' 
+                              : 'opacity-70 hover:opacity-100 hover:scale-[1.03] hover:shadow-lg hover:shadow-purple-500/30 hover:ring-2 hover:ring-purple-400'
+                            }`}
+                          style={{ aspectRatio: '9/16', maxHeight: '180px' }}
+                        >
+                          <img
+                            src={getStyleThumbnail(template.id)}
+                            alt={template.name}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                          <div className="absolute bottom-0 left-0 right-0 p-3">
+                            <div className="flex items-center gap-2">
+                              <Icon className="w-4 h-4 text-white" />
+                              <span className="text-white font-medium text-sm">{template.name}</span>
                             </div>
-                          ) : (template.id < 1 || template.id > 4) && (
-                            <IconComponent className="w-12 h-12 text-white/50" />
+                          </div>
+                          {isSelected && (
+                            <div className="absolute top-2 right-2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                              <Check className="w-4 h-4 text-white" />
+                            </div>
                           )}
                         </div>
-
-                        {/* Template Name */}
-                        <p className="text-sm text-foreground font-medium mt-2 text-center">
-                          {template.name}
-                        </p>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </div>
                 </div>
 
-                {/* Output Format Section - Show only when template selected */}
-                {selectedTemplate && (
-                  <div className="mt-8 max-w-[700px]">
-                    <h3 className="text-lg font-semibold text-foreground mb-4">Output Format</h3>
-                    <RadioGroup value={aspectRatio} onValueChange={setAspectRatio} className="flex gap-4">
-                      <div className="flex items-center space-x-2 flex-1">
-                        <div className={`
-                          flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all
-                          ${aspectRatio === "9:16" 
-                            ? "border-purple-500 bg-purple-500/10" 
-                            : "border-gray-700 bg-gray-800/50 hover:border-purple-400"
-                          }
-                        `} onClick={() => setAspectRatio("9:16")}>
-                          <div className="flex items-center">
-                            <RadioGroupItem value="9:16" id="ratio-9-16" className="mr-3" />
-                            <Label htmlFor="ratio-9-16" className="cursor-pointer flex-1">
-                              <span className="text-foreground font-semibold block text-base">9:16 - Stories/Reels</span>
-                              <span className="block text-[0.75rem] text-muted-foreground/60 mt-1">
-                                Instagram • TikTok • YouTube Shorts
-                              </span>
-                            </Label>
-                          </div>
+                {/* Output Format */}
+                <div>
+                  <h2 className="text-lg font-semibold text-foreground mb-4">Output Format</h2>
+                  <RadioGroup value={aspectRatio} onValueChange={setAspectRatio} className="flex flex-wrap gap-4">
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="9:16" id="r1" />
+                      <Label htmlFor="r1" className="cursor-pointer">
+                        <div>
+                          <span className="font-medium">9:16 - Stories/Reels</span>
+                          <p className="text-xs text-muted-foreground">Instagram • TikTok • YouTube Shorts</p>
                         </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2 flex-1">
-                        <div className={`
-                          flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all
-                          ${aspectRatio === "3:4" 
-                            ? "border-purple-500 bg-purple-500/10" 
-                            : "border-gray-700 bg-gray-800/50 hover:border-purple-400"
-                          }
-                        `} onClick={() => setAspectRatio("3:4")}>
-                          <div className="flex items-center">
-                            <RadioGroupItem value="3:4" id="ratio-3-4" className="mr-3" />
-                            <Label htmlFor="ratio-3-4" className="cursor-pointer flex-1">
-                              <span className="text-foreground font-semibold block text-base">3:4 - Feed Posts</span>
-                              <span className="block text-[0.75rem] text-muted-foreground/60 mt-1">
-                                Instagram Feed
-                              </span>
-                            </Label>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2 flex-1">
-                        <div className={`
-                          flex-1 p-4 rounded-lg border-2 cursor-pointer transition-all
-                          ${aspectRatio === "1:1" 
-                            ? "border-purple-500 bg-purple-500/10" 
-                            : "border-gray-700 bg-gray-800/50 hover:border-purple-400"
-                          }
-                        `} onClick={() => setAspectRatio("1:1")}>
-                          <div className="flex items-center">
-                            <RadioGroupItem value="1:1" id="ratio-1-1" className="mr-3" />
-                            <Label htmlFor="ratio-1-1" className="cursor-pointer flex-1">
-                              <span className="text-foreground font-semibold block text-base">1:1 - Square</span>
-                              <span className="block text-[0.75rem] text-muted-foreground/60 mt-1">
-                                Instagram • Facebook • Twitter/X
-                              </span>
-                            </Label>
-                          </div>
-                        </div>
-                      </div>
-                    </RadioGroup>
-                  </div>
-                )}
-
-                {/* Style Change Warning */}
-                {styleChangeWarning && (
-                  <div className="mt-6 max-w-[700px] animate-fade-in">
-                    <div className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/30 backdrop-blur-sm">
-                      <p className="text-sm text-white">{styleChangeWarning}</p>
+                      </Label>
                     </div>
-                  </div>
-                )}
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="3:4" id="r2" />
+                      <Label htmlFor="r2" className="cursor-pointer">
+                        <div>
+                          <span className="font-medium">3:4 - Feed Posts</span>
+                          <p className="text-xs text-muted-foreground">Instagram Feed</p>
+                        </div>
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="1:1" id="r3" />
+                      <Label htmlFor="r3" className="cursor-pointer">
+                        <div>
+                          <span className="font-medium">1:1 - Square</span>
+                          <p className="text-xs text-muted-foreground">Instagram • Facebook • Twitter/X</p>
+                        </div>
+                      </Label>
+                    </div>
+                  </RadioGroup>
+                </div>
 
-                {/* Advanced Options Section - Collapsible */}
-                <div className={`mt-6 max-w-[700px] transition-opacity duration-300 ${selectedTemplate === null ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
-                  {selectedTemplate === null && (
-                    <p className="text-sm text-muted-foreground/70 mb-2">Select a style first</p>
+                {/* Advanced Options */}
+                <div className={`transition-opacity duration-300 ${selectedTemplate ? 'opacity-100' : 'opacity-50 pointer-events-none'}`}>
+                  {!selectedTemplate && (
+                    <p className="text-sm text-muted-foreground mb-2">Select a style first</p>
                   )}
+                  
+                  {/* Style change warning */}
+                  {styleChangeWarning && (
+                    <div className="mb-3 p-3 bg-purple-500/10 border border-purple-500/30 rounded-lg text-sm text-white animate-fadeIn">
+                      {styleChangeWarning}
+                    </div>
+                  )}
+                  
                   <button
                     onClick={() => setAdvancedOptionsOpen(!advancedOptionsOpen)}
-                    disabled={selectedTemplate === null}
-                    className="w-full flex items-center justify-between p-4 rounded-lg bg-gray-800/50 border border-gray-700 hover:border-purple-400 transition-all disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-3"
                   >
-                    <span className="text-foreground font-medium flex items-center gap-2">
-                      <Settings className="w-5 h-5 text-purple-400" />
-                      Advanced Options (optional)
-                    </span>
-                    {advancedOptionsOpen ? (
-                      <ChevronUp className="w-5 h-5 text-muted-foreground" />
-                    ) : (
-                      <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                    )}
+                    <Settings className="w-4 h-4" />
+                    <span className="text-sm font-medium">Advanced Options</span>
+                    {advancedOptionsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
-                    
+                  
                   {advancedOptionsOpen && (
-                    <div className="mt-4 p-6 rounded-lg bg-gray-800/30 border border-gray-700 space-y-6 animate-in slide-in-from-top-2 duration-300">
-                      {/* Background Dropdown */}
+                    <div className="space-y-4 p-4 bg-gray-800/50 rounded-lg border border-gray-700 animate-fadeIn">
+                      {/* Background */}
                       <div>
-                        <Label htmlFor="background" className="text-foreground mb-2 block">Background</Label>
+                        <Label className="text-sm mb-2 block">Background</Label>
                         <Select value={background} onValueChange={setBackground}>
-                          <SelectTrigger id="background" className="bg-gray-900 border-gray-700">
-                            <SelectValue placeholder="Select background" />
+                          <SelectTrigger className="bg-gray-900 border-gray-700">
+                            <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {getBackgroundOptions(selectedTemplate).map((option) => (
-                              <SelectItem key={option.value} value={option.value}>
-                                {option.label}
-                              </SelectItem>
+                            {getBackgroundOptions(selectedTemplate).map(opt => (
+                              <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                         {background === "custom" && (
                           <Input
+                            placeholder="Describe your custom background..."
                             value={customBackground}
                             onChange={(e) => setCustomBackground(e.target.value)}
-                            placeholder="e.g., cozy bookstore interior"
                             className="mt-2 bg-gray-900 border-gray-700"
                           />
                         )}
                       </div>
-
-                      {/* Lighting Dropdown */}
+                      
+                      {/* Lighting */}
                       <div>
-                        <Label htmlFor="lighting" className="text-foreground mb-2 block">Lighting</Label>
+                        <Label className="text-sm mb-2 block">Lighting</Label>
                         <Select value={lighting} onValueChange={setLighting}>
-                          <SelectTrigger id="lighting" className="bg-gray-900 border-gray-700">
-                            <SelectValue placeholder="Select lighting" />
+                          <SelectTrigger className="bg-gray-900 border-gray-700">
+                            <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="auto">Auto (from style)</SelectItem>
                             <SelectItem value="bright-airy">Bright & Airy</SelectItem>
                             <SelectItem value="dramatic-moody">Dramatic & Moody</SelectItem>
                             <SelectItem value="natural-daylight">Natural Daylight</SelectItem>
-                            <SelectItem value="warm-golden-hour">Warm Golden Hour</SelectItem>
+                            <SelectItem value="warm-golden">Warm Golden Hour</SelectItem>
                             <SelectItem value="custom">Custom</SelectItem>
                           </SelectContent>
                         </Select>
                         {lighting === "custom" && (
                           <Input
+                            placeholder="Describe your custom lighting..."
                             value={customLighting}
                             onChange={(e) => setCustomLighting(e.target.value)}
-                            placeholder="e.g., soft window light"
                             className="mt-2 bg-gray-900 border-gray-700"
                           />
                         )}
                       </div>
-
-                      {/* Camera Angle Dropdown */}
+                      
+                      {/* Camera Angle */}
                       <div>
-                        <Label htmlFor="camera-angle" className="text-foreground mb-2 block">Camera Angle</Label>
+                        <Label className="text-sm mb-2 block">Camera Angle</Label>
                         <Select value={cameraAngle} onValueChange={setCameraAngle}>
-                          <SelectTrigger id="camera-angle" className="bg-gray-900 border-gray-700">
-                            <SelectValue placeholder="Select camera angle" />
+                          <SelectTrigger className="bg-gray-900 border-gray-700">
+                            <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
                             <SelectItem value="auto">Auto (from style)</SelectItem>
@@ -820,15 +750,15 @@ const FashionPhotography = () => {
                             <SelectItem value="high-angle">High Angle</SelectItem>
                             <SelectItem value="low-angle">Low Angle</SelectItem>
                             <SelectItem value="45-angle">45° Angle</SelectItem>
-                            <SelectItem value="closeup-detail">Close-up Detail</SelectItem>
+                            <SelectItem value="close-up">Close-up Detail</SelectItem>
                             <SelectItem value="custom">Custom</SelectItem>
                           </SelectContent>
                         </Select>
                         {cameraAngle === "custom" && (
                           <Input
+                            placeholder="Describe your custom camera angle..."
                             value={customCameraAngle}
                             onChange={(e) => setCustomCameraAngle(e.target.value)}
-                            placeholder="e.g., overhead flat lay"
                             className="mt-2 bg-gray-900 border-gray-700"
                           />
                         )}
@@ -837,29 +767,16 @@ const FashionPhotography = () => {
                   )}
                 </div>
 
-                {/* Generate Button - Show only when both image and template selected */}
-                {selectedFile && selectedTemplate && (
-                  <div className="flex flex-col items-center mt-8">
+                {/* Generate Button */}
+                {uploadedImageUrl && selectedTemplate && (
+                  <div className="pt-4">
                     <Button
                       onClick={handleGenerate}
-                      disabled={isGenerating}
-                      className="px-8 py-4 text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                      className="w-full px-8 py-4 text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 hover:scale-[1.02] transition-all duration-200 shadow-lg rounded-lg"
                     >
-                      {isGenerating ? (
-                        <>
-                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                          Generating your photos...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="mr-2 h-5 w-5" />
-                          Generate Photos (1 Credit)
-                        </>
-                      )}
+                      <Sparkles className="mr-2 h-5 w-5" />
+                      Generate Photos (1 Credit)
                     </Button>
-                    <p className="text-muted-foreground text-sm mt-2">
-                      You'll receive 4 high-quality images
-                    </p>
                   </div>
                 )}
               </div>

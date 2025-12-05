@@ -2,3 +2,15 @@ project_id = "syaauhmujhosskdpeiii"
 
 [functions.fashion-webhook]
 verify_jwt = true
+
+[functions.storage-upload]
+verify_jwt = false
+
+[functions.storage-list]
+verify_jwt = false
+
+[functions.storage-delete]
+verify_jwt = false
+
+[functions.admin-storage]
+verify_jwt = false
