@@ -1,46 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.76.1";
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-/**
- * Validate Clerk token and extract user ID
- */
-function validateClerkToken(authHeader: string | null): { valid: boolean; userId?: string; error?: string } {
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return { valid: false, error: 'Missing authorization header' };
-  }
-
-  const token = authHeader.replace('Bearer ', '');
-  
-  try {
-    const parts = token.split('.');
-    if (parts.length !== 3) {
-      return { valid: false, error: 'Invalid token format' };
-    }
-
-    const payload = JSON.parse(atob(parts[1]));
-    
-    // Check expiration
-    const now = Math.floor(Date.now() / 1000);
-    if (payload.exp && payload.exp < now) {
-      return { valid: false, error: 'Token expired' };
-    }
-
-    const userId = payload.sub;
-    if (!userId) {
-      return { valid: false, error: 'No user ID in token' };
-    }
-
-    return { valid: true, userId };
-  } catch (error) {
-    console.error('Token validation error:', error);
-    return { valid: false, error: 'Invalid token' };
-  }
-}
+import { validateClerkToken, corsHeaders } from "../_shared/clerk-auth.ts";
 
 serve(async (req) => {
   // Handle CORS preflight
@@ -49,8 +9,8 @@ serve(async (req) => {
   }
 
   try {
-    // Validate Clerk session
-    const authResult = validateClerkToken(req.headers.get('authorization'));
+    // Validate Clerk session with proper signature verification
+    const authResult = await validateClerkToken(req.headers.get('authorization'));
     if (!authResult.valid || !authResult.userId) {
       console.error('Auth validation failed:', authResult.error);
       return new Response(
