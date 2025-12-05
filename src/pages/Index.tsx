@@ -29,13 +29,19 @@ import carousel13 from "@/assets/carousel-13.png";
 import { VideoComparisonCard } from "@/components/VideoComparisonCard";
 import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-
 const Index = () => {
   const [showAnnouncement, setShowAnnouncement] = useState(true);
-  const { user, isLoaded } = useUser();
-  const { signOut } = useClerk();
+  const {
+    user,
+    isLoaded
+  } = useUser();
+  const {
+    signOut
+  } = useClerk();
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [videoUrl, setVideoUrl] = useState<string>('/videos/BOLD.mp4');
   const [heroVideos, setHeroVideos] = useState({
     left1: '',
@@ -45,7 +51,6 @@ const Index = () => {
     right2: '',
     right3: ''
   });
-
   useEffect(() => {
     // Function to load videos from localStorage
     const loadVideos = () => {
@@ -81,13 +86,11 @@ const Index = () => {
     if (savedHeroVideo) {
       setVideoUrl(savedHeroVideo);
     }
-
     return () => {
       window.removeEventListener('focus', handleFocus);
       window.removeEventListener('storage', handleStorage);
     };
   }, []);
-
   const handleLogout = async () => {
     try {
       await signOut();
@@ -103,7 +106,6 @@ const Index = () => {
       });
     }
   };
-
   const categories = ["dresses", "pants", "tops", "graphic t-shirts", "outerwear", "baby & kids clothing", "men's clothing", "women's clothing", "jewellery", "handbags", "sunglasses", "hats", "skincare", "makeup", "beverage", "health & wellness", "pet products", "electronics"];
   const pricingPlans = [{
     number: "01",
@@ -142,7 +144,6 @@ const Index = () => {
     popular: false,
     features: ["2300 credits = 2300 images", "2K resolution", "Video generation", "Image editing with prompts"]
   }];
-
   return <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b border-border">
@@ -378,22 +379,13 @@ const Index = () => {
               {/* Right Side: Product Photo Placeholder */}
               <div className="relative mt-8 md:mt-0">
                 <div className="w-[300px] md:w-[420px] h-[400px] md:h-[560px] mx-auto rounded-lg overflow-hidden shadow-2xl">
-                  <img 
-                    src={heroPhoto1} 
-                    alt="Product photography example" 
-                    className="w-full h-full object-cover"
-                  />
+                  <img alt="Product photography example" className="w-full h-full object-cover" src="/lovable-uploads/c505d9bf-13b2-4dfd-af4a-b3db4f22f6e1.png" />
                 </div>
                 {/* Floating product thumbnail */}
-                <div 
-                  className="absolute -bottom-4 -right-4 md:bottom-8 md:-right-8 w-[100px] h-[120px] bg-black rounded-lg shadow-xl overflow-hidden"
-                  style={{ transform: 'rotate(8deg)' }}
-                >
-                  <img 
-                    src={heroThumbnail1} 
-                    alt="Product thumbnail" 
-                    className="w-full h-full object-cover"
-                  />
+                <div className="absolute -bottom-4 -right-4 md:bottom-8 md:-right-8 w-[100px] h-[120px] bg-black rounded-lg shadow-xl overflow-hidden" style={{
+                transform: 'rotate(8deg)'
+              }}>
+                  <img alt="Product thumbnail" className="w-full h-full object-cover" src="/lovable-uploads/2666c21d-84ba-4e59-a500-d7d2309e4406.jpg" />
                 </div>
               </div>
             </div>
@@ -535,7 +527,9 @@ const Index = () => {
                     <div className="flex items-center gap-2 text-white text-sm">
                       <span>9:41</span>
                       <div className="w-6 h-3 border border-white rounded-sm relative">
-                        <div className="absolute inset-0.5 bg-white rounded-sm" style={{ width: '70%' }} />
+                        <div className="absolute inset-0.5 bg-white rounded-sm" style={{
+                        width: '70%'
+                      }} />
                       </div>
                     </div>
                   </div>
@@ -584,14 +578,7 @@ const Index = () => {
                   
                   {/* Video Content */}
                   <div className="aspect-[4/5] bg-black overflow-hidden">
-                    <video 
-                      src="/videos/social-mockup.mp4"
-                      className="w-full h-full object-cover"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                    />
+                    <video src="/videos/social-mockup.mp4" className="w-full h-full object-cover" autoPlay loop muted playsInline />
                   </div>
                   
                   {/* CTA Button */}
@@ -677,36 +664,12 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <VideoComparisonCard
-              imageSrc={heroPhoto1}
-              videoSrc="/videos/social-mockup.mp4"
-              templateName="Fashion Style 1"
-            />
-            <VideoComparisonCard
-              imageSrc={heroPhoto2}
-              videoSrc="/videos/social-mockup.mp4"
-              templateName="Fashion Style 2"
-            />
-            <VideoComparisonCard
-              imageSrc={heroPhoto3}
-              videoSrc="/videos/social-mockup.mp4"
-              templateName="Fashion Style 3"
-            />
-            <VideoComparisonCard
-              imageSrc={heroPhoto4}
-              videoSrc="/videos/social-mockup.mp4"
-              templateName="Fashion Style 4"
-            />
-            <VideoComparisonCard
-              imageSrc={heroThumbnail1}
-              videoSrc="/videos/social-mockup.mp4"
-              templateName="Fashion Style 5"
-            />
-            <VideoComparisonCard
-              imageSrc={heroThumbnail2}
-              videoSrc="/videos/social-mockup.mp4"
-              templateName="Fashion Style 6"
-            />
+            <VideoComparisonCard imageSrc={heroPhoto1} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 1" />
+            <VideoComparisonCard imageSrc={heroPhoto2} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 2" />
+            <VideoComparisonCard imageSrc={heroPhoto3} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 3" />
+            <VideoComparisonCard imageSrc={heroPhoto4} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 4" />
+            <VideoComparisonCard imageSrc={heroThumbnail1} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 5" />
+            <VideoComparisonCard imageSrc={heroThumbnail2} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 6" />
           </div>
         </div>
       </section>
@@ -770,30 +733,20 @@ const Index = () => {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {pricingPlans.map((plan) => (
-              <Card 
-                key={plan.name} 
-                className={`relative overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 ${
-                  plan.popular ? 'ring-2 ring-primary' : ''
-                }`}
-              >
+            {pricingPlans.map(plan => <Card key={plan.name} className={`relative overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 ${plan.popular ? 'ring-2 ring-primary' : ''}`}>
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between mb-2">
                     <span className="text-gray-500 text-sm font-mono">{plan.number}</span>
                     <span className="text-gray-500 text-sm">•••</span>
                   </div>
                   
-                  {plan.saveBadge && (
-                    <span className="inline-block px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs font-medium rounded mb-2 w-fit">
+                  {plan.saveBadge && <span className="inline-block px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs font-medium rounded mb-2 w-fit">
                       {plan.saveBadge}
-                    </span>
-                  )}
+                    </span>}
                   
-                  {plan.popular && (
-                    <span className="inline-block px-2 py-0.5 bg-blue-500 text-white text-xs font-medium rounded mb-2 w-fit">
+                  {plan.popular && <span className="inline-block px-2 py-0.5 bg-blue-500 text-white text-xs font-medium rounded mb-2 w-fit">
                       Popular
-                    </span>
-                  )}
+                    </span>}
                   
                   <CardTitle className="text-xl">{plan.name}</CardTitle>
                   <CardDescription className="text-gray-400">{plan.subtitle}</CardDescription>
@@ -806,24 +759,17 @@ const Index = () => {
                   </div>
                   
                   <ul className="space-y-3">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-center gap-2 text-sm text-gray-300">
+                    {plan.features.map((feature, i) => <li key={i} className="flex items-center gap-2 text-sm text-gray-300">
                         <Check className="h-4 w-4 text-emerald-400 flex-shrink-0" />
                         {feature}
-                      </li>
-                    ))}
+                      </li>)}
                   </ul>
                   
-                  <Button 
-                    className={`w-full ${plan.popular ? 'bg-blue-500 hover:bg-blue-600' : ''}`}
-                    variant={plan.popular ? 'default' : 'outline'}
-                    onClick={() => navigate("/signup")}
-                  >
+                  <Button className={`w-full ${plan.popular ? 'bg-blue-500 hover:bg-blue-600' : ''}`} variant={plan.popular ? 'default' : 'outline'} onClick={() => navigate("/signup")}>
                     Get started
                   </Button>
                 </CardContent>
-              </Card>
-            ))}
+              </Card>)}
           </div>
         </div>
       </section>
@@ -854,5 +800,4 @@ const Index = () => {
       </footer>
     </div>;
 };
-
 export default Index;
