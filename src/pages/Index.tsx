@@ -157,7 +157,6 @@ const Index = () => {
             <nav className="hidden md:flex items-center gap-8">
               <Link to="/features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Features</Link>
               <a href="#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
-              <a href="#resources" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Resources</a>
             </nav>
 
             <div className="flex items-center gap-4">
