@@ -733,7 +733,7 @@ const Index = () => {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {pricingPlans.map(plan => <Card key={plan.name} className={`relative overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 ${plan.popular ? 'ring-2 ring-primary' : ''}`}>
+            {pricingPlans.map(plan => <Card key={plan.name} className={`relative overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 flex flex-col ${plan.popular ? 'ring-2 ring-primary' : ''}`}>
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between mb-2">
                     <span className="text-gray-500 text-sm font-mono">{plan.number}</span>
@@ -752,7 +752,7 @@ const Index = () => {
                   <CardDescription className="text-gray-400">{plan.subtitle}</CardDescription>
                 </CardHeader>
                 
-                <CardContent className="space-y-6">
+                <CardContent className="flex flex-col flex-grow space-y-6">
                   <div>
                     <span className="text-4xl font-bold">{plan.price}</span>
                     <span className="text-gray-400 text-sm ml-2">{plan.priceLabel}</span>
@@ -765,9 +765,11 @@ const Index = () => {
                       </li>)}
                   </ul>
                   
-                  <Button className={`w-full ${plan.popular ? 'bg-blue-500 hover:bg-blue-600' : ''}`} variant={plan.popular ? 'default' : 'outline'} onClick={() => navigate("/signup")}>
-                    Get started
-                  </Button>
+                  <div className="mt-auto pt-4">
+                    <Button className={`w-full ${plan.popular ? 'bg-blue-500 hover:bg-blue-600' : ''}`} variant={plan.popular ? 'default' : 'outline'} onClick={() => navigate("/signup")}>
+                      Get started
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>)}
           </div>
