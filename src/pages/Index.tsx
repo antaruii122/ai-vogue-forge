@@ -752,24 +752,22 @@ const Index = () => {
                   <CardDescription className="text-gray-400">{plan.subtitle}</CardDescription>
                 </CardHeader>
                 
-                <CardContent className="flex flex-col flex-grow space-y-6">
-                  <div>
+                <CardContent className="flex flex-col flex-1 pt-0">
+                  <div className="mb-6">
                     <span className="text-4xl font-bold">{plan.price}</span>
                     <span className="text-gray-400 text-sm ml-2">{plan.priceLabel}</span>
                   </div>
                   
-                  <ul className="space-y-3">
+                  <ul className="space-y-3 flex-1">
                     {plan.features.map((feature, i) => <li key={i} className="flex items-center gap-2 text-sm text-gray-300">
                         <Check className="h-4 w-4 text-emerald-400 flex-shrink-0" />
                         {feature}
                       </li>)}
                   </ul>
                   
-                  <div className="mt-auto pt-4">
-                    <Button className={`w-full ${plan.popular ? 'bg-blue-500 hover:bg-blue-600' : ''}`} variant={plan.popular ? 'default' : 'outline'} onClick={() => navigate("/signup")}>
-                      Get started
-                    </Button>
-                  </div>
+                  <Button className={`w-full mt-6 ${plan.popular ? 'bg-blue-500 hover:bg-blue-600' : ''}`} variant={plan.popular ? 'default' : 'outline'} onClick={() => navigate("/signup")}>
+                    Get started
+                  </Button>
                 </CardContent>
               </Card>)}
           </div>
