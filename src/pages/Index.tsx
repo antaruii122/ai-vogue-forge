@@ -732,8 +732,8 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-            {pricingPlans.map(plan => <Card key={plan.name} className={`relative overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 flex flex-col ${plan.popular ? 'ring-2 ring-primary' : ''}`}>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto items-stretch">
+            {pricingPlans.map(plan => <Card key={plan.name} className={`relative overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 flex flex-col h-full ${plan.popular ? 'ring-2 ring-primary' : ''}`}>
                 <CardHeader className="pb-4">
                   <div className="flex items-start justify-between mb-2">
                     <span className="text-gray-500 text-sm font-mono">{plan.number}</span>
