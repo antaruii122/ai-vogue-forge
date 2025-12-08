@@ -67,7 +67,8 @@ All colors MUST be HSL.
 }
 
 /* Google Translate Widget Styling */
-.google-translate-widget {
+.google-translate-widget,
+.google-translate-widget-dark {
   display: flex;
   align-items: center;
 }
@@ -78,17 +79,19 @@ All colors MUST be HSL.
   color: transparent !important;
 }
 
+/* Default dark theme styling for the dropdown */
 .goog-te-gadget .goog-te-combo {
-  font-size: 14px !important;
+  font-size: 13px !important;
   font-family: inherit !important;
   background-color: hsl(237 28% 20%) !important;
   color: hsl(240 10% 98%) !important;
   border: 1px solid hsl(237 28% 30%) !important;
   border-radius: 6px !important;
-  padding: 6px 12px !important;
+  padding: 5px 10px !important;
   cursor: pointer !important;
   outline: none !important;
   transition: all 0.2s ease !important;
+  max-width: 120px !important;
 }
 
 .goog-te-gadget .goog-te-combo:hover {
@@ -99,6 +102,17 @@ All colors MUST be HSL.
 .goog-te-gadget .goog-te-combo:focus {
   border-color: hsl(162 73% 46%) !important;
   box-shadow: 0 0 0 2px hsl(162 73% 46% / 0.2) !important;
+}
+
+/* Dark header variant (for AppLayout) */
+.google-translate-widget-dark .goog-te-gadget .goog-te-combo {
+  background-color: hsl(0 0% 25%) !important;
+  border-color: hsl(0 0% 35%) !important;
+}
+
+.google-translate-widget-dark .goog-te-gadget .goog-te-combo:hover {
+  background-color: hsl(0 0% 30%) !important;
+  border-color: hsl(0 0% 45%) !important;
 }
 
 /* Hide Google Translate top banner */
@@ -115,14 +129,11 @@ body {
   color: hsl(240 10% 98%) !important;
 }
 
-/* Mobile Google Translate */
+/* Mobile responsiveness */
 @media (max-width: 768px) {
-  .google-translate-widget-mobile {
-    width: 100%;
-  }
-  
-  .google-translate-widget-mobile .goog-te-gadget .goog-te-combo {
-    width: 100% !important;
-    padding: 10px 14px !important;
+  .goog-te-gadget .goog-te-combo {
+    font-size: 12px !important;
+    padding: 4px 8px !important;
+    max-width: 100px !important;
   }
 }
