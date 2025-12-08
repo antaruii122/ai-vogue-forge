@@ -66,36 +66,46 @@ All colors MUST be HSL.
   }
 }
 
-/* Google Translate Widget Styling */
-.google-translate-widget,
-.google-translate-widget-dark {
+/* Google Translate Widget Container */
+.google-translate-container {
   display: flex;
   align-items: center;
 }
 
-/* Hide Google Translate branding and attribution */
+/* Hide Google Translate branding text */
 .goog-te-gadget {
   font-size: 0 !important;
   color: transparent !important;
+  line-height: 0 !important;
 }
 
-/* Default dark theme styling for the dropdown */
+.goog-te-gadget > span {
+  display: none !important;
+}
+
+/* Style the dropdown select */
 .goog-te-gadget .goog-te-combo {
   font-size: 13px !important;
   font-family: inherit !important;
-  background-color: hsl(237 28% 20%) !important;
+  background-color: hsl(237 28% 15%) !important;
   color: hsl(240 10% 98%) !important;
-  border: 1px solid hsl(237 28% 30%) !important;
+  border: 1px solid hsl(237 28% 25%) !important;
   border-radius: 6px !important;
-  padding: 5px 10px !important;
+  padding: 6px 12px !important;
   cursor: pointer !important;
   outline: none !important;
   transition: all 0.2s ease !important;
-  max-width: 120px !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23a0a0a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 8px center !important;
+  padding-right: 28px !important;
 }
 
 .goog-te-gadget .goog-te-combo:hover {
-  background-color: hsl(237 28% 25%) !important;
+  background-color: hsl(237 28% 20%) !important;
   border-color: hsl(162 73% 46%) !important;
 }
 
@@ -104,23 +114,17 @@ All colors MUST be HSL.
   box-shadow: 0 0 0 2px hsl(162 73% 46% / 0.2) !important;
 }
 
-/* Dark header variant (for AppLayout) */
-.google-translate-widget-dark .goog-te-gadget .goog-te-combo {
-  background-color: hsl(0 0% 25%) !important;
-  border-color: hsl(0 0% 35%) !important;
-}
-
-.google-translate-widget-dark .goog-te-gadget .goog-te-combo:hover {
-  background-color: hsl(0 0% 30%) !important;
-  border-color: hsl(0 0% 45%) !important;
-}
-
 /* Hide Google Translate top banner and prevent page shift */
 .goog-te-banner-frame {
   display: none !important;
 }
 
-.skiptranslate {
+/* Hide only the top iframe banner, not our widget */
+body > .skiptranslate {
+  display: none !important;
+}
+
+iframe.skiptranslate {
   display: none !important;
 }
 
@@ -129,16 +133,23 @@ body {
   position: static !important;
 }
 
-/* Style the dropdown options */
-.goog-te-menu-value span {
-  color: hsl(240 10% 98%) !important;
+/* Fix for translated page - prevent body shift */
+html.translated-ltr,
+html.translated-rtl {
+  margin-top: 0 !important;
+}
+
+html.translated-ltr body,
+html.translated-rtl body {
+  top: 0 !important;
+  margin-top: 0 !important;
 }
 
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .goog-te-gadget .goog-te-combo {
     font-size: 12px !important;
-    padding: 4px 8px !important;
-    max-width: 100px !important;
+    padding: 5px 10px !important;
+    padding-right: 24px !important;
   }
 }

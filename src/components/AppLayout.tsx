@@ -58,7 +58,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           {/* Right - Translate, Credits, CreativeAgent, Avatar */}
           <div className="flex items-center gap-4">
             {/* Google Translate Widget */}
-            <GoogleTranslate variant="dark" />
+            <GoogleTranslate />
             
             <button className="flex items-center gap-2 text-[#666666] hover:text-[#888888] transition-colors">
               <span className="text-sm">0 CREDITS</span>
