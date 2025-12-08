@@ -17,7 +17,7 @@ import heroThumbnail4 from "@/assets/hero-thumbnail-4.png";
 // VideoComparisonCard Section Images (independent)
 import comparisonPhoto1 from "@/assets/fashion-comparison-photo.png";
 import comparisonPhoto2 from "@/assets/fashion-style-2.png";
-import comparisonPhoto3 from "@/assets/fashion-style-3.png";
+import comparisonPhoto3 from "@/assets/fashion-style-3.webp";
 import comparisonPhoto4 from "@/assets/fashion-style-4.png";
 import comparisonPhoto5 from "@/assets/fashion-style-5.webp";
 import comparisonPhoto6 from "@/assets/carousel-4.png";
