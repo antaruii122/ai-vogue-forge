@@ -162,7 +162,7 @@ const Index = () => {
 
             <div className="flex items-center gap-2 md:gap-4">
               {/* Google Translate Widget */}
-              <GoogleTranslate variant="dark" />
+              <GoogleTranslate />
               
               {isLoaded && user ? <>
                   <Button variant="ghost" size="sm" onClick={() => navigate("/my-images")} className="hidden md:flex">
