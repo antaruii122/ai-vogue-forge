@@ -677,7 +677,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             <VideoComparisonCard imageSrc={comparisonPhoto1} videoSrc="/videos/fashion-comparison.mp4" templateName="Fashion Style 1" />
             <VideoComparisonCard imageSrc={comparisonPhoto2} videoSrc="/videos/fashion-style-2.mp4" templateName="Fashion Style 2" />
-            <VideoComparisonCard imageSrc={comparisonPhoto3} videoSrc="/videos/fashion-style-3.mp4" templateName="Fashion Style 3" />
+            <VideoComparisonCard imageSrc={comparisonPhoto3} videoSrc="/videos/fashion-style-3.mp4?v=2" templateName="Fashion Style 3" />
             <VideoComparisonCard imageSrc={comparisonPhoto4} videoSrc="/videos/fashion-style-4.mp4" templateName="Fashion Style 4" />
             <VideoComparisonCard imageSrc={comparisonPhoto5} videoSrc="/videos/fashion-style-5.mp4" templateName="Fashion Style 5" />
             <VideoComparisonCard imageSrc={comparisonPhoto6} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 6" />
