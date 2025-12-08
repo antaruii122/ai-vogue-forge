@@ -119,13 +119,25 @@ All colors MUST be HSL.
   display: none !important;
 }
 
-/* Hide only the top iframe banner, not our widget */
-body > .skiptranslate {
+/* Hide the fixed position banner at top, but NOT the widget dropdown */
+body > .skiptranslate:not(#google_translate_element) {
+  display: none !important;
+  height: 0 !important;
+}
+
+/* Specifically hide the banner iframe */
+iframe.goog-te-banner-frame,
+.goog-te-banner-frame.skiptranslate {
   display: none !important;
 }
 
-iframe.skiptranslate {
-  display: none !important;
+/* Make sure our widget container is visible */
+#google_translate_element {
+  display: inline-block !important;
+}
+
+#google_translate_element .skiptranslate {
+  display: inline-block !important;
 }
 
 body {
