@@ -161,9 +161,6 @@ const Index = () => {
             </nav>
 
             <div className="flex items-center gap-2 md:gap-4">
-              {/* Google Translate Widget */}
-              <GoogleTranslate />
-              
               {isLoaded && user ? <>
                   <Button variant="ghost" size="sm" onClick={() => navigate("/my-images")} className="hidden md:flex">
                     My Images
@@ -171,6 +168,7 @@ const Index = () => {
                   <Button variant="ghost" size="sm" onClick={() => navigate("/generator")} className="hidden md:flex">
                     Generator
                   </Button>
+                  <GoogleTranslate />
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" size="sm">
@@ -202,6 +200,7 @@ const Index = () => {
                   <Button variant="ghost" size="sm" onClick={() => navigate("/login")}>
                     Log In
                   </Button>
+                  <GoogleTranslate />
                   <Button size="sm" onClick={() => navigate("/signup")}>
                     Sign Up
                   </Button>
