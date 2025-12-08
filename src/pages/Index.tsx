@@ -19,7 +19,7 @@ import comparisonPhoto1 from "@/assets/fashion-comparison-photo.png";
 import comparisonPhoto2 from "@/assets/fashion-style-2.png";
 import comparisonPhoto3 from "@/assets/fashion-style-3.png";
 import comparisonPhoto4 from "@/assets/fashion-style-4.png";
-import comparisonPhoto5 from "@/assets/carousel-3.png";
+import comparisonPhoto5 from "@/assets/fashion-style-5.webp";
 import comparisonPhoto6 from "@/assets/carousel-4.png";
 import carousel1 from "@/assets/carousel-1.png";
 import carousel2 from "@/assets/carousel-2.png";
@@ -679,7 +679,7 @@ const Index = () => {
             <VideoComparisonCard imageSrc={comparisonPhoto2} videoSrc="/videos/fashion-style-2.mp4" templateName="Fashion Style 2" />
             <VideoComparisonCard imageSrc={comparisonPhoto3} videoSrc="/videos/fashion-style-3.mp4" templateName="Fashion Style 3" />
             <VideoComparisonCard imageSrc={comparisonPhoto4} videoSrc="/videos/fashion-style-4.mp4" templateName="Fashion Style 4" />
-            <VideoComparisonCard imageSrc={comparisonPhoto5} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 5" />
+            <VideoComparisonCard imageSrc={comparisonPhoto5} videoSrc="/videos/fashion-style-5.mp4" templateName="Fashion Style 5" />
             <VideoComparisonCard imageSrc={comparisonPhoto6} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 6" />
           </div>
         </div>
