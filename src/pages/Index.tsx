@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Upload, Wand2, Download, Camera, Video, Sparkles, Star, Check, User, LogOut, ChevronDown, ArrowRight } from "lucide-react";
 import { useUser, useClerk } from "@clerk/clerk-react";
 import tetesImage from "@/assets/tetes.png";
-import heroPhoto1 from "@/assets/hero-photo-1.png";
+import heroPhoto1 from "@/assets/fashion-comparison-photo.png";
 import heroPhoto2 from "@/assets/hero-photo-2.png";
 import heroPhoto3 from "@/assets/hero-photo-3.png";
 import heroPhoto4 from "@/assets/hero-photo-4.png";
@@ -667,7 +667,7 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <VideoComparisonCard imageSrc={heroPhoto1} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 1" />
+            <VideoComparisonCard imageSrc={heroPhoto1} videoSrc="/videos/fashion-comparison.mp4" templateName="Fashion Style 1" />
             <VideoComparisonCard imageSrc={heroPhoto2} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 2" />
             <VideoComparisonCard imageSrc={heroPhoto3} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 3" />
             <VideoComparisonCard imageSrc={heroPhoto4} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 4" />
