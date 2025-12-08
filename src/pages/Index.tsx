@@ -17,7 +17,7 @@ import heroThumbnail4 from "@/assets/hero-thumbnail-4.png";
 // VideoComparisonCard Section Images (independent)
 import comparisonPhoto1 from "@/assets/fashion-comparison-photo.png";
 import comparisonPhoto2 from "@/assets/fashion-style-2.png";
-import comparisonPhoto3 from "@/assets/carousel-1.png";
+import comparisonPhoto3 from "@/assets/fashion-style-3.png";
 import comparisonPhoto4 from "@/assets/carousel-2.png";
 import comparisonPhoto5 from "@/assets/carousel-3.png";
 import comparisonPhoto6 from "@/assets/carousel-4.png";
@@ -677,7 +677,7 @@ const Index = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
             <VideoComparisonCard imageSrc={comparisonPhoto1} videoSrc="/videos/fashion-comparison.mp4" templateName="Fashion Style 1" />
             <VideoComparisonCard imageSrc={comparisonPhoto2} videoSrc="/videos/fashion-style-2.mp4" templateName="Fashion Style 2" />
-            <VideoComparisonCard imageSrc={comparisonPhoto3} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 3" />
+            <VideoComparisonCard imageSrc={comparisonPhoto3} videoSrc="/videos/fashion-style-3.mp4" templateName="Fashion Style 3" />
             <VideoComparisonCard imageSrc={comparisonPhoto4} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 4" />
             <VideoComparisonCard imageSrc={comparisonPhoto5} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 5" />
             <VideoComparisonCard imageSrc={comparisonPhoto6} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 6" />
