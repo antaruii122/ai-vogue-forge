@@ -100,22 +100,52 @@ const GoogleTranslate = ({ variant = "dark" }: GoogleTranslateProps) => {
     
     setSelectedLang(langCode);
     
-    // Try to trigger Google Translate via the hidden select
-    const selectElement = document.querySelector('.goog-te-combo') as HTMLSelectElement;
-    if (selectElement) {
-      selectElement.value = langCode;
-      selectElement.dispatchEvent(new Event('change'));
+    if (langCode === 'en') {
+      // Reset to English - need to restore original page
+      // Method 1: Try using Google Translate's restore function
+      const iframe = document.querySelector('.goog-te-banner-frame') as HTMLIFrameElement;
+      if (iframe) {
+        const innerDoc = iframe.contentDocument || iframe.contentWindow?.document;
+        const restoreButton = innerDoc?.querySelector('.goog-te-button button') as HTMLButtonElement;
+        if (restoreButton) {
+          restoreButton.click();
+          return;
+        }
+      }
+      
+      // Method 2: Try the combo box
+      const selectElement = document.querySelector('.goog-te-combo') as HTMLSelectElement;
+      if (selectElement) {
+        selectElement.value = '';
+        selectElement.dispatchEvent(new Event('change'));
+        return;
+      }
+      
+      // Method 3: Clear cookies and reload
+      document.cookie = 'googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = `googtrans=; path=/; domain=.${window.location.hostname}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+      document.cookie = `googtrans=; path=/; domain=${window.location.hostname}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+      
+      // Also try removing from the root domain
+      const hostParts = window.location.hostname.split('.');
+      if (hostParts.length > 2) {
+        const rootDomain = hostParts.slice(-2).join('.');
+        document.cookie = `googtrans=; path=/; domain=.${rootDomain}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+      }
+      
+      window.location.reload();
     } else {
-      // Fallback: set cookie and reload
-      if (langCode === 'en') {
-        // Reset to English
-        document.cookie = `googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-        document.cookie = `googtrans=; path=/; domain=${window.location.hostname}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+      // Switch to another language
+      const selectElement = document.querySelector('.goog-te-combo') as HTMLSelectElement;
+      if (selectElement) {
+        selectElement.value = langCode;
+        selectElement.dispatchEvent(new Event('change'));
       } else {
+        // Fallback: set cookie and reload
         document.cookie = `googtrans=/en/${langCode}; path=/`;
         document.cookie = `googtrans=/en/${langCode}; path=/; domain=${window.location.hostname}`;
+        window.location.reload();
       }
-      window.location.reload();
     }
   };
 
