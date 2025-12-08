@@ -29,6 +29,7 @@ import carousel13 from "@/assets/carousel-13.png";
 import { VideoComparisonCard } from "@/components/VideoComparisonCard";
 import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import GoogleTranslate from "@/components/GoogleTranslate";
 const Index = () => {
   const [showAnnouncement, setShowAnnouncement] = useState(true);
   const {
@@ -161,7 +162,7 @@ const Index = () => {
 
             <div className="flex items-center gap-2 md:gap-4">
               {/* Google Translate Widget */}
-              <div id="google_translate_element" className="google-translate-widget"></div>
+              <GoogleTranslate variant="dark" />
               
               {isLoaded && user ? <>
                   <Button variant="ghost" size="sm" onClick={() => navigate("/my-images")} className="hidden md:flex">

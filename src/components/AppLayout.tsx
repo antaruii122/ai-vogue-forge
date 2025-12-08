@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { Menu, ChevronDown, X, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import GoogleTranslate from "@/components/GoogleTranslate";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -54,8 +55,11 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           {/* Center - Spacer */}
           <div className="flex-1" />
 
-          {/* Right - Credits, CreativeAgent, Avatar */}
+          {/* Right - Translate, Credits, CreativeAgent, Avatar */}
           <div className="flex items-center gap-4">
+            {/* Google Translate Widget */}
+            <GoogleTranslate variant="dark" />
+            
             <button className="flex items-center gap-2 text-[#666666] hover:text-[#888888] transition-colors">
               <span className="text-sm">0 CREDITS</span>
               <ChevronDown className="w-4 h-4" />
