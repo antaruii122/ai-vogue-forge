@@ -115,13 +115,18 @@ All colors MUST be HSL.
   border-color: hsl(0 0% 45%) !important;
 }
 
-/* Hide Google Translate top banner */
+/* Hide Google Translate top banner and prevent page shift */
 .goog-te-banner-frame {
+  display: none !important;
+}
+
+.skiptranslate {
   display: none !important;
 }
 
 body {
   top: 0 !important;
+  position: static !important;
 }
 
 /* Style the dropdown options */
