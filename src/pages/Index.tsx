@@ -157,9 +157,13 @@ const Index = () => {
             <nav className="hidden md:flex items-center gap-8">
               <Link to="/features" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Features</Link>
               <a href="#pricing" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
+              <div id="google_translate_element" className="google-translate-widget"></div>
             </nav>
 
             <div className="flex items-center gap-4">
+              {/* Mobile translate widget */}
+              <div id="google_translate_element_mobile" className="google-translate-widget md:hidden"></div>
+              
               {isLoaded && user ? <>
                   <Button variant="ghost" size="sm" onClick={() => navigate("/my-images")} className="hidden md:flex">
                     My Images
