@@ -100,21 +100,24 @@ const GoogleTranslate = ({ variant = "dark" }: GoogleTranslateProps) => {
     
     setSelectedLang(langCode);
     
-    // Try to trigger Google Translate via the hidden select
+    if (langCode === 'en') {
+      // Reset to English - clear all googtrans cookies and reload
+      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=' + window.location.hostname;
+      document.cookie = 'googtrans=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; domain=.' + window.location.hostname;
+      window.location.reload();
+      return;
+    }
+    
+    // For Spanish, try to use Google Translate's select element
     const selectElement = document.querySelector('.goog-te-combo') as HTMLSelectElement;
     if (selectElement) {
       selectElement.value = langCode;
       selectElement.dispatchEvent(new Event('change'));
     } else {
       // Fallback: set cookie and reload
-      if (langCode === 'en') {
-        // Reset to English
-        document.cookie = `googtrans=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-        document.cookie = `googtrans=; path=/; domain=${window.location.hostname}; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
-      } else {
-        document.cookie = `googtrans=/en/${langCode}; path=/`;
-        document.cookie = `googtrans=/en/${langCode}; path=/; domain=${window.location.hostname}`;
-      }
+      document.cookie = `googtrans=/en/${langCode}; path=/`;
+      document.cookie = `googtrans=/en/${langCode}; path=/; domain=${window.location.hostname}`;
       window.location.reload();
     }
   };
