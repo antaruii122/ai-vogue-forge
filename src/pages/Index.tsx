@@ -5,14 +5,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Upload, Wand2, Download, Camera, Video, Sparkles, Star, Check, User, LogOut, ChevronDown, ArrowRight } from "lucide-react";
 import { useUser, useClerk } from "@clerk/clerk-react";
 import tetesImage from "@/assets/tetes.png";
-import heroPhoto1 from "@/assets/fashion-comparison-photo.png";
-import heroPhoto2 from "@/assets/fashion-style-2.png";
+// Hero Section Images (independent)
+import heroPhoto1 from "@/assets/hero-photo-1.png";
+import heroPhoto2 from "@/assets/hero-photo-2.png";
 import heroPhoto3 from "@/assets/hero-photo-3.png";
 import heroPhoto4 from "@/assets/hero-photo-4.png";
 import heroThumbnail1 from "@/assets/hero-thumbnail-1.png";
 import heroThumbnail2 from "@/assets/hero-thumbnail-2.png";
 import heroThumbnail3 from "@/assets/hero-thumbnail-3.png";
 import heroThumbnail4 from "@/assets/hero-thumbnail-4.png";
+// VideoComparisonCard Section Images (independent)
+import comparisonPhoto1 from "@/assets/fashion-comparison-photo.png";
+import comparisonPhoto2 from "@/assets/fashion-style-2.png";
+import comparisonPhoto3 from "@/assets/carousel-1.png";
+import comparisonPhoto4 from "@/assets/carousel-2.png";
+import comparisonPhoto5 from "@/assets/carousel-3.png";
+import comparisonPhoto6 from "@/assets/carousel-4.png";
 import carousel1 from "@/assets/carousel-1.png";
 import carousel2 from "@/assets/carousel-2.png";
 import carousel3 from "@/assets/carousel-3.png";
@@ -667,12 +675,12 @@ const Index = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            <VideoComparisonCard imageSrc={heroPhoto1} videoSrc="/videos/fashion-comparison.mp4" templateName="Fashion Style 1" />
-            <VideoComparisonCard imageSrc={heroPhoto2} videoSrc="/videos/fashion-style-2.mp4" templateName="Fashion Style 2" />
-            <VideoComparisonCard imageSrc={heroPhoto3} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 3" />
-            <VideoComparisonCard imageSrc={heroPhoto4} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 4" />
-            <VideoComparisonCard imageSrc={heroThumbnail1} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 5" />
-            <VideoComparisonCard imageSrc={heroThumbnail2} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 6" />
+            <VideoComparisonCard imageSrc={comparisonPhoto1} videoSrc="/videos/fashion-comparison.mp4" templateName="Fashion Style 1" />
+            <VideoComparisonCard imageSrc={comparisonPhoto2} videoSrc="/videos/fashion-style-2.mp4" templateName="Fashion Style 2" />
+            <VideoComparisonCard imageSrc={comparisonPhoto3} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 3" />
+            <VideoComparisonCard imageSrc={comparisonPhoto4} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 4" />
+            <VideoComparisonCard imageSrc={comparisonPhoto5} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 5" />
+            <VideoComparisonCard imageSrc={comparisonPhoto6} videoSrc="/videos/social-mockup.mp4" templateName="Fashion Style 6" />
           </div>
         </div>
       </section>
