@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Play, Pause } from "lucide-react";
 
@@ -10,9 +10,16 @@ interface VideoComparisonCardProps {
 
 export const VideoComparisonCard = ({ imageSrc, videoSrc, templateName }: VideoComparisonCardProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleClick = () => {
-    setIsPlaying(!isPlaying);
+    if (isPlaying) {
+      videoRef.current?.pause();
+      setIsPlaying(false);
+    } else {
+      videoRef.current?.play();
+      setIsPlaying(true);
+    }
   };
 
   return (
@@ -32,11 +39,11 @@ export const VideoComparisonCard = ({ imageSrc, videoSrc, templateName }: VideoC
         
         {/* Video */}
         <video
+          ref={videoRef}
           src={videoSrc}
           className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
             isPlaying ? 'opacity-100' : 'opacity-0'
           }`}
-          autoPlay={isPlaying}
           loop
           muted
           playsInline
