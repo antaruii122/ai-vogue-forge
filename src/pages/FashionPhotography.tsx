@@ -591,7 +591,7 @@ const FashionPhotography = () => {
                 {/* Style Templates */}
                 <div>
                   <h2 className="text-lg font-semibold text-foreground mb-4">Choose a Style</h2>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {templates.map((template) => {
                       const Icon = template.icon;
                       const isSelected = selectedTemplate === template.id;
@@ -605,7 +605,7 @@ const FashionPhotography = () => {
                               ? 'ring-3 ring-purple-500 scale-105 shadow-xl shadow-purple-500/50' 
                               : 'opacity-70 hover:opacity-100 hover:scale-[1.03] hover:shadow-lg hover:shadow-purple-500/30 hover:ring-2 hover:ring-purple-400'
                             }`}
-                          style={{ aspectRatio: '9/16', maxHeight: '180px' }}
+                          style={{ aspectRatio: '9/16', minHeight: '280px' }}
                         >
                           <img
                             src={getStyleThumbnail(template.id)}
