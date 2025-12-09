@@ -600,18 +600,16 @@ const FashionPhotography = () => {
                         <div
                           key={template.id}
                           onClick={() => handleStyleSelect(template.id)}
-                          className={`relative cursor-pointer rounded-2xl overflow-hidden transition-all duration-300 ease-out border-2
+                          className={`relative cursor-pointer rounded-2xl overflow-hidden transition-all duration-300 ease-out border-2 aspect-[9/16]
                             ${isSelected 
                               ? 'border-purple-500 scale-[1.02] shadow-2xl shadow-purple-500/40' 
                               : 'border-gray-700/50 opacity-80 hover:opacity-100 hover:scale-[1.01] hover:shadow-xl hover:shadow-purple-500/20 hover:border-purple-400/50'
                             }`}
-                          style={{ minHeight: '400px' }}
                         >
                           <img
                             src={getStyleThumbnail(template.id)}
                             alt={template.name}
                             className="w-full h-full object-cover absolute inset-0"
-                            style={{ minHeight: '400px' }}
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
                           <div className="absolute bottom-0 left-0 right-0 p-5">
