@@ -587,11 +587,11 @@ const FashionPhotography = () => {
               </div>
 
               {/* Right Column - Templates & Options */}
-              <div className="space-y-6">
+              <div className="space-y-8">
                 {/* Style Templates */}
                 <div>
-                  <h2 className="text-lg font-semibold text-foreground mb-4">Choose a Style</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <h2 className="text-xl font-semibold text-foreground mb-6">Choose a Style</h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {templates.map((template) => {
                       const Icon = template.icon;
                       const isSelected = selectedTemplate === template.id;
@@ -600,28 +600,29 @@ const FashionPhotography = () => {
                         <div
                           key={template.id}
                           onClick={() => handleStyleSelect(template.id)}
-                          className={`relative cursor-pointer rounded-xl overflow-hidden transition-all duration-300 ease-out
+                          className={`relative cursor-pointer rounded-2xl overflow-hidden transition-all duration-300 ease-out border-2
                             ${isSelected 
-                              ? 'ring-3 ring-purple-500 scale-105 shadow-xl shadow-purple-500/50' 
-                              : 'opacity-70 hover:opacity-100 hover:scale-[1.03] hover:shadow-lg hover:shadow-purple-500/30 hover:ring-2 hover:ring-purple-400'
+                              ? 'border-purple-500 scale-[1.02] shadow-2xl shadow-purple-500/40' 
+                              : 'border-gray-700/50 opacity-80 hover:opacity-100 hover:scale-[1.01] hover:shadow-xl hover:shadow-purple-500/20 hover:border-purple-400/50'
                             }`}
-                          style={{ aspectRatio: '9/16', minHeight: '280px' }}
+                          style={{ minHeight: '400px' }}
                         >
                           <img
                             src={getStyleThumbnail(template.id)}
                             alt={template.name}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover absolute inset-0"
+                            style={{ minHeight: '400px' }}
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                          <div className="absolute bottom-0 left-0 right-0 p-3">
-                            <div className="flex items-center gap-2">
-                              <Icon className="w-4 h-4 text-white" />
-                              <span className="text-white font-medium text-sm">{template.name}</span>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
+                          <div className="absolute bottom-0 left-0 right-0 p-5">
+                            <div className="flex items-center gap-3">
+                              <Icon className="w-5 h-5 text-white" />
+                              <span className="text-white font-semibold text-lg">{template.name}</span>
                             </div>
                           </div>
                           {isSelected && (
-                            <div className="absolute top-2 right-2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
-                              <Check className="w-4 h-4 text-white" />
+                            <div className="absolute top-3 right-3 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                              <Check className="w-5 h-5 text-white" />
                             </div>
                           )}
                         </div>
