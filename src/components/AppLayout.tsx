@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Menu, ChevronDown, X, Home, User, CreditCard, Wallet, FolderOpen, LogOut } from "lucide-react";
+import { Menu, ChevronDown, ChevronLeft, ChevronRight, X, Home, User, CreditCard, Wallet, FolderOpen, LogOut, PanelLeftClose, PanelLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import GoogleTranslate from "@/components/GoogleTranslate";
@@ -15,8 +15,17 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    const saved = localStorage.getItem('sidebarCollapsed');
+    return saved ? JSON.parse(saved) : false;
+  });
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const { signOut } = useClerk();
+
+  // Save sidebar preference to localStorage
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', JSON.stringify(isSidebarCollapsed));
+  }, [isSidebarCollapsed]);
 
   // Close profile menu when clicking outside
   useEffect(() => {
@@ -33,6 +42,10 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
+  };
+
+  const toggleSidebarCollapse = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
   const menuItems = {
@@ -180,17 +193,28 @@ const AppLayout = ({ children }: AppLayoutProps) => {
       {/* Left Sidebar */}
       <aside
         className={`
-          fixed top-14 left-0 bottom-0 w-[280px] bg-white border-r border-[#e0e0e0] z-40
-          transition-transform duration-300 ease-in-out overflow-y-auto
+          fixed top-14 left-0 bottom-0 bg-[#1a1a1a] border-r border-gray-800 z-40
+          transition-all duration-300 ease-in-out overflow-y-auto
+          ${isSidebarCollapsed ? 'w-0 lg:w-0' : 'w-[280px]'}
           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          ${isSidebarCollapsed ? 'lg:-translate-x-full' : 'lg:translate-x-0'}
         `}
       >
         {/* Close button for mobile */}
         <button
           onClick={() => setIsSidebarOpen(false)}
-          className="lg:hidden absolute top-4 right-4 text-[#666666] hover:text-[#000000]"
+          className="lg:hidden absolute top-4 right-4 text-gray-400 hover:text-white"
         >
           <X className="w-5 h-5" />
+        </button>
+
+        {/* Collapse toggle button */}
+        <button
+          onClick={toggleSidebarCollapse}
+          className="hidden lg:flex absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+          title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+        >
+          <PanelLeftClose className="w-5 h-5" />
         </button>
 
         <nav className="py-4">
@@ -201,7 +225,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                 setIsSidebarOpen(false);
                 navigate("/");
               }}
-              className="flex items-center gap-2 text-sm text-[#666666] hover:text-[#000000] transition-colors w-full py-2"
+              className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors w-full py-2"
             >
               <Home className="w-4 h-4" />
               <span>Back to Home</span>
@@ -209,7 +233,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
           </div>
 
           {/* Separator */}
-          <div className="border-t border-[#e0e0e0] mb-6" />
+          <div className="border-t border-gray-700 mb-6" />
 
           {/* Dashboard Section */}
           <div className="mb-6">
@@ -222,8 +246,8 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                 block w-full text-left px-4 py-3 text-base font-bold transition-colors
                 ${
                   isRouteActive("/dashboard")
-                    ? "bg-[#f5f5f5] text-[#000000] border-l-[3px] border-[#000000]"
-                    : "text-[#666666] hover:bg-[#fafafa]"
+                    ? "bg-purple-500/20 text-white border-l-[3px] border-purple-500"
+                    : "text-gray-300 hover:bg-gray-800"
                 }
               `}
             >
@@ -242,14 +266,14 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                   w-full text-left pl-8 pr-4 py-3 text-sm transition-colors flex items-center justify-between
                   ${
                     isRouteActive(item.route)
-                      ? "bg-[#f5f5f5] text-[#000000] font-bold border-l-[3px] border-[#000000]"
-                      : "text-[#666666] hover:bg-[#fafafa]"
+                      ? "bg-purple-500/20 text-white font-bold border-l-[3px] border-purple-500"
+                      : "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
                   }
                 `}
               >
                 <span>{item.name}</span>
                 {item.badge && (
-                  <span className="px-2 py-0.5 text-[10px] bg-[#1a1a1a] text-white rounded-full font-medium">
+                  <span className="px-2 py-0.5 text-[10px] bg-purple-500 text-white rounded-full font-medium">
                     {item.badge}
                   </span>
                 )}
@@ -259,7 +283,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
           {/* Resources Section */}
           <div className="mb-6">
-            <h2 className="px-4 mb-2 text-xs font-bold text-[#999999] uppercase tracking-wider">
+            <h2 className="px-4 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">
               Resources
             </h2>
             {menuItems.resources.map((item) => (
@@ -273,8 +297,8 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                   w-full text-left px-4 py-3 text-sm transition-colors
                   ${
                     isRouteActive(item.route)
-                      ? "bg-[#f5f5f5] text-[#000000] font-bold border-l-[3px] border-[#000000]"
-                      : "text-[#666666] hover:bg-[#fafafa]"
+                      ? "bg-purple-500/20 text-white font-bold border-l-[3px] border-purple-500"
+                      : "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
                   }
                 `}
               >
@@ -285,7 +309,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
           {/* Profile Section */}
           <div className="mb-6">
-            <h2 className="px-4 mb-2 text-xs font-bold text-[#999999] uppercase tracking-wider">
+            <h2 className="px-4 mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">
               Profile
             </h2>
             {menuItems.profile.map((item) => (
@@ -299,8 +323,8 @@ const AppLayout = ({ children }: AppLayoutProps) => {
                   w-full text-left px-4 py-3 text-sm transition-colors
                   ${
                     isRouteActive(item.route)
-                      ? "bg-[#f5f5f5] text-[#000000] font-bold border-l-[3px] border-[#000000]"
-                      : "text-[#666666] hover:bg-[#fafafa]"
+                      ? "bg-purple-500/20 text-white font-bold border-l-[3px] border-purple-500"
+                      : "text-gray-400 hover:bg-gray-800 hover:text-gray-200"
                   }
                 `}
               >
@@ -315,7 +339,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               onClick={() => {
                 setIsSidebarOpen(false);
               }}
-              className="w-full text-left px-4 py-3 text-sm transition-colors text-[#666666] hover:bg-[#fafafa]"
+              className="w-full text-left px-4 py-3 text-sm transition-colors text-gray-400 hover:bg-gray-800 hover:text-gray-200"
             >
               Contact Us
             </button>
@@ -323,8 +347,19 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         </nav>
       </aside>
 
+      {/* Floating expand button when sidebar is collapsed */}
+      {isSidebarCollapsed && (
+        <button
+          onClick={toggleSidebarCollapse}
+          className="hidden lg:flex fixed top-20 left-4 z-50 w-10 h-10 bg-[#1a1a1a] border border-gray-700 rounded-lg items-center justify-center text-gray-400 hover:text-white hover:bg-gray-800 transition-all shadow-lg"
+          title="Expand sidebar"
+        >
+          <PanelLeft className="w-5 h-5" />
+        </button>
+      )}
+
       {/* Main Content Area */}
-      <main className="pt-14 lg:ml-[280px] min-h-screen">
+      <main className={`pt-14 min-h-screen transition-all duration-300 ${isSidebarCollapsed ? 'lg:ml-0' : 'lg:ml-[280px]'}`}>
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
