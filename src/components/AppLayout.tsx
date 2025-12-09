@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Menu, ChevronDown, X, Home } from "lucide-react";
+import { Menu, ChevronDown, X, Home, User, CreditCard, Wallet, FolderOpen, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import GoogleTranslate from "@/components/GoogleTranslate";
+import { useClerk } from "@clerk/clerk-react";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -13,6 +14,26 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
+  const { signOut } = useClerk();
+
+  // Close profile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+        setIsProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   const menuItems = {
     dashboard: [
@@ -73,8 +94,76 @@ const AppLayout = ({ children }: AppLayoutProps) => {
               <span className="text-sm hidden sm:inline">CreativeAgent</span>
             </button>
 
-            <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center">
-              <span className="text-xs font-bold text-[#1a1a1a]">U</span>
+            {/* Profile Avatar with Dropdown */}
+            <div className="relative" ref={profileMenuRef}>
+              <button 
+                onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                className="w-8 h-8 rounded-full bg-white flex items-center justify-center hover:ring-2 hover:ring-purple-400 transition-all"
+              >
+                <User className="w-4 h-4 text-[#1a1a1a]" />
+              </button>
+
+              {/* Profile Dropdown Menu */}
+              {isProfileMenuOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-[#1f1f1f] border border-gray-700 rounded-lg shadow-xl z-50 py-2 overflow-hidden">
+                  <button
+                    onClick={() => {
+                      setIsProfileMenuOpen(false);
+                      navigate("/profile");
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:bg-gray-700/50 transition-colors"
+                  >
+                    <User className="w-4 h-4" />
+                    <span>Profile</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      setIsProfileMenuOpen(false);
+                      navigate("/billing");
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:bg-gray-700/50 transition-colors"
+                  >
+                    <Wallet className="w-4 h-4" />
+                    <span>My Credits</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      setIsProfileMenuOpen(false);
+                      navigate("/billing");
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:bg-gray-700/50 transition-colors"
+                  >
+                    <CreditCard className="w-4 h-4" />
+                    <span>Billing</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      setIsProfileMenuOpen(false);
+                      navigate("/portfolio");
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-200 hover:bg-gray-700/50 transition-colors"
+                  >
+                    <FolderOpen className="w-4 h-4" />
+                    <span>Portfolio</span>
+                  </button>
+                  
+                  <div className="border-t border-gray-700 my-1" />
+                  
+                  <button
+                    onClick={() => {
+                      setIsProfileMenuOpen(false);
+                      handleSignOut();
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:bg-gray-700/50 transition-colors"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
