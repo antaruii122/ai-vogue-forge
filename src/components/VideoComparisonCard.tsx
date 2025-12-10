@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useRef, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Play, Pause } from "lucide-react";
 
@@ -6,20 +6,31 @@ interface VideoComparisonCardProps {
   imageSrc: string;
   videoSrc: string;
   templateName: string;
+  id: string;
+  isPlaying: boolean;
+  onPlay: (id: string) => void;
 }
 
-export const VideoComparisonCard = ({ imageSrc, videoSrc, templateName }: VideoComparisonCardProps) => {
-  const [isPlaying, setIsPlaying] = useState(false);
+export const VideoComparisonCard = ({ 
+  imageSrc, 
+  videoSrc, 
+  templateName, 
+  id, 
+  isPlaying, 
+  onPlay 
+}: VideoComparisonCardProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const handleClick = () => {
+  useEffect(() => {
     if (isPlaying) {
-      videoRef.current?.pause();
-      setIsPlaying(false);
-    } else {
       videoRef.current?.play();
-      setIsPlaying(true);
+    } else {
+      videoRef.current?.pause();
     }
+  }, [isPlaying]);
+
+  const handleClick = () => {
+    onPlay(isPlaying ? "" : id);
   };
 
   return (
