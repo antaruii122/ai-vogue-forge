@@ -13,19 +13,29 @@ import { useUser, useAuth } from "@clerk/clerk-react";
 import luxuryPremiumExample from "@/assets/luxury-premium-example.jpeg";
 import studioCleanExample from "@/assets/studio-clean-example.jpeg";
 import outdoorNaturalExample from "@/assets/outdoor-natural-example.jpeg";
+import aiModel1 from "@/assets/ai-model-1.png";
+import aiModel2 from "@/assets/ai-model-2.png";
+import aiModel3 from "@/assets/ai-model-3.png";
+import aiModel4 from "@/assets/ai-model-4.png";
+import aiModel5 from "@/assets/ai-model-5.png";
+import aiModel6 from "@/assets/ai-model-6.png";
+import aiModel7 from "@/assets/ai-model-7.png";
+import aiModel8 from "@/assets/ai-model-8.png";
+import aiModel9 from "@/assets/ai-model-9.png";
+import aiModel10 from "@/assets/ai-model-10.png";
 
-// AI Model placeholder images - using diverse model previews
+// AI Models with real images
 const aiModels = [
-  { id: 1, name: "Model 1", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=600&fit=crop" },
-  { id: 2, name: "Model 2", image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=600&fit=crop" },
-  { id: 3, name: "Model 3", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop" },
-  { id: 4, name: "Model 4", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=600&fit=crop" },
-  { id: 5, name: "Model 5", image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=600&fit=crop" },
-  { id: 6, name: "Model 6", image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=600&fit=crop" },
-  { id: 7, name: "Model 7", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=600&fit=crop" },
-  { id: 8, name: "Model 8", image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=600&fit=crop" },
-  { id: 9, name: "Model 9", image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=600&fit=crop" },
-  { id: 10, name: "Model 10", image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=600&fit=crop" },
+  { id: 1, name: "Model 1", image: aiModel1 },
+  { id: 2, name: "Model 2", image: aiModel2 },
+  { id: 3, name: "Model 3", image: aiModel3 },
+  { id: 4, name: "Model 4", image: aiModel4 },
+  { id: 5, name: "Model 5", image: aiModel5 },
+  { id: 6, name: "Model 6", image: aiModel6 },
+  { id: 7, name: "Model 7", image: aiModel7 },
+  { id: 8, name: "Model 8", image: aiModel8 },
+  { id: 9, name: "Model 9", image: aiModel9 },
+  { id: 10, name: "Model 10", image: aiModel10 },
 ];
 
 const templates = [
