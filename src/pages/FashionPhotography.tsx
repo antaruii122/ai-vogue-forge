@@ -1,17 +1,32 @@
 import { useState, useRef } from "react";
 import AppLayout from "@/components/AppLayout";
-import { UploadCloud, MapPin, Sparkles, Sun, Crown, Check, Loader2, Download, Save, Plus, CheckCircle, Expand, Share2, ChevronDown, ChevronUp, Settings } from "lucide-react";
+import { UploadCloud, MapPin, Sparkles, Sun, Crown, Check, Loader2, Download, Save, Plus, CheckCircle, Expand, Share2, ChevronDown, ChevronUp, Settings, Users, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { uploadImageToStorage } from "@/utils/uploadToStorage";
 import { useUser, useAuth } from "@clerk/clerk-react";
 import luxuryPremiumExample from "@/assets/luxury-premium-example.jpeg";
 import studioCleanExample from "@/assets/studio-clean-example.jpeg";
 import outdoorNaturalExample from "@/assets/outdoor-natural-example.jpeg";
+
+// AI Model placeholder images - using diverse model previews
+const aiModels = [
+  { id: 1, name: "Model 1", image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=600&fit=crop" },
+  { id: 2, name: "Model 2", image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=600&fit=crop" },
+  { id: 3, name: "Model 3", image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop" },
+  { id: 4, name: "Model 4", image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=600&fit=crop" },
+  { id: 5, name: "Model 5", image: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=600&fit=crop" },
+  { id: 6, name: "Model 6", image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=600&fit=crop" },
+  { id: 7, name: "Model 7", image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=600&fit=crop" },
+  { id: 8, name: "Model 8", image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=600&fit=crop" },
+  { id: 9, name: "Model 9", image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=600&fit=crop" },
+  { id: 10, name: "Model 10", image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=600&fit=crop" },
+];
 
 const templates = [
   { id: 1, name: "Urban Lifestyle", gradient: "from-blue-500 to-purple-500", icon: MapPin },
@@ -95,6 +110,8 @@ const FashionPhotography = () => {
   const [cameraAngle, setCameraAngle] = useState<string>("auto");
   const [customCameraAngle, setCustomCameraAngle] = useState<string>("");
   const [styleChangeWarning, setStyleChangeWarning] = useState<string | null>(null);
+  const [isModelModalOpen, setIsModelModalOpen] = useState(false);
+  const [selectedAiModel, setSelectedAiModel] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   // Edge function URL for webhook proxy
@@ -205,9 +222,23 @@ const FashionPhotography = () => {
     setPreviewUrl(null);
     setSelectedTemplate(null);
     setGeneratedPhotos(null);
+    setSelectedAiModel(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+  };
+
+  const handleSelectAiModel = (modelId: number) => {
+    setSelectedAiModel(modelId);
+    setIsModelModalOpen(false);
+    toast({
+      title: "AI Model selected",
+      description: `Model ${modelId} has been selected for your photo generation.`,
+    });
+  };
+
+  const getSelectedModelInfo = () => {
+    return aiModels.find(m => m.id === selectedAiModel);
   };
 
   const handleGenerate = async () => {
@@ -527,7 +558,7 @@ const FashionPhotography = () => {
 
             {/* Main content - 2 column layout */}
             <div className="grid grid-cols-1 lg:grid-cols-[35%_65%] gap-8">
-              {/* Left Column - Upload */}
+              {/* Left Column - Upload & AI Model */}
               <div className="space-y-6">
                 {!previewUrl ? (
                   <div
@@ -553,14 +584,11 @@ const FashionPhotography = () => {
                     />
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-6">
                       <UploadCloud className="w-16 h-16 text-gray-400 mb-4" />
-                      <p className="text-xl text-foreground font-medium mb-1">
-                        Drag & drop your product photo
+                      <p className="text-xl text-foreground font-medium mb-1 text-center">
+                        Drag & drop your product photo or click to browse
                       </p>
-                      <p className="text-sm text-gray-400 mb-3">
-                        or click to browse
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        Supports: JPG, PNG, WEBP • Max 10MB
+                      <p className="text-xs text-gray-500 mt-2">
+                        Supports: JPG, PNG, WebP • Max 10MB
                       </p>
                     </div>
                   </div>
@@ -584,7 +612,92 @@ const FashionPhotography = () => {
                     </div>
                   </div>
                 )}
+
+                {/* AI Model Button */}
+                <Button
+                  onClick={() => setIsModelModalOpen(true)}
+                  variant="outline"
+                  className="w-full py-4 border-2 border-purple-500/50 bg-purple-500/10 hover:bg-purple-500/20 hover:border-purple-400 text-purple-300 hover:text-purple-200 transition-all duration-300"
+                >
+                  <Users className="mr-2 h-5 w-5" />
+                  Don't have a model? Choose from our AI Models
+                </Button>
+
+                {/* Selected AI Model Display */}
+                {selectedAiModel && (
+                  <div className="p-4 bg-gray-800/50 rounded-lg border border-gray-700">
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={getSelectedModelInfo()?.image}
+                        alt={getSelectedModelInfo()?.name}
+                        className="w-16 h-24 object-cover rounded-lg border border-purple-500/50"
+                      />
+                      <div className="flex-1">
+                        <p className="text-foreground font-medium">
+                          {getSelectedModelInfo()?.name} selected
+                        </p>
+                        <button
+                          onClick={() => setIsModelModalOpen(true)}
+                          className="text-sm text-purple-400 hover:text-purple-300 transition-colors mt-1"
+                        >
+                          Change model
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
+
+              {/* AI Model Selection Modal */}
+              <Dialog open={isModelModalOpen} onOpenChange={setIsModelModalOpen}>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-700">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-bold text-foreground flex items-center gap-2">
+                      <Users className="h-6 w-6 text-purple-400" />
+                      Choose Your AI Model
+                    </DialogTitle>
+                  </DialogHeader>
+                  
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+                    {aiModels.map((model) => (
+                      <div
+                        key={model.id}
+                        className={`relative cursor-pointer rounded-xl overflow-hidden transition-all duration-300 border-2 aspect-[9/16]
+                          ${selectedAiModel === model.id 
+                            ? 'border-purple-500 scale-[1.02] shadow-xl shadow-purple-500/40' 
+                            : 'border-gray-700 hover:border-purple-400/50 hover:scale-[1.01]'
+                          }`}
+                        onClick={() => handleSelectAiModel(model.id)}
+                      >
+                        <img
+                          src={model.image}
+                          alt={model.name}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                        <div className="absolute bottom-0 left-0 right-0 p-3">
+                          <p className="text-white font-medium text-center">{model.name}</p>
+                          <Button
+                            size="sm"
+                            className="w-full mt-2 bg-purple-600 hover:bg-purple-700 text-white text-xs"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleSelectAiModel(model.id);
+                            }}
+                          >
+                            Select This Model
+                          </Button>
+                        </div>
+                        {selectedAiModel === model.id && (
+                          <div className="absolute top-2 right-2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                            <Check className="w-4 h-4 text-white" />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </DialogContent>
+              </Dialog>
 
               {/* Right Column - Templates & Options */}
               <div className="space-y-8">
