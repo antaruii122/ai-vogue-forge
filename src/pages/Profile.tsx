@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
@@ -10,7 +10,6 @@ import { useToast } from "@/hooks/use-toast";
 import { User, Bell, Palette, AlertTriangle, Zap, ArrowRight, Mail, Link2, Calendar, Edit } from "lucide-react";
 import { motion } from "framer-motion";
 import { useCredits } from "@/hooks/useCredits";
-import { supabase } from "@/integrations/supabase/client";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,29 +26,10 @@ const Profile = () => {
   const { user, isLoaded } = useUser();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { credits, isLoading: creditsLoading } = useCredits();
+  // Use the shared credits hook as the single source of truth
+  const { credits, totalPurchased, isLoading: creditsLoading } = useCredits();
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [theme, setTheme] = useState<"light" | "dark">("dark");
-  const [totalPurchased, setTotalPurchased] = useState(0);
-
-  // Fetch total credits purchased
-  useEffect(() => {
-    const fetchProfileData = async () => {
-      if (!user?.id) return;
-
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("total_credits_purchased")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (!error && data) {
-        setTotalPurchased(data.total_credits_purchased);
-      }
-    };
-
-    fetchProfileData();
-  }, [user?.id]);
 
   const handleDeleteAccount = () => {
     toast({

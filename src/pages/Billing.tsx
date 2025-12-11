@@ -29,11 +29,6 @@ interface Transaction {
   status: string;
 }
 
-interface ProfileData {
-  credits: number;
-  total_credits_purchased: number;
-}
-
 const CREDIT_PACKAGES = [
   {
     name: "Trial",
@@ -78,14 +73,14 @@ const CREDIT_PACKAGES = [
 const Billing = () => {
   const { user, isLoaded } = useUser();
   const { toast } = useToast();
-  const { credits, isLoading: creditsLoading } = useCredits();
+  // Use the shared credits hook as the single source of truth
+  const { credits, totalPurchased, isLoading: creditsLoading, refetch: refetchCredits } = useCredits();
   const [isPayPalOpen, setIsPayPalOpen] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [loadingTransactions, setLoadingTransactions] = useState(true);
   const [usageStats, setUsageStats] = useState({ photos: 0, videos: 0 });
 
-  // Fetch transactions and profile data
+  // Fetch transactions and usage stats
   useEffect(() => {
     const fetchData = async () => {
       if (!user?.id) return;
@@ -105,19 +100,6 @@ const Billing = () => {
           setTransactions(txData || []);
         }
 
-        // Fetch profile data
-        const { data: profileData, error: profileError } = await supabase
-          .from("profiles")
-          .select("credits, total_credits_purchased")
-          .eq("user_id", user.id)
-          .maybeSingle();
-
-        if (profileError) {
-          console.error("Error fetching profile:", profileError);
-        } else {
-          setProfileData(profileData);
-        }
-
         // Fetch usage stats (count generations this month)
         const startOfMonth = new Date();
         startOfMonth.setDate(1);
@@ -130,7 +112,7 @@ const Billing = () => {
           .gte("created_at", startOfMonth.toISOString());
 
         if (!genError && generationsData) {
-          // Assuming photos use 1 credit and videos use 10
+          // Photos use 1 credit, videos use 10
           let photos = 0;
           let videos = 0;
           generationsData.forEach((gen) => {
@@ -156,6 +138,12 @@ const Billing = () => {
     setIsPayPalOpen(true);
   };
 
+  const handlePayPalClose = () => {
+    setIsPayPalOpen(false);
+    // Refetch credits after modal closes
+    refetchCredits();
+  };
+
   if (!isLoaded || creditsLoading) {
     return (
       <AppLayout>
@@ -166,9 +154,9 @@ const Billing = () => {
     );
   }
 
-  const currentCredits = credits ?? profileData?.credits ?? 0;
-  const totalPurchased = profileData?.total_credits_purchased ?? 0;
-  const creditsUsedThisMonth = usageStats.photos + usageStats.videos * 10;
+  const currentCredits = credits ?? 0;
+  // Calculate credits spent: total purchased - current balance (excluding free signup credits)
+  const creditsSpent = Math.max(0, totalPurchased + 3 - currentCredits); // +3 for free signup credits
   const videosCanMake = Math.floor(currentCredits / 10);
 
   return (
@@ -239,20 +227,20 @@ const Billing = () => {
               <CardContent>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center py-3 border-b border-gray-700">
-                    <span className="text-muted-foreground">Credits spent</span>
-                    <span className="text-foreground font-semibold text-lg">{creditsUsedThisMonth}</span>
+                    <span className="text-muted-foreground">Credits spent (lifetime)</span>
+                    <span className="text-foreground font-semibold text-lg">{creditsSpent}</span>
                   </div>
                   <div className="flex justify-between items-center py-2">
                     <div className="flex items-center gap-2">
                       <Image className="h-4 w-4 text-green-400" />
-                      <span className="text-muted-foreground">Photos generated</span>
+                      <span className="text-muted-foreground">Photos this month</span>
                     </div>
                     <span className="text-foreground font-medium">{usageStats.photos}</span>
                   </div>
                   <div className="flex justify-between items-center py-2">
                     <div className="flex items-center gap-2">
                       <Video className="h-4 w-4 text-blue-400" />
-                      <span className="text-muted-foreground">Videos generated</span>
+                      <span className="text-muted-foreground">Videos this month</span>
                     </div>
                     <span className="text-foreground font-medium">{usageStats.videos}</span>
                   </div>
@@ -424,7 +412,7 @@ const Billing = () => {
         </div>
       </motion.div>
 
-      <PayPalCheckoutModal isOpen={isPayPalOpen} onClose={() => setIsPayPalOpen(false)} />
+      <PayPalCheckoutModal isOpen={isPayPalOpen} onClose={handlePayPalClose} />
     </AppLayout>
   );
 };
