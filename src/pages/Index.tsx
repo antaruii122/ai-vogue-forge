@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Upload, Wand2, Download, Camera, Video, Sparkles, Star, Check, User, LogOut, ChevronDown, ArrowRight } from "lucide-react";
+import { Upload, Wand2, Download, Camera, Video, Sparkles, Star, Check, User, LogOut, ChevronDown, ArrowRight, Flame, Zap, Users } from "lucide-react";
 import { useUser, useClerk } from "@clerk/clerk-react";
 import tetesImage from "@/assets/tetes.png";
 // Hero Section Images (independent)
@@ -38,10 +38,12 @@ import { VideoComparisonCard } from "@/components/VideoComparisonCard";
 import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import GoogleTranslate from "@/components/GoogleTranslate";
+import { PayPalCheckoutModal } from "@/components/PayPalCheckoutModal";
 const Index = () => {
   const [showAnnouncement, setShowAnnouncement] = useState(true);
   const [currentlyPlayingVideoId, setCurrentlyPlayingVideoId] = useState<string>("");
   const [searchParams] = useSearchParams();
+  const [isPayPalModalOpen, setIsPayPalModalOpen] = useState(false);
   const {
     user,
     isLoaded
@@ -134,47 +136,59 @@ const Index = () => {
   const pricingPlans = [{
     number: "01",
     name: "Trial",
+    tierId: "trial",
     subtitle: "Try risk-free",
     price: "$9",
     priceLabel: "One time payment",
+    credits: 20,
     pricePerCredit: "$0.45/credit",
-    saveBadge: null,
+    saveBadge: "Save 61%",
     popular: false,
-    features: ["20 credits", "20 images OR 2 videos", "1K resolution"],
-    creditInfo: "1 credit = 1 image • 10 credits = 1 video"
+    bestValue: false,
+    features: ["20 credits", "20 AI photos", "1K resolution"],
+    creditInfo: "1 credit = 1 photo generation"
   }, {
     number: "02",
     name: "Basic",
-    subtitle: "The essentials to get started",
+    tierId: "basic",
+    subtitle: "Best for beginners",
     price: "$35",
     priceLabel: "One time payment",
-    pricePerCredit: "$0.25/credit",
-    saveBadge: "Save 44%",
+    credits: 200,
+    pricePerCredit: "$0.175/credit",
+    saveBadge: "Save 61%",
     popular: false,
-    features: ["140 credits", "140 images OR 14 videos", "1K resolution", "Image editing with prompts"],
-    creditInfo: "1 credit = 1 image • 10 credits = 1 video"
+    bestValue: false,
+    features: ["200 credits", "200 AI photos", "1K resolution", "Image editing"],
+    creditInfo: "1 credit = 1 photo generation"
   }, {
     number: "03",
     name: "Professional",
-    subtitle: "For growing businesses",
+    tierId: "professional",
+    subtitle: "Most popular choice",
     price: "$99",
     priceLabel: "One time payment",
-    pricePerCredit: "$0.22/credit",
-    saveBadge: "Save 51%",
+    credits: 600,
+    pricePerCredit: "$0.165/credit",
+    saveBadge: "Save 63%",
     popular: true,
-    features: ["450 credits", "450 images OR 45 videos", "1K resolution", "Video generation", "Image editing with prompts"],
-    creditInfo: "1 credit = 1 image • 10 credits = 1 video"
+    bestValue: true,
+    features: ["600 credits", "600 AI photos", "1K resolution", "Video generation", "Priority support"],
+    creditInfo: "1 credit = 1 photo generation"
   }, {
     number: "04",
     name: "Enterprise",
-    subtitle: "For large businesses",
+    tierId: "enterprise",
+    subtitle: "For power users",
     price: "$450",
     priceLabel: "One time payment",
-    pricePerCredit: "$0.20/credit",
-    saveBadge: "Save 56%",
+    credits: 3000,
+    pricePerCredit: "$0.15/credit",
+    saveBadge: "Save 67%",
     popular: false,
-    features: ["2300 credits", "2300 images OR 230 videos", "2K resolution", "Video generation", "Image editing with prompts"],
-    creditInfo: "1 credit = 1 image • 10 credits = 1 video"
+    bestValue: false,
+    features: ["3000 credits", "3000 AI photos", "2K resolution", "Video generation", "Priority support"],
+    creditInfo: "1 credit = 1 photo generation"
   }];
   return <div className="min-h-screen bg-background">
       {/* Header */}
@@ -762,27 +776,53 @@ const Index = () => {
               Simple, Transparent Pricing
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              One-time payments. No subscriptions. Refill as needed.
+              Pay only for what you use. 1 credit = 1 AI photo generation
             </p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto items-stretch">
-            {pricingPlans.map(plan => <Card key={plan.name} className={`relative overflow-hidden bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 flex flex-col h-full ${plan.popular ? 'ring-2 ring-primary' : ''}`}>
-                <CardHeader className="pb-4">
+            {pricingPlans.map(plan => (
+              <Card 
+                key={plan.name} 
+                className={`relative overflow-hidden flex flex-col h-full transition-all duration-300 hover:scale-[1.02] ${
+                  plan.bestValue 
+                    ? 'bg-gradient-to-br from-purple-900/80 to-pink-900/60 border-2 border-purple-500 shadow-lg shadow-purple-500/20' 
+                    : 'bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700'
+                }`}
+              >
+                {/* Best Value Badge */}
+                {plan.bestValue && (
+                  <div className="absolute -top-1 left-1/2 -translate-x-1/2 z-10">
+                    <span className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg">
+                      <Flame className="w-3 h-3" /> BEST VALUE
+                    </span>
+                  </div>
+                )}
+                
+                <CardHeader className="pb-4 pt-6">
                   <div className="flex items-start justify-between mb-2">
                     <span className="text-gray-500 text-sm font-mono">{plan.number}</span>
                     <span className="text-gray-500 text-sm">•••</span>
                   </div>
                   
-                  {plan.saveBadge && <span className="inline-block px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs font-medium rounded mb-2 w-fit">
-                      {plan.saveBadge}
-                    </span>}
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {plan.saveBadge && (
+                      <span className="inline-block px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs font-medium rounded">
+                        {plan.saveBadge}
+                      </span>
+                    )}
+                    
+                    {plan.popular && !plan.bestValue && (
+                      <span className="inline-block px-2 py-0.5 bg-blue-500 text-white text-xs font-medium rounded">
+                        Popular
+                      </span>
+                    )}
+                  </div>
                   
-                  {plan.popular && <span className="inline-block px-2 py-0.5 bg-blue-500 text-white text-xs font-medium rounded mb-2 w-fit">
-                      Popular
-                    </span>}
-                  
-                  <CardTitle className="text-xl">{plan.name}</CardTitle>
+                  <CardTitle className="text-xl flex items-center gap-2">
+                    {plan.name}
+                    {plan.name === "Basic" && <Star className="w-4 h-4 text-yellow-400" />}
+                  </CardTitle>
                   <CardDescription className="text-gray-400">{plan.subtitle}</CardDescription>
                 </CardHeader>
                 
@@ -791,29 +831,65 @@ const Index = () => {
                     <span className="text-4xl font-bold">{plan.price}</span>
                     <span className="text-gray-400 text-sm ml-2">{plan.priceLabel}</span>
                   </div>
+                  
+                  <div className="flex items-center gap-2 mb-4">
+                    <Zap className="w-4 h-4 text-yellow-400" />
+                    <span className="text-white font-semibold">{plan.credits} credits</span>
+                  </div>
+                  
                   <div className="text-primary text-sm font-medium mb-4">
                     {plan.pricePerCredit}
                   </div>
                   
                   <ul className="space-y-3 flex-1">
-                    {plan.features.map((feature, i) => <li key={i} className="flex items-center gap-2 text-sm text-gray-300">
+                    {plan.features.map((feature, i) => (
+                      <li key={i} className="flex items-center gap-2 text-sm text-gray-300">
                         <Check className="h-4 w-4 text-emerald-400 flex-shrink-0" />
                         {feature}
-                      </li>)}
+                      </li>
+                    ))}
                   </ul>
                   
                   <div className="text-xs text-gray-500 mt-4 border-t border-gray-700 pt-3">
                     {plan.creditInfo}
                   </div>
                   
-                  <Button className={`w-full mt-4 ${plan.popular ? 'bg-blue-500 hover:bg-blue-600' : ''}`} variant={plan.popular ? 'default' : 'outline'} onClick={() => navigate("/signup")}>
-                    Get started
+                  <Button 
+                    className={`w-full mt-4 ${
+                      plan.bestValue 
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0' 
+                        : plan.popular 
+                          ? 'bg-blue-500 hover:bg-blue-600' 
+                          : ''
+                    }`} 
+                    variant={plan.popular || plan.bestValue ? 'default' : 'outline'} 
+                    onClick={() => setIsPayPalModalOpen(true)}
+                  >
+                    <Zap className="w-4 h-4 mr-2" />
+                    Buy Now
                   </Button>
                 </CardContent>
-              </Card>)}
+              </Card>
+            ))}
+          </div>
+          
+          {/* Social Proof */}
+          <div className="mt-12 text-center">
+            <div className="flex items-center justify-center gap-2 text-muted-foreground">
+              <Users className="w-5 h-5" />
+              <p className="text-sm">
+                Join <span className="text-foreground font-semibold">10,000+</span> creators using our AI fashion photography
+              </p>
+            </div>
           </div>
         </div>
       </section>
+
+      {/* PayPal Checkout Modal */}
+      <PayPalCheckoutModal 
+        isOpen={isPayPalModalOpen} 
+        onClose={() => setIsPayPalModalOpen(false)} 
+      />
 
       {/* Footer */}
       <footer className="py-12 bg-background border-t border-border">
