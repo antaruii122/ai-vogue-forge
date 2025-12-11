@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
 import { Loader2, CheckCircle, Download, Plus, Share2, AlertCircle } from "lucide-react";
@@ -26,32 +26,45 @@ const FashionResults = () => {
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [generationId, setGenerationId] = useState<string | null>(null);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const pollingRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const params = location.state as GenerationParams | null;
   const WEBHOOK_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fashion-webhook`;
+  const STATUS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generation-status`;
 
   useEffect(() => {
-    // If no params, redirect back to fashion photography
     if (!params) {
       navigate('/tools/fashion-photography');
       return;
     }
 
-    generatePhoto();
+    // Start elapsed time counter
+    timerRef.current = setInterval(() => {
+      setElapsedSeconds(prev => prev + 1);
+    }, 1000);
+
+    startGeneration();
+
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+      if (timerRef.current) clearInterval(timerRef.current);
+    };
   }, []);
 
-  const generatePhoto = async () => {
+  const startGeneration = async () => {
     if (!params) return;
 
     try {
       const clerkToken = await getToken();
-      
       if (!clerkToken) {
         setError("Authentication error. Please log in again.");
         setIsGenerating(false);
         return;
       }
 
+      // Call the webhook to start generation
       const response = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: {
@@ -69,31 +82,81 @@ const FashionResults = () => {
         }),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Generation failed with status ${response.status}`);
-      }
-
       const result = await response.json();
-      console.log('Generation result:', result);
+      console.log('Initial generation result:', result);
 
       if (result.success && result.image_url) {
+        // Immediate success (synchronous response)
         setGeneratedImageUrl(result.image_url);
         setGenerationId(result.generation_id);
         setIsGenerating(false);
-      } else if (result.success && result.status === 'processing') {
-        // N8N is processing asynchronously - keep showing loading
-        // In a real implementation, you'd poll for status here
-        setError("Your photo is being generated in the background. Check your portfolio in a few minutes.");
-        setIsGenerating(false);
+        if (timerRef.current) clearInterval(timerRef.current);
+      } else if (result.success && result.generation_id) {
+        // Async mode - start polling for result
+        setGenerationId(result.generation_id);
+        startPolling(result.generation_id, clerkToken);
+      } else if (result.generation_id) {
+        // Even if not marked success, we have a generation_id - poll for it
+        setGenerationId(result.generation_id);
+        startPolling(result.generation_id, clerkToken);
       } else {
-        throw new Error(result.error || 'Generation failed');
+        setError(result.error || 'Failed to start generation');
+        setIsGenerating(false);
       }
     } catch (err) {
       console.error('Generation error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to generate photo');
+      setError(err instanceof Error ? err.message : 'Failed to start generation');
       setIsGenerating(false);
     }
+  };
+
+  const startPolling = async (genId: string, token: string) => {
+    console.log('Starting to poll for generation:', genId);
+    
+    // Poll every 2 seconds
+    pollingRef.current = setInterval(async () => {
+      try {
+        const response = await fetch(`${STATUS_URL}?id=${genId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        const status = await response.json();
+        console.log('Poll result:', status);
+
+        if (status.status === 'completed' && status.image_url) {
+          // Generation complete!
+          setGeneratedImageUrl(status.image_url);
+          setIsGenerating(false);
+          if (pollingRef.current) clearInterval(pollingRef.current);
+          if (timerRef.current) clearInterval(timerRef.current);
+          
+          toast({
+            title: "Photo generated!",
+            description: `Completed in ${elapsedSeconds} seconds`,
+          });
+        } else if (status.status === 'failed') {
+          setError('Generation failed. Please try again.');
+          setIsGenerating(false);
+          if (pollingRef.current) clearInterval(pollingRef.current);
+          if (timerRef.current) clearInterval(timerRef.current);
+        }
+        // If still 'processing', continue polling
+      } catch (err) {
+        console.error('Polling error:', err);
+        // Don't stop polling on network errors, just log
+      }
+    }, 2000);
+
+    // Stop polling after 3 minutes (timeout)
+    setTimeout(() => {
+      if (pollingRef.current && isGenerating) {
+        clearInterval(pollingRef.current);
+        setError('Generation is taking longer than expected. Please check your portfolio later.');
+        setIsGenerating(false);
+      }
+    }, 180000);
   };
 
   const handleDownload = async () => {
@@ -154,11 +217,14 @@ const FashionResults = () => {
             <h1 className="text-2xl font-bold text-foreground mb-3">
               Generating Your Fashion Photo...
             </h1>
-            <p className="text-muted-foreground mb-6">
-              Please wait 30-60 seconds while our AI creates your image.
+            <p className="text-muted-foreground mb-2">
+              Please wait while our AI creates your image.
+            </p>
+            <p className="text-purple-400 text-lg font-mono mb-6">
+              {elapsedSeconds}s elapsed
             </p>
             
-            <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700">
+            <div className="bg-gray-800/50 rounded-lg p-4 border border-gray-700 mb-4">
               <p className="text-sm text-gray-400">
                 <span className="font-medium text-gray-300">Style:</span> {params?.style}
               </p>
@@ -166,6 +232,10 @@ const FashionResults = () => {
                 <span className="font-medium text-gray-300">Format:</span> {params?.aspectRatio}
               </p>
             </div>
+
+            <p className="text-xs text-gray-500">
+              Typically takes 15-60 seconds. Do not close this page.
+            </p>
           </div>
         </div>
       </AppLayout>
@@ -208,7 +278,7 @@ const FashionResults = () => {
                 Your Photo Is Ready!
               </h1>
               <p className="text-muted-foreground">
-                {params?.style} • {params?.aspectRatio}
+                {params?.style} • {params?.aspectRatio} • Generated in {elapsedSeconds}s
               </p>
             </div>
 
@@ -264,8 +334,8 @@ const FashionResults = () => {
                   <p className="text-foreground font-medium">{params?.aspectRatio}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Background</p>
-                  <p className="text-foreground font-medium capitalize">{params?.background || 'Auto'}</p>
+                  <p className="text-gray-500">Generation Time</p>
+                  <p className="text-foreground font-medium">{elapsedSeconds} seconds</p>
                 </div>
                 <div>
                   <p className="text-gray-500">Credits Used</p>
@@ -281,4 +351,3 @@ const FashionResults = () => {
 };
 
 export default FashionResults;
-
