@@ -22,6 +22,7 @@ const TIERS = [
     savings: '61%',
     icon: null,
     popular: false,
+    features: ['20 AI photos OR', '2 AI videos OR', 'Mix of both'],
   },
   {
     id: 'basic',
@@ -33,6 +34,7 @@ const TIERS = [
     savings: '61%',
     icon: Star,
     popular: false,
+    features: ['200 AI photos OR', '20 AI videos OR', 'Mix of both'],
   },
   {
     id: 'professional',
@@ -44,6 +46,7 @@ const TIERS = [
     savings: '63%',
     icon: Flame,
     popular: true,
+    features: ['600 AI photos OR', '60 AI videos OR', 'Mix of both'],
   },
   {
     id: 'enterprise',
@@ -55,6 +58,7 @@ const TIERS = [
     savings: '67%',
     icon: null,
     popular: false,
+    features: ['3,000 AI photos OR', '300 AI videos OR', 'Mix of both'],
   },
 ];
 
@@ -240,6 +244,15 @@ export function PayPalCheckoutModal({ isOpen, onClose }: PayPalCheckoutModalProp
                   </span>
                 </div>
 
+                {/* Credit usage options */}
+                <div className="mb-3 space-y-1">
+                  {tier.features.map((feature, idx) => (
+                    <p key={idx} className={`text-xs ${feature === 'Mix of both' ? 'text-purple-400' : 'text-gray-400'}`}>
+                      {feature === 'Mix of both' ? '✓ ' : ''}{feature}
+                    </p>
+                  ))}
+                </div>
+
                 {/* Tagline */}
                 <p className="text-gray-500 text-xs mb-4">{tier.tagline}</p>
 
@@ -295,7 +308,7 @@ export function PayPalCheckoutModal({ isOpen, onClose }: PayPalCheckoutModalProp
           {/* Note */}
           <div className="mt-6 text-center">
             <p className="text-gray-500 text-sm">
-              💡 1 credit = 1 photo generation
+              💡 1 credit = 1 photo • 10 credits = 1 video
             </p>
           </div>
         </div>
