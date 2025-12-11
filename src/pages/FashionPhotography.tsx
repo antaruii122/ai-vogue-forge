@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
-import { UploadCloud, MapPin, Sparkles, Sun, Crown, Check, Loader2, Download, Save, Plus, CheckCircle, Expand, Share2, ChevronDown, ChevronUp, Settings, Users, X, Camera, Layers, ZoomIn, Shirt, Square } from "lucide-react";
+import { UploadCloud, MapPin, Sparkles, Sun, Crown, Check, ChevronDown, ChevronUp, Settings, Users, X, Camera, Layers, ZoomIn, Shirt, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -120,9 +121,6 @@ const FashionPhotography = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generatedPhotos, setGeneratedPhotos] = useState<string[] | null>(null);
-  const [hoveredImageIndex, setHoveredImageIndex] = useState<number | null>(null);
   const [aspectRatio, setAspectRatio] = useState<string>("9:16");
   const [advancedOptionsOpen, setAdvancedOptionsOpen] = useState(false);
   const [background, setBackground] = useState<string>("auto");
@@ -137,8 +135,6 @@ const FashionPhotography = () => {
   const [activeStyleTab, setActiveStyleTab] = useState<string>("lifestyle");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  // Edge function URL for webhook proxy
-  const WEBHOOK_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fashion-webhook`;
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -250,7 +246,6 @@ const FashionPhotography = () => {
     setUploadedImageUrl(null);
     setPreviewUrl(null);
     setSelectedTemplate(null);
-    setGeneratedPhotos(null);
     setSelectedAiModel(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -270,7 +265,9 @@ const FashionPhotography = () => {
     return aiModels.find(m => m.id === selectedAiModel);
   };
 
-  const handleGenerate = async () => {
+  const navigate = useNavigate();
+
+  const handleGenerate = () => {
     if (!uploadedImageUrl || !selectedTemplate) {
       toast({
         title: "Missing information",
@@ -280,113 +277,17 @@ const FashionPhotography = () => {
       return;
     }
 
-    setIsGenerating(true);
-    
-    try {
-      // Get Clerk token for authenticated webhook call
-      const clerkToken = await getToken();
-      
-      if (!clerkToken) {
-        toast({
-          title: "Authentication error",
-          description: "Please log in again",
-          variant: "destructive",
-        });
-        setIsGenerating(false);
-        return;
+    // Navigate to results page with generation parameters
+    navigate('/tools/fashion-results', {
+      state: {
+        image_url: uploadedImageUrl,
+        style: getTemplateName(),
+        styleId: selectedTemplate,
+        aspectRatio,
+        background: background === "custom" ? customBackground : background,
+        lighting: lighting === "custom" ? customLighting : lighting,
+        cameraAngle: cameraAngle === "custom" ? customCameraAngle : cameraAngle,
       }
-
-      toast({
-        title: "Generating your photo...",
-        description: "This may take a moment. Please wait.",
-      });
-      
-      // Send POST request to webhook via edge function and wait for response
-      const response = await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${clerkToken}`,
-        },
-        body: JSON.stringify({
-          image_url: uploadedImageUrl,
-          style: getTemplateName(),
-          styleId: selectedTemplate,
-          aspectRatio,
-          background: background === "custom" ? customBackground : background,
-          lighting: lighting === "custom" ? customLighting : lighting,
-          cameraAngle: cameraAngle === "custom" ? customCameraAngle : cameraAngle,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `Generation failed with status ${response.status}`);
-      }
-
-      const result = await response.json();
-      console.log('Generation result:', result);
-
-      if (result.success && result.image_url) {
-        // Completed - show the generated image
-        setGeneratedPhotos([result.image_url]);
-        setIsGenerating(false);
-        
-        toast({
-          title: "Photo generated!",
-          description: "Your fashion photo is ready.",
-        });
-      } else if (result.success && result.status === 'processing') {
-        // N8N is processing asynchronously
-        setIsGenerating(false);
-        toast({
-          title: "Generation queued",
-          description: "Your photo is being generated. This may take a few minutes. Check your portfolio for results.",
-        });
-      } else {
-        throw new Error(result.error || 'Generation failed - no image returned');
-      }
-    } catch (error) {
-      setIsGenerating(false);
-      console.error('Generation error:', error);
-      toast({
-        title: "Generation failed",
-        description: error instanceof Error ? error.message : "Failed to generate photo",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleGenerateAnother = () => {
-    setGeneratedPhotos(null);
-    setSelectedFile(null);
-    setUploadedImageUrl(null);
-    setPreviewUrl(null);
-    setSelectedTemplate(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  const handleDownload = () => {
-    toast({
-      title: "Download started",
-      description: "Your photos are being downloaded as ZIP.",
-    });
-  };
-
-  const handleDownloadSingle = (index: number) => {
-    toast({
-      title: "Download started",
-      description: `Downloading photo ${index + 1}.`,
-    });
-  };
-
-  const handleShare = (index: number) => {
-    navigator.clipboard.writeText(window.location.href);
-    toast({
-      title: "Link copied",
-      description: "Photo link copied to clipboard.",
     });
   };
 
@@ -395,153 +296,6 @@ const FashionPhotography = () => {
     return template?.name || "Unknown";
   };
 
-  // Show results view if photos are generated
-  if (generatedPhotos) {
-    const isSingleImage = generatedPhotos.length === 1;
-    
-    return (
-      <AppLayout>
-        <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-purple-500/5 animate-pulse pointer-events-none" />
-          
-          <div className="relative z-10 p-6">
-            <div className="max-w-6xl mx-auto mt-12 px-6">
-              {/* Success Header */}
-              <div className="text-center mb-6">
-                <CheckCircle className="w-10 h-10 text-green-400 mx-auto mb-3" />
-                <h1 className="text-2xl font-bold text-foreground mb-1">
-                  Your Photo Is Ready!
-                </h1>
-                <p className="text-muted-foreground text-sm">
-                  {isSingleImage ? '1 high-quality image generated' : `${generatedPhotos.length} high-quality images generated`}
-                </p>
-              </div>
-
-              {/* Photo Display - Single image centered or grid for multiple */}
-              <div className={`mt-8 mb-8 ${isSingleImage ? 'flex justify-center' : 'grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-[800px] mx-auto'}`}>
-                {generatedPhotos.map((photo, index) => (
-                  <div 
-                    key={index} 
-                    className={`relative group ${isSingleImage ? 'max-w-[500px] w-full' : 'aspect-square max-w-[350px] mx-auto'}`}
-                    onMouseEnter={() => setHoveredImageIndex(index)}
-                    onMouseLeave={() => setHoveredImageIndex(null)}
-                  >
-                    <img
-                      src={photo}
-                      alt={`Generated photo ${index + 1}`}
-                      className={`w-full ${isSingleImage ? 'max-h-[600px] object-contain' : 'h-full object-cover'} rounded-xl border border-gray-700 shadow-2xl shadow-purple-500/20 transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-purple-500/40`}
-                    />
-                    
-                    {/* Hover overlay with actions */}
-                    {hoveredImageIndex === index && (
-                      <div className="absolute inset-0 bg-black/50 rounded-xl flex items-center justify-center gap-3 transition-all duration-300">
-                        <button
-                          onClick={() => handleDownloadSingle(index)}
-                          className="p-3 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
-                          title="Download this image"
-                        >
-                          <Download className="w-5 h-5 text-white" />
-                        </button>
-                        <button
-                          onClick={() => toast({ title: "Full size view", description: "Coming soon!" })}
-                          className="p-3 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
-                          title="View full size"
-                        >
-                          <Expand className="w-5 h-5 text-white" />
-                        </button>
-                        <button
-                          onClick={() => handleShare(index)}
-                          className="p-3 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
-                          title="Share this image"
-                        >
-                          <Share2 className="w-5 h-5 text-white" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Action Buttons - more compact */}
-              <div className="flex flex-col sm:flex-row gap-3 mt-6 max-w-[600px] mx-auto">
-                <Button
-                  onClick={handleDownload}
-                  className="flex-1 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 font-semibold"
-                >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download All (ZIP)
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  className="px-5 py-2.5 border-2 border-purple-500 text-purple-400 hover:bg-purple-500/10"
-                >
-                  <Save className="mr-2 h-4 w-4" />
-                  Save to Portfolio
-                </Button>
-              </div>
-
-              <div className="flex justify-center mt-4 mb-6">
-                <button
-                  onClick={handleGenerateAnother}
-                  className="text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2 text-sm"
-                >
-                  <Plus className="h-4 w-4" />
-                  Generate More Photos
-                </button>
-              </div>
-
-              {/* Photo Info Card - more compact */}
-              <div className="max-w-[600px] mx-auto backdrop-blur-xl bg-white/5 rounded-lg py-4 px-5 border border-white/10 mt-6">
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <p className="text-muted-foreground text-xs mb-1">Style</p>
-                    <p className="text-foreground text-base font-medium">{getTemplateName()}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground text-xs mb-1">Images</p>
-                    <p className="text-foreground text-base font-medium">4 photos</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground text-xs mb-1">Resolution</p>
-                    <p className="text-foreground text-base font-medium">2048x2048</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground text-xs mb-1">Cost</p>
-                    <p className="text-foreground text-base font-medium">1 credit</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </AppLayout>
-    );
-  }
-
-  // Show loading view while generating
-  if (isGenerating) {
-    return (
-      <AppLayout>
-        <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 relative overflow-hidden flex items-center justify-center">
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-pink-500/5 to-purple-500/5 animate-pulse pointer-events-none" />
-          
-          <div className="relative z-10 text-center">
-            <Loader2 className="w-16 h-16 text-purple-400 animate-spin mx-auto mb-6" />
-            <h2 className="text-2xl font-bold text-foreground mb-2">
-              Generating your fashion photos...
-            </h2>
-            <p className="text-muted-foreground mb-8">
-              This usually takes about 30 seconds
-            </p>
-            <div className="w-64 h-2 bg-gray-800 rounded-full mx-auto overflow-hidden">
-              <div className="h-full bg-gradient-to-r from-purple-600 to-pink-600 animate-pulse rounded-full w-2/3" />
-            </div>
-          </div>
-        </div>
-      </AppLayout>
-    );
-  }
 
   // Style thumbnail mapping
   const getStyleThumbnail = (styleId: number) => {
