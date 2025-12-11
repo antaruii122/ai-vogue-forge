@@ -176,26 +176,32 @@ const FashionResults = () => {
     if (!generatedImageUrl) return;
     
     try {
-      const response = await fetch(generatedImageUrl);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `fashion-photo-${Date.now()}.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-      
-      toast({
-        title: "Download started",
-        description: "Your photo is being downloaded.",
-      });
+      // Try fetch first (works for same-origin or CORS-enabled URLs)
+      const response = await fetch(generatedImageUrl, { mode: 'cors' });
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `fashion-photo-${Date.now()}.jpg`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        toast({
+          title: "Download started",
+          description: "Your photo is being downloaded.",
+        });
+      } else {
+        throw new Error('Fetch failed');
+      }
     } catch (err) {
+      // Fallback: open in new tab for manual save (CORS workaround)
+      window.open(generatedImageUrl, '_blank');
       toast({
-        title: "Download failed",
-        description: "Could not download the image.",
-        variant: "destructive",
+        title: "Opening image",
+        description: "Right-click and save the image from the new tab.",
       });
     }
   };
