@@ -168,12 +168,18 @@ const FashionPhotography = () => {
   };
 
   const handleFile = async (file: File) => {
-    // Validate file type
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-    if (!validTypes.includes(file.type)) {
+    // Validate file type - check MIME type and file extension
+    const validMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    const validExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
+    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+    
+    const isValidMime = validMimeTypes.includes(file.type);
+    const isValidExtension = validExtensions.includes(fileExtension);
+    
+    if (!isValidMime && !isValidExtension) {
       toast({
         title: "Invalid file type",
-        description: "Please upload a valid image file (JPG, PNG, or WEBP)",
+        description: "Please upload a valid image file (JPG, JPEG, PNG, WebP, or GIF)",
         variant: "destructive",
       });
       return;
@@ -601,7 +607,7 @@ const FashionPhotography = () => {
                     <input
                       ref={fileInputRef}
                       type="file"
-                      accept="image/*"
+                      accept=".jpg,.jpeg,.png,.webp,.gif,image/jpeg,image/png,image/webp,image/gif"
                       onChange={handleFileInput}
                       className="hidden"
                     />
