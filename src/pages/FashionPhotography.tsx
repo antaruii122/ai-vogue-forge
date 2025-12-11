@@ -295,8 +295,13 @@ const FashionPhotography = () => {
         setIsGenerating(false);
         return;
       }
+
+      toast({
+        title: "Generating your photo...",
+        description: "This may take a moment. Please wait.",
+      });
       
-      // Send POST request to webhook via edge function
+      // Send POST request to webhook via edge function and wait for response
       const response = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: {
@@ -311,42 +316,35 @@ const FashionPhotography = () => {
           background: background === "custom" ? customBackground : background,
           lighting: lighting === "custom" ? customLighting : lighting,
           cameraAngle: cameraAngle === "custom" ? customCameraAngle : cameraAngle,
-          timestamp: new Date().toISOString(),
         }),
       });
 
       if (!response.ok) {
-        throw new Error(`Webhook responded with status ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `Generation failed with status ${response.status}`);
       }
 
-      toast({
-        title: "Request sent!",
-        description: "Your request has been sent for processing",
-      });
+      const result = await response.json();
+      console.log('Generation result:', result);
 
-      // Simulate generation time for demo purposes
-      setTimeout(() => {
-        // Mock generated images (in production, these would come from your webhook/AI service)
-        const mockImages = [
-          "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80",
-          "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=500&q=80",
-          "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=500&q=80",
-          "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=500&q=80",
-        ];
-        
-        setGeneratedPhotos(mockImages);
+      if (result.success && result.image_url) {
+        // Show the single generated image
+        setGeneratedPhotos([result.image_url]);
         setIsGenerating(false);
         
         toast({
-          title: "Photos generated!",
-          description: "Your 4 fashion photos are ready.",
+          title: "Photo generated!",
+          description: "Your fashion photo is ready.",
         });
-      }, 3000);
+      } else {
+        throw new Error(result.error || 'Generation failed - no image returned');
+      }
     } catch (error) {
       setIsGenerating(false);
+      console.error('Generation error:', error);
       toast({
         title: "Generation failed",
-        description: error instanceof Error ? error.message : "Failed to send generation request",
+        description: error instanceof Error ? error.message : "Failed to generate photo",
         variant: "destructive",
       });
     }
@@ -392,6 +390,8 @@ const FashionPhotography = () => {
 
   // Show results view if photos are generated
   if (generatedPhotos) {
+    const isSingleImage = generatedPhotos.length === 1;
+    
     return (
       <AppLayout>
         <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 relative overflow-hidden">
@@ -403,26 +403,26 @@ const FashionPhotography = () => {
               <div className="text-center mb-6">
                 <CheckCircle className="w-10 h-10 text-green-400 mx-auto mb-3" />
                 <h1 className="text-2xl font-bold text-foreground mb-1">
-                  Your Photos Are Ready!
+                  Your Photo Is Ready!
                 </h1>
                 <p className="text-muted-foreground text-sm">
-                  4 high-quality images generated
+                  {isSingleImage ? '1 high-quality image generated' : `${generatedPhotos.length} high-quality images generated`}
                 </p>
               </div>
 
-              {/* Photo Grid - 2x2 layout, more compact */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8 mb-8 max-w-[800px] mx-auto">
+              {/* Photo Display - Single image centered or grid for multiple */}
+              <div className={`mt-8 mb-8 ${isSingleImage ? 'flex justify-center' : 'grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-[800px] mx-auto'}`}>
                 {generatedPhotos.map((photo, index) => (
                   <div 
                     key={index} 
-                    className="relative group aspect-square max-w-[350px] mx-auto"
+                    className={`relative group ${isSingleImage ? 'max-w-[500px] w-full' : 'aspect-square max-w-[350px] mx-auto'}`}
                     onMouseEnter={() => setHoveredImageIndex(index)}
                     onMouseLeave={() => setHoveredImageIndex(null)}
                   >
                     <img
                       src={photo}
                       alt={`Generated photo ${index + 1}`}
-                      className="w-full h-full object-cover rounded-xl border border-gray-700 shadow-2xl shadow-purple-500/20 transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-purple-500/40"
+                      className={`w-full ${isSingleImage ? 'max-h-[600px] object-contain' : 'h-full object-cover'} rounded-xl border border-gray-700 shadow-2xl shadow-purple-500/20 transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-purple-500/40`}
                     />
                     
                     {/* Hover overlay with actions */}
