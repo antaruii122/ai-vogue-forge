@@ -25,36 +25,46 @@ const FashionResults = () => {
   const [isGenerating, setIsGenerating] = useState(true);
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [generationId, setGenerationId] = useState<string | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const pollingRef = useRef<NodeJS.Timeout | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const hasStartedRef = useRef(false); // Prevent double calls
 
   const params = location.state as GenerationParams | null;
   const WEBHOOK_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fashion-webhook`;
-  const STATUS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generation-status`;
 
   useEffect(() => {
+    // Redirect if no params
     if (!params) {
       navigate('/tools/fashion-photography');
       return;
     }
+
+    // CRITICAL: Only call once using ref to prevent React StrictMode double-mount
+    if (hasStartedRef.current) {
+      console.log('Generation already started, skipping duplicate call');
+      return;
+    }
+    hasStartedRef.current = true;
+
+    console.log('=== STARTING GENERATION (ONCE) ===');
 
     // Start elapsed time counter
     timerRef.current = setInterval(() => {
       setElapsedSeconds(prev => prev + 1);
     }, 1000);
 
-    startGeneration();
+    // Call webhook ONCE and wait for response
+    callWebhook();
 
     return () => {
-      if (pollingRef.current) clearInterval(pollingRef.current);
       if (timerRef.current) clearInterval(timerRef.current);
     };
   }, []);
 
-  const startGeneration = async () => {
+  const callWebhook = async () => {
     if (!params) return;
+
+    console.log('>>> Calling fashion-webhook ONCE');
 
     try {
       const clerkToken = await getToken();
@@ -64,7 +74,6 @@ const FashionResults = () => {
         return;
       }
 
-      // Call the webhook to start generation
       const response = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: {
@@ -83,92 +92,32 @@ const FashionResults = () => {
       });
 
       const result = await response.json();
-      console.log('Initial generation result:', result);
+      console.log('<<< Webhook response received:', result);
+
+      if (timerRef.current) clearInterval(timerRef.current);
 
       if (result.success && result.image_url) {
-        // Immediate success (synchronous response)
+        // Success - we got the image directly
         setGeneratedImageUrl(result.image_url);
-        setGenerationId(result.generation_id);
         setIsGenerating(false);
-        if (timerRef.current) clearInterval(timerRef.current);
-      } else if (result.success && result.generation_id) {
-        // Async mode - start polling for result
-        setGenerationId(result.generation_id);
-        startPolling(result.generation_id);
-      } else if (result.generation_id) {
-        // Even if not marked success, we have a generation_id - poll for it
-        setGenerationId(result.generation_id);
-        startPolling(result.generation_id);
+        toast({
+          title: "Photo generated!",
+          description: `Completed in ${elapsedSeconds} seconds`,
+        });
+      } else if (result.error) {
+        setError(result.error);
+        setIsGenerating(false);
       } else {
-        setError(result.error || 'Failed to start generation');
+        // N8N returned but no image yet - this shouldn't happen with sync flow
+        setError('Generation completed but no image was returned. Please try again.');
         setIsGenerating(false);
       }
     } catch (err) {
-      console.error('Generation error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to start generation');
+      console.error('Webhook error:', err);
+      if (timerRef.current) clearInterval(timerRef.current);
+      setError(err instanceof Error ? err.message : 'Failed to generate image');
       setIsGenerating(false);
     }
-  };
-
-  const startPolling = async (genId: string) => {
-    console.log('Starting to poll for generation:', genId);
-    
-    // Poll every 2 seconds
-    pollingRef.current = setInterval(async () => {
-      try {
-        // Get fresh token on each poll (tokens expire after ~60s)
-        const freshToken = await getToken();
-        if (!freshToken) {
-          console.error('Could not get fresh token for polling');
-          return;
-        }
-
-        const response = await fetch(`${STATUS_URL}?id=${genId}`, {
-          headers: {
-            'Authorization': `Bearer ${freshToken}`,
-          },
-        });
-
-        if (!response.ok) {
-          console.error('Poll response not ok:', response.status);
-          return;
-        }
-
-        const status = await response.json();
-        console.log('Poll result:', status);
-
-        if (status.status === 'completed' && status.image_url) {
-          // Generation complete!
-          setGeneratedImageUrl(status.image_url);
-          setIsGenerating(false);
-          if (pollingRef.current) clearInterval(pollingRef.current);
-          if (timerRef.current) clearInterval(timerRef.current);
-          
-          toast({
-            title: "Photo generated!",
-            description: `Completed in ${elapsedSeconds} seconds`,
-          });
-        } else if (status.status === 'failed') {
-          setError('Generation failed. Please try again.');
-          setIsGenerating(false);
-          if (pollingRef.current) clearInterval(pollingRef.current);
-          if (timerRef.current) clearInterval(timerRef.current);
-        }
-        // If still 'processing', continue polling
-      } catch (err) {
-        console.error('Polling error:', err);
-        // Don't stop polling on network errors, just log
-      }
-    }, 2000);
-
-    // Stop polling after 3 minutes (timeout)
-    setTimeout(() => {
-      if (pollingRef.current && isGenerating) {
-        clearInterval(pollingRef.current);
-        setError('Generation is taking longer than expected. Please check your portfolio later.');
-        setIsGenerating(false);
-      }
-    }, 180000);
   };
 
   const handleDownload = async () => {
