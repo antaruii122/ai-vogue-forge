@@ -125,8 +125,8 @@ export function PayPalCheckoutModal({ isOpen, onClose }: PayPalCheckoutModalProp
 
       if (result.success) {
         toast({
-          title: '✅ Payment Successful!',
-          description: `${result.credits_added} credits added! New balance: ${result.new_balance}`,
+          title: '✅ Credits Added!',
+          description: `${result.credits_added} credits added! Ready to create amazing photos.`,
         });
         
         triggerCreditsRefetch();

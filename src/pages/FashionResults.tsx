@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
-import { Loader2, CheckCircle, Download, Plus, Share2, AlertCircle } from "lucide-react";
+import { Loader2, CheckCircle, Download, Plus, Share2, AlertCircle, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@clerk/clerk-react";
 import { triggerCreditsRefetch } from "@/hooks/useCredits";
+import { PayPalCheckoutModal } from "@/components/PayPalCheckoutModal";
 
 interface GenerationParams {
   image_url: string;
@@ -28,6 +29,8 @@ const FashionResults = () => {
   const [error, setError] = useState<string | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [generationId, setGenerationId] = useState<string | null>(null);
+  const [isPayPalModalOpen, setIsPayPalModalOpen] = useState(false);
+  const [remainingCredits, setRemainingCredits] = useState<number | null>(null);
   
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
@@ -93,16 +96,45 @@ const FashionResults = () => {
         }),
       });
 
+      // Handle 402 Insufficient Credits
+      if (response.status === 402) {
+        const result = await response.json();
+        setError('insufficient_credits');
+        setIsGenerating(false);
+        if (timerRef.current) clearInterval(timerRef.current);
+        toast({
+          title: "⚠️ Insufficient Credits",
+          description: result.message || "Please purchase more credits to continue.",
+          variant: "destructive",
+          action: (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setIsPayPalModalOpen(true)}
+              className="border-yellow-500 text-yellow-500 hover:bg-yellow-500/10"
+            >
+              <Zap className="w-3 h-3 mr-1" />
+              Buy Credits
+            </Button>
+          ),
+        });
+        return;
+      }
+
       const result = await response.json();
       console.log('<<< Webhook response:', result);
 
       // If we got an image directly (sync response), show it
       if (result.success && result.image_url) {
         setGeneratedImageUrl(result.image_url);
+        setRemainingCredits(result.remaining_credits);
         setIsGenerating(false);
         if (timerRef.current) clearInterval(timerRef.current);
         triggerCreditsRefetch(); // Refresh credits after generation
-        toast({ title: "Photo generated!", description: `Completed in ${elapsedSeconds} seconds` });
+        toast({ 
+          title: "✅ Photo generated!", 
+          description: `${result.remaining_credits !== undefined ? `${result.remaining_credits} credits remaining` : `Completed in ${elapsedSeconds} seconds`}` 
+        });
         return;
       }
 
@@ -110,6 +142,7 @@ const FashionResults = () => {
       if (result.generation_id) {
         console.log('N8N is async, starting to poll for generation_id:', result.generation_id);
         setGenerationId(result.generation_id);
+        setRemainingCredits(result.remaining_credits);
         startPolling(result.generation_id);
       } else {
         setError(result.error || 'Failed to start generation');
@@ -266,21 +299,61 @@ const FashionResults = () => {
 
   // Error state
   if (error) {
+    const isInsufficientCredits = error === 'insufficient_credits';
+    
     return (
       <AppLayout>
         <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 flex items-center justify-center">
           <div className="text-center max-w-md px-6">
-            <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
+            {isInsufficientCredits ? (
+              <Zap className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
+            ) : (
+              <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
+            )}
             <h1 className="text-2xl font-bold text-foreground mb-3">
-              Generation Issue
+              {isInsufficientCredits ? 'Insufficient Credits' : 'Generation Issue'}
             </h1>
-            <p className="text-muted-foreground mb-6">{error}</p>
-            <Button onClick={handleGenerateAnother} className="bg-purple-600 hover:bg-purple-700">
-              <Plus className="w-4 h-4 mr-2" />
-              Try Again
-            </Button>
+            <p className="text-muted-foreground mb-6">
+              {isInsufficientCredits 
+                ? 'You need credits to generate photos. Purchase credits to continue creating amazing fashion imagery.'
+                : error
+              }
+            </p>
+            
+            {isInsufficientCredits ? (
+              <div className="space-y-3">
+                <Button 
+                  onClick={() => setIsPayPalModalOpen(true)} 
+                  className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black"
+                >
+                  <Zap className="w-4 h-4 mr-2" />
+                  Buy Credits
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={handleGenerateAnother}
+                  className="ml-3"
+                >
+                  Go Back
+                </Button>
+              </div>
+            ) : (
+              <Button onClick={handleGenerateAnother} className="bg-purple-600 hover:bg-purple-700">
+                <Plus className="w-4 h-4 mr-2" />
+                Try Again
+              </Button>
+            )}
           </div>
         </div>
+        
+        {/* PayPal Modal */}
+        <PayPalCheckoutModal 
+          isOpen={isPayPalModalOpen} 
+          onClose={() => {
+            setIsPayPalModalOpen(false);
+            triggerCreditsRefetch();
+          }} 
+        />
       </AppLayout>
     );
   }
@@ -360,8 +433,17 @@ const FashionResults = () => {
                   <p className="text-foreground font-medium">{elapsedSeconds} seconds</p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Credits Used</p>
-                  <p className="text-foreground font-medium">1 credit</p>
+                  <p className="text-gray-500">Credits Remaining</p>
+                  <p className={`font-medium flex items-center gap-1 ${
+                    remainingCredits !== null && remainingCredits > 10 
+                      ? 'text-green-400' 
+                      : remainingCredits !== null && remainingCredits > 0 
+                        ? 'text-yellow-400' 
+                        : 'text-red-400'
+                  }`}>
+                    <Zap className="w-3 h-3" />
+                    {remainingCredits ?? '--'}
+                  </p>
                 </div>
               </div>
             </div>

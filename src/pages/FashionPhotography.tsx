@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
-import { UploadCloud, MapPin, Sparkles, Sun, Crown, Check, ChevronDown, ChevronUp, Settings, Users, X, Camera, Layers, ZoomIn, Shirt, Square } from "lucide-react";
+import { UploadCloud, MapPin, Sparkles, Sun, Crown, Check, ChevronDown, ChevronUp, Settings, Users, X, Camera, Layers, ZoomIn, Shirt, Square, Zap, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -12,6 +12,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { uploadImageToStorage } from "@/utils/uploadToStorage";
 import { useUser, useAuth } from "@clerk/clerk-react";
+import { useCredits, triggerCreditsRefetch } from "@/hooks/useCredits";
+import { PayPalCheckoutModal } from "@/components/PayPalCheckoutModal";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import luxuryPremiumExample from "@/assets/luxury-premium-example.jpeg";
 import studioCleanExample from "@/assets/studio-clean-example.jpeg";
 import outdoorNaturalExample from "@/assets/outdoor-natural-example.jpeg";
@@ -133,8 +136,10 @@ const FashionPhotography = () => {
   const [isModelModalOpen, setIsModelModalOpen] = useState(false);
   const [selectedAiModel, setSelectedAiModel] = useState<number | null>(null);
   const [activeStyleTab, setActiveStyleTab] = useState<string>("lifestyle");
+  const [isPayPalModalOpen, setIsPayPalModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { credits, isLoading: isCreditsLoading, refetch: refetchCredits } = useCredits();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -277,6 +282,27 @@ const FashionPhotography = () => {
       return;
     }
 
+    // Check credits before proceeding
+    if (credits !== null && credits < 1) {
+      toast({
+        title: "⚠️ Insufficient Credits",
+        description: "You need 1 credit to generate. You have 0 credits.",
+        variant: "destructive",
+        action: (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setIsPayPalModalOpen(true)}
+            className="border-yellow-500 text-yellow-500 hover:bg-yellow-500/10"
+          >
+            <Zap className="w-3 h-3 mr-1" />
+            Buy Credits
+          </Button>
+        ),
+      });
+      return;
+    }
+
     // Navigate to results page with generation parameters
     navigate('/tools/fashion-results', {
       state: {
@@ -295,6 +321,23 @@ const FashionPhotography = () => {
     const template = allTemplates.find(t => t.id === selectedTemplate);
     return template?.name || "Unknown";
   };
+
+  // Credit display helpers
+  const getCreditColorClass = () => {
+    if (credits === null || isCreditsLoading) return 'text-gray-400';
+    if (credits > 10) return 'text-green-400';
+    if (credits > 0) return 'text-yellow-400';
+    return 'text-red-400';
+  };
+
+  const getCreditBgClass = () => {
+    if (credits === null || isCreditsLoading) return 'bg-gray-800/50';
+    if (credits > 10) return 'bg-green-500/10 border-green-500/30';
+    if (credits > 0) return 'bg-yellow-500/10 border-yellow-500/30';
+    return 'bg-red-500/10 border-red-500/30';
+  };
+
+  const hasEnoughCredits = credits !== null && credits >= 1;
 
 
   // Style thumbnail mapping
@@ -341,9 +384,32 @@ const FashionPhotography = () => {
               <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3 tracking-tight">
                 AI Fashion Photography
               </h1>
-              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-6">
                 Transform your product photos into stunning fashion imagery with AI
               </p>
+              
+              {/* Credit Balance Indicator */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={() => setIsPayPalModalOpen(true)}
+                      className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border transition-all cursor-pointer hover:scale-105 ${getCreditBgClass()} ${getCreditColorClass()}`}
+                    >
+                      <Zap className="w-5 h-5" />
+                      <span className="font-semibold">
+                        {isCreditsLoading ? '...' : `${credits ?? 0} Credits`}
+                      </span>
+                      {credits === 0 && (
+                        <AlertCircle className="w-4 h-4 text-red-400" />
+                      )}
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Click to buy more credits</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
 
             {/* Main content - 2 column layout */}
@@ -727,20 +793,67 @@ const FashionPhotography = () => {
 
                 {/* Generate Button */}
                 {uploadedImageUrl && selectedTemplate && (
-                  <div className="pt-4">
-                    <Button
-                      onClick={handleGenerate}
-                      className="w-full px-8 py-4 text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 hover:scale-[1.02] transition-all duration-200 shadow-lg rounded-lg"
-                    >
-                      <Sparkles className="mr-2 h-5 w-5" />
-                      Generate Photos (1 Credit)
-                    </Button>
+                  <div className="pt-4 space-y-3">
+                    {/* Credit balance near button */}
+                    <div className="flex items-center justify-center gap-2 text-sm">
+                      <span className="text-gray-400">Balance:</span>
+                      <span className={`flex items-center gap-1 font-medium ${getCreditColorClass()}`}>
+                        <Zap className="w-4 h-4" />
+                        {isCreditsLoading ? '--' : credits ?? 0} credits
+                      </span>
+                    </div>
+                    
+                    {hasEnoughCredits ? (
+                      <Button
+                        onClick={handleGenerate}
+                        className="w-full px-8 py-4 text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 hover:scale-[1.02] transition-all duration-200 shadow-lg rounded-lg"
+                      >
+                        <Sparkles className="mr-2 h-5 w-5" />
+                        Generate Photos (1 Credit)
+                      </Button>
+                    ) : (
+                      <div className="space-y-2">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                disabled
+                                className="w-full px-8 py-4 text-lg font-semibold bg-gray-700 text-gray-400 cursor-not-allowed rounded-lg"
+                              >
+                                <AlertCircle className="mr-2 h-5 w-5" />
+                                Need Credits
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Buy credits to continue generating</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        
+                        <Button
+                          onClick={() => setIsPayPalModalOpen(true)}
+                          className="w-full px-8 py-3 text-base font-semibold bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 hover:scale-[1.02] transition-all duration-200 shadow-lg rounded-lg text-black"
+                        >
+                          <Zap className="mr-2 h-5 w-5" />
+                          Buy Credits to Continue
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             </div>
           </div>
         </div>
+        
+        {/* PayPal Checkout Modal */}
+        <PayPalCheckoutModal 
+          isOpen={isPayPalModalOpen} 
+          onClose={() => {
+            setIsPayPalModalOpen(false);
+            refetchCredits();
+          }} 
+        />
       </div>
     </AppLayout>
   );
