@@ -3,6 +3,12 @@ project_id = "syaauhmujhosskdpeiii"
 [functions.fashion-webhook]
 verify_jwt = false
 
+[functions.generation-status]
+verify_jwt = false
+
+[functions.generation-callback]
+verify_jwt = false
+
 [functions.storage-upload]
 verify_jwt = false
 
