@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { z } from "https://esm.sh/zod@3.22.4";
 import { validateClerkToken, corsHeaders } from '../_shared/clerk-auth.ts';
 
 const TIER_CONFIG = {
@@ -9,6 +10,12 @@ const TIER_CONFIG = {
 } as const;
 
 type Tier = keyof typeof TIER_CONFIG;
+
+// Input validation schema
+const PaymentSchema = z.object({
+  paypal_order_id: z.string().min(1).max(100).regex(/^[A-Z0-9]+$/i, 'Invalid PayPal order ID format'),
+  tier: z.enum(['trial', 'basic', 'professional', 'enterprise']),
+});
 
 async function getPayPalAccessToken(): Promise<string> {
   const clientId = Deno.env.get('PAYPAL_CLIENT_ID');
@@ -87,24 +94,22 @@ Deno.serve(async (req) => {
     const userId = clerkResult.userId;
     console.log('Authenticated user:', userId);
 
-    // Parse request body
-    const body = await req.json();
-    const { paypal_order_id, tier } = body;
-
-    if (!paypal_order_id || !tier) {
+    // Parse and validate request body
+    const rawBody = await req.json();
+    const parseResult = PaymentSchema.safeParse(rawBody);
+    
+    if (!parseResult.success) {
+      console.error('Input validation failed:', parseResult.error.errors);
       return new Response(
-        JSON.stringify({ error: 'Missing required fields: paypal_order_id, tier' }),
+        JSON.stringify({ 
+          error: 'Invalid input', 
+          details: parseResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+        }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Validate tier
-    if (!TIER_CONFIG[tier as Tier]) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid tier', valid_tiers: Object.keys(TIER_CONFIG) }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    const { paypal_order_id, tier } = parseResult.data;
 
     const tierConfig = TIER_CONFIG[tier as Tier];
     console.log(`Processing ${tier} payment for order ${paypal_order_id}`);

@@ -1,8 +1,19 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://esm.sh/zod@3.22.4";
 import { validateClerkToken, corsHeaders } from "../_shared/clerk-auth.ts";
 
 const WEBHOOK_URL = "https://n8n.quicklyandgood.com/webhook/662d6440-b0e1-4c5e-9c71-11e077a84e39";
+
+// Input validation schema
+const FashionWebhookSchema = z.object({
+  image_url: z.string().url().max(2048),
+  style: z.string().max(100),
+  aspectRatio: z.enum(['9:16', '3:4', '1:1']).optional().default('9:16'),
+  background: z.string().max(200).optional(),
+  lighting: z.string().max(200).optional(),
+  cameraAngle: z.string().max(200).optional(),
+});
 
 serve(async (req) => {
   // Handle CORS preflight
@@ -112,8 +123,29 @@ serve(async (req) => {
     // END CREDIT VALIDATION
     // ============================================
 
-    const body = await req.json();
-    console.log('Received request body:', JSON.stringify(body));
+    const rawBody = await req.json();
+    console.log('Received request body:', JSON.stringify(rawBody));
+
+    // Validate input
+    const parseResult = FashionWebhookSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      console.error('Input validation failed:', parseResult.error.errors);
+      // REFUND the credit since validation failed
+      await supabase
+        .from('profiles')
+        .update({ credits: remainingCredits + 1 })
+        .eq('user_id', userId);
+      
+      return new Response(
+        JSON.stringify({ 
+          error: 'Invalid input', 
+          details: parseResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    const body = parseResult.data;
 
     // PHASE 1: Insert record into user_generations with status 'processing'
     const { data: generationRecord, error: insertError } = await supabase
