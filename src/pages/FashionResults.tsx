@@ -94,11 +94,11 @@ const FashionResults = () => {
       } else if (result.success && result.generation_id) {
         // Async mode - start polling for result
         setGenerationId(result.generation_id);
-        startPolling(result.generation_id, clerkToken);
+        startPolling(result.generation_id);
       } else if (result.generation_id) {
         // Even if not marked success, we have a generation_id - poll for it
         setGenerationId(result.generation_id);
-        startPolling(result.generation_id, clerkToken);
+        startPolling(result.generation_id);
       } else {
         setError(result.error || 'Failed to start generation');
         setIsGenerating(false);
@@ -110,17 +110,29 @@ const FashionResults = () => {
     }
   };
 
-  const startPolling = async (genId: string, token: string) => {
+  const startPolling = async (genId: string) => {
     console.log('Starting to poll for generation:', genId);
     
     // Poll every 2 seconds
     pollingRef.current = setInterval(async () => {
       try {
+        // Get fresh token on each poll (tokens expire after ~60s)
+        const freshToken = await getToken();
+        if (!freshToken) {
+          console.error('Could not get fresh token for polling');
+          return;
+        }
+
         const response = await fetch(`${STATUS_URL}?id=${genId}`, {
           headers: {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': `Bearer ${freshToken}`,
           },
         });
+
+        if (!response.ok) {
+          console.error('Poll response not ok:', response.status);
+          return;
+        }
 
         const status = await response.json();
         console.log('Poll result:', status);
