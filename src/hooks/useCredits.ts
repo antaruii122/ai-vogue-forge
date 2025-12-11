@@ -66,6 +66,27 @@ export function useCredits(): UseCreditsReturn {
     };
   }, [fetchCredits]);
 
+  // Refetch when window gains focus (user returns from another page/tab)
+  useEffect(() => {
+    const handleFocus = () => {
+      fetchCredits();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    // Also refetch when page becomes visible
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchCredits();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [fetchCredits]);
+
   return {
     credits,
     isLoading,
