@@ -71,18 +71,27 @@ serve(async (req) => {
       );
     }
 
-    // Get public URL
-    const { data: { publicUrl } } = supabase.storage
+    // Generate signed URL (valid for 1 hour) - works for private buckets
+    const { data: signedUrlData, error: signedUrlError } = await supabase.storage
       .from(bucket)
-      .getPublicUrl(filePath);
+      .createSignedUrl(filePath, 3600); // 1 hour expiry
 
-    console.log('Upload successful:', publicUrl);
+    if (signedUrlError) {
+      console.error('Signed URL error:', signedUrlError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to generate access URL' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    console.log('Upload successful, signed URL generated');
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        url: publicUrl,
-        path: filePath 
+        url: signedUrlData.signedUrl,
+        path: filePath,
+        expiresIn: 3600 // seconds
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
