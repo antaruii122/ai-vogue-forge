@@ -145,8 +145,8 @@ const Index = () => {
     saveBadge: "Save 61%",
     popular: false,
     bestValue: false,
-    features: ["20 credits", "20 AI photos", "1K resolution"],
-    creditInfo: "1 credit = 1 photo generation"
+    features: ["20 credits", "20 AI photos OR", "2 AI videos OR", "Mix of both (your choice)", "1K resolution"],
+    creditInfo: "1 credit = 1 photo • 10 credits = 1 video"
   }, {
     number: "02",
     name: "Basic",
@@ -159,8 +159,8 @@ const Index = () => {
     saveBadge: "Save 61%",
     popular: false,
     bestValue: false,
-    features: ["200 credits", "200 AI photos", "1K resolution", "Image editing"],
-    creditInfo: "1 credit = 1 photo generation"
+    features: ["200 credits", "200 AI photos OR", "20 AI videos OR", "Mix of both (your choice)", "1K resolution", "Image editing"],
+    creditInfo: "1 credit = 1 photo • 10 credits = 1 video"
   }, {
     number: "03",
     name: "Professional",
@@ -173,8 +173,8 @@ const Index = () => {
     saveBadge: "Save 63%",
     popular: true,
     bestValue: true,
-    features: ["600 credits", "600 AI photos", "1K resolution", "Video generation", "Priority support"],
-    creditInfo: "1 credit = 1 photo generation"
+    features: ["600 credits", "600 AI photos OR", "60 AI videos OR", "Mix of both (your choice)", "1K resolution", "Video generation", "Priority support"],
+    creditInfo: "1 credit = 1 photo • 10 credits = 1 video"
   }, {
     number: "04",
     name: "Enterprise",
@@ -187,8 +187,8 @@ const Index = () => {
     saveBadge: "Save 67%",
     popular: false,
     bestValue: false,
-    features: ["3000 credits", "3000 AI photos", "2K resolution", "Video generation", "Priority support"],
-    creditInfo: "1 credit = 1 photo generation"
+    features: ["3,000 credits", "3,000 AI photos OR", "300 AI videos OR", "Mix of both (your choice)", "2K resolution", "Video generation", "Priority support"],
+    creditInfo: "1 credit = 1 photo • 10 credits = 1 video"
   }];
   return <div className="min-h-screen bg-background">
       {/* Header */}
@@ -776,7 +776,7 @@ const Index = () => {
               Simple, Transparent Pricing
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Pay only for what you use. 1 credit = 1 AI photo generation
+              Pay only for what you use. 1 credit = 1 photo • 10 credits = 1 video
             </p>
           </div>
           
