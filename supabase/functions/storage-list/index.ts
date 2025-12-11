@@ -56,13 +56,14 @@ serve(async (req) => {
       } else if (uploads) {
         for (const file of uploads) {
           if (file.name !== '.emptyFolderPlaceholder') {
-            const { data: { publicUrl } } = supabase.storage
+            // Use signed URL since bucket is private
+            const { data: signedData } = await supabase.storage
               .from(bucket)
-              .getPublicUrl(`${userId}/uploads/${file.name}`);
+              .createSignedUrl(`${userId}/uploads/${file.name}`, 3600); // 1 hour expiry
             
             files.push({
               name: file.name,
-              url: publicUrl,
+              url: signedData?.signedUrl || '',
               created_at: file.created_at || new Date().toISOString(),
               size: file.metadata?.size || 0,
               type: 'uploads'
@@ -85,13 +86,14 @@ serve(async (req) => {
       } else if (generated) {
         for (const file of generated) {
           if (file.name !== '.emptyFolderPlaceholder') {
-            const { data: { publicUrl } } = supabase.storage
+            // Use signed URL since bucket is private
+            const { data: signedData } = await supabase.storage
               .from(bucket)
-              .getPublicUrl(`${userId}/generated/${file.name}`);
+              .createSignedUrl(`${userId}/generated/${file.name}`, 3600); // 1 hour expiry
             
             files.push({
               name: file.name,
-              url: publicUrl,
+              url: signedData?.signedUrl || '',
               created_at: file.created_at || new Date().toISOString(),
               size: file.metadata?.size || 0,
               type: 'generated'

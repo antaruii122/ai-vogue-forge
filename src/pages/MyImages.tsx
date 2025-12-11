@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import AppLayout from "@/components/AppLayout";
 import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
-import { Image as ImageIcon, Loader2 } from "lucide-react";
+import { Image as ImageIcon, Loader2, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useUser, useAuth } from "@clerk/clerk-react";
-import { getAllUserImages, StorageFile } from "@/utils/storageHelpers";
+import { getAllUserImages, deleteUserFile, StorageFile } from "@/utils/storageHelpers";
+import { Button } from "@/components/ui/button";
 
 const MyImages = () => {
   const [images, setImages] = useState<StorageFile[]>([]);
@@ -51,6 +52,28 @@ const MyImages = () => {
     }
   };
 
+  const handleDelete = async (image: StorageFile) => {
+    if (!user?.id) return;
+    
+    const clerkToken = await getToken();
+    if (!clerkToken) return;
+
+    try {
+      await deleteUserFile(user.id, image.name, image.type, clerkToken);
+      setImages(prev => prev.filter(img => img.name !== image.name));
+      toast({
+        title: "Image deleted",
+        description: "The image has been removed.",
+      });
+    } catch (error) {
+      toast({
+        title: "Delete failed",
+        description: error instanceof Error ? error.message : "Failed to delete image",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <AppLayout>
       <div className="min-h-screen bg-background p-8">
@@ -75,9 +98,18 @@ const MyImages = () => {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
               {images.map((image, index) => (
-                <Card key={index} className="bg-card border-border overflow-hidden group">
+                <Card key={index} className="bg-card border-border overflow-hidden group relative">
+                  {/* Delete button */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-2 right-2 z-10 h-8 w-8 bg-black/50 hover:bg-destructive text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={() => handleDelete(image)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
                   <div className="aspect-square relative overflow-hidden">
                     <img
                       src={image.url}
