@@ -1,8 +1,12 @@
 import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
-import { UploadCloud, Sparkles, Check, Loader2, Download, Save, Plus, CheckCircle } from "lucide-react";
+import { UploadCloud, Sparkles, Check, Loader2, Download, Save, Plus, CheckCircle, Zap, AlertCircle, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useCredits, triggerCreditsRefetch } from "@/hooks/useCredits";
+import { PayPalCheckoutModal } from "@/components/PayPalCheckoutModal";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const templates = [
   { id: 1, name: "360° Spin", gradient: "from-purple-500 to-pink-500" },
@@ -14,15 +18,39 @@ const templates = [
   { id: 7, name: "Minimal Studio", gradient: "from-teal-500 to-cyan-500" },
 ];
 
+const VIDEO_CREDIT_COST = 10;
+
 const VideoGeneration = () => {
+  const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null);
+  const [isPayPalModalOpen, setIsPayPalModalOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  
+  // Use the shared credits hook
+  const { credits, isLoading: isCreditsLoading } = useCredits();
+
+  // Credit display helpers
+  const getCreditColorClass = () => {
+    if (credits === null || isCreditsLoading) return 'text-gray-400';
+    if (credits >= VIDEO_CREDIT_COST) return 'text-green-400';
+    if (credits > 0) return 'text-yellow-400';
+    return 'text-red-400';
+  };
+
+  const getCreditBgClass = () => {
+    if (credits === null || isCreditsLoading) return 'bg-gray-800/50';
+    if (credits >= VIDEO_CREDIT_COST) return 'bg-green-500/10 border-green-500/30';
+    if (credits > 0) return 'bg-yellow-500/10 border-yellow-500/30';
+    return 'bg-red-500/10 border-red-500/30';
+  };
+
+  const hasEnoughCredits = credits !== null && credits >= VIDEO_CREDIT_COST;
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -93,16 +121,39 @@ const VideoGeneration = () => {
   const handleGenerate = async () => {
     if (!selectedFile || !selectedTemplate) return;
 
+    // Check credits before proceeding
+    if (credits !== null && credits < VIDEO_CREDIT_COST) {
+      toast({
+        title: "⚠️ Insufficient Credits",
+        description: `You need ${VIDEO_CREDIT_COST} credits to generate a video. You have ${credits} credits.`,
+        variant: "destructive",
+        action: (
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setIsPayPalModalOpen(true)}
+            className="border-yellow-500 text-yellow-500 hover:bg-yellow-500/10"
+          >
+            <Zap className="w-3 h-3 mr-1" />
+            Buy Credits
+          </Button>
+        ),
+      });
+      return;
+    }
+
     setIsGenerating(true);
     
-    // Simulate video generation (replace with actual API call)
+    // TODO: Implement actual video generation with video-webhook Edge Function
+    // For now, simulate video generation
     setTimeout(() => {
       // Use placeholder video URL (replace with actual generated video)
       setGeneratedVideoUrl("/videos/BOLD.mp4");
       setIsGenerating(false);
+      triggerCreditsRefetch(); // Refresh credits after generation
       toast({
-        title: "Video generated!",
-        description: "Your video is ready to download.",
+        title: "✅ Video generated!",
+        description: `Your video is ready to download. ${(credits ?? 0) - VIDEO_CREDIT_COST} credits remaining.`,
       });
     }, 3000);
   };
@@ -221,13 +272,18 @@ const VideoGeneration = () => {
                   </div>
                   <div>
                     <p className="text-muted-foreground text-sm mb-1">Cost</p>
-                    <p className="text-foreground font-medium">1 credit</p>
+                    <p className="text-foreground font-medium">{VIDEO_CREDIT_COST} credits</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        
+        <PayPalCheckoutModal 
+          isOpen={isPayPalModalOpen} 
+          onClose={() => setIsPayPalModalOpen(false)} 
+        />
       </AppLayout>
     );
   }
@@ -267,10 +323,51 @@ const VideoGeneration = () => {
         
         <div className="relative z-10 p-6">
           {/* Main page title */}
-          <div className="mt-20 mb-8">
-            <h1 className="text-3xl font-bold text-foreground text-center">
-              Video Generation
+          <div className="text-center mb-10 mt-8">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3 tracking-tight">
+              AI Video Generation
             </h1>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-6">
+              Transform your product photos into stunning videos
+            </p>
+            
+            {/* Credit Balance Indicator */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={() => setIsPayPalModalOpen(true)}
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full border transition-all cursor-pointer hover:scale-105 ${getCreditBgClass()} ${getCreditColorClass()}`}
+                  >
+                    <Zap className="w-5 h-5" />
+                    <span className="font-semibold">
+                      {isCreditsLoading ? '...' : `${credits ?? 0} Credits`}
+                    </span>
+                    {credits !== null && credits < VIDEO_CREDIT_COST && (
+                      <AlertCircle className="w-4 h-4 text-yellow-400" />
+                    )}
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{hasEnoughCredits ? 'Click to buy more credits' : `Need ${VIDEO_CREDIT_COST} credits for video generation`}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            
+            {/* Credit requirement notice */}
+            {credits !== null && credits < VIDEO_CREDIT_COST && (
+              <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/10 border border-yellow-500/30 rounded-lg text-yellow-400 text-sm">
+                <Video className="w-4 h-4" />
+                <span>Video generation requires {VIDEO_CREDIT_COST} credits. You have {credits}.</span>
+                <Button
+                  size="sm"
+                  onClick={() => setIsPayPalModalOpen(true)}
+                  className="ml-2 bg-yellow-500 hover:bg-yellow-600 text-black text-xs"
+                >
+                  Buy Credits
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* 2-column layout on desktop */}
@@ -357,7 +454,7 @@ const VideoGeneration = () => {
                     Choose Your Video Style
                   </h2>
                   <p className="text-muted-foreground text-sm">
-                    Select a template to generate your video (1 credit)
+                    Select a template to generate your video ({VIDEO_CREDIT_COST} credits)
                   </p>
                 </div>
 
@@ -413,11 +510,20 @@ const VideoGeneration = () => {
                   <div className="flex justify-center mt-8">
                     <Button
                       onClick={handleGenerate}
-                      disabled={isGenerating}
-                      className="px-8 py-4 text-lg font-semibold bg-gradient-primary rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                      disabled={isGenerating || !hasEnoughCredits}
+                      className={`px-8 py-4 text-lg font-semibold rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 ${
+                        hasEnoughCredits 
+                          ? 'bg-gradient-primary hover:scale-105 hover:shadow-lg' 
+                          : 'bg-gray-600'
+                      }`}
                       aria-label="Generate video from uploaded photo"
                     >
-                      {isGenerating ? (
+                      {!hasEnoughCredits ? (
+                        <>
+                          <AlertCircle className="mr-2 h-5 w-5" />
+                          Need {VIDEO_CREDIT_COST} Credits
+                        </>
+                      ) : isGenerating ? (
                         <>
                           <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                           Generating your video...
@@ -425,9 +531,22 @@ const VideoGeneration = () => {
                       ) : (
                         <>
                           <Sparkles className="mr-2 h-5 w-5" />
-                          Generate Video (1 Credit)
+                          Generate Video ({VIDEO_CREDIT_COST} Credits)
                         </>
                       )}
+                    </Button>
+                  </div>
+                )}
+                
+                {/* Buy credits prompt if not enough */}
+                {selectedFile && selectedTemplate && !hasEnoughCredits && (
+                  <div className="flex justify-center mt-4">
+                    <Button
+                      onClick={() => setIsPayPalModalOpen(true)}
+                      className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black"
+                    >
+                      <Zap className="mr-2 h-4 w-4" />
+                      Buy Credits to Continue
                     </Button>
                   </div>
                 )}
@@ -436,6 +555,11 @@ const VideoGeneration = () => {
           </div>
         </div>
       </div>
+      
+      <PayPalCheckoutModal 
+        isOpen={isPayPalModalOpen} 
+        onClose={() => setIsPayPalModalOpen(false)} 
+      />
     </AppLayout>
   );
 };

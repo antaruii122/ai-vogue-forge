@@ -148,7 +148,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_credits_atomic: {
+        Args: { p_credits_to_add: number; p_user_id: string }
+        Returns: {
+          new_balance: number
+        }[]
+      }
       create_first_admin: { Args: { _user_id: string }; Returns: undefined }
+      deduct_credit_atomic: {
+        Args: { p_credits_needed: number; p_user_id: string }
+        Returns: {
+          new_balance: number
+          success: boolean
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -162,6 +175,12 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      refund_credit_atomic: {
+        Args: { p_credits_to_refund: number; p_user_id: string }
+        Returns: {
+          new_balance: number
+        }[]
       }
     }
     Enums: {
