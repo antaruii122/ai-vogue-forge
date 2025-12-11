@@ -28,11 +28,13 @@ serve(async (req) => {
     const body = await req.json();
     console.log('Forwarding to webhook for user:', userId, 'body:', JSON.stringify(body));
 
-    // Add user ID to the webhook payload for tracking
+    // Wrap payload in "body" object for n8n
     const webhookPayload = {
-      ...body,
-      userId,
-      timestamp: new Date().toISOString(),
+      body: {
+        ...body,
+        userId,
+        timestamp: new Date().toISOString(),
+      }
     };
 
     const response = await fetch(WEBHOOK_URL, {
