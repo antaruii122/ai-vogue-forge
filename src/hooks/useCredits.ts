@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
+import { useAuth } from '@clerk/clerk-react';
 
 interface UseCreditsReturn {
   credits: number | null;
@@ -12,8 +12,10 @@ interface UseCreditsReturn {
 // Auto-refresh interval in milliseconds (30 seconds)
 const AUTO_REFRESH_INTERVAL = 30000;
 
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+
 export function useCredits(): UseCreditsReturn {
-  const { supabase, isLoaded, userId } = useSupabaseAuth();
+  const { getToken, isLoaded, userId } = useAuth();
   const [credits, setCredits] = useState<number | null>(null);
   const [totalPurchased, setTotalPurchased] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,25 +31,37 @@ export function useCredits(): UseCreditsReturn {
     try {
       setError(null);
 
-      const { data, error: fetchError } = await supabase
-        .from('profiles')
-        .select('credits, total_credits_purchased')
-        .eq('user_id', userId)
-        .maybeSingle();
+      // Get the Clerk session token (not the supabase template)
+      const token = await getToken();
+      
+      if (!token) {
+        console.error('No auth token available');
+        setError('Not authenticated');
+        setCredits(3); // Default for unauthenticated
+        setTotalPurchased(0);
+        setIsLoading(false);
+        return;
+      }
 
-      if (fetchError) {
-        console.error('Error fetching credits:', fetchError);
-        setError(fetchError.message);
-        // Default values for error state
+      // Call the edge function to get credits
+      const response = await fetch(`${SUPABASE_URL}/functions/v1/get-credits`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Error fetching credits:', response.status, errorData);
+        setError(errorData.error || 'Failed to fetch credits');
         setCredits(0);
         setTotalPurchased(0);
-      } else if (data) {
+      } else {
+        const data = await response.json();
         setCredits(data.credits);
         setTotalPurchased(data.total_credits_purchased);
-      } else {
-        // No profile exists yet - user will get 3 credits on first generation
-        setCredits(3);
-        setTotalPurchased(0);
       }
     } catch (err) {
       console.error('Failed to fetch credits:', err);
@@ -57,7 +71,7 @@ export function useCredits(): UseCreditsReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [supabase, userId, isLoaded]);
+  }, [getToken, userId, isLoaded]);
 
   useEffect(() => {
     // Initial fetch
