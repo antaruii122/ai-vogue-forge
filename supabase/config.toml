@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.paypal-complete-payment]
 verify_jwt = false
+
+[functions.get-credits]
+verify_jwt = false
