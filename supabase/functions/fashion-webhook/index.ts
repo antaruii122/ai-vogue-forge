@@ -105,6 +105,7 @@ serve(async (req) => {
     }
 
     // PHASE 3: Handle N8N response
+    // Check for successful generation with image
     if (n8nResponse.success && n8nResponse.image_url) {
       // Success - update record with generated image
       const { error: updateError } = await supabase
@@ -130,8 +131,24 @@ serve(async (req) => {
         }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
-    } else {
-      // N8N returned an error or no image
+    } 
+    // Handle async workflow response - N8N started but hasn't returned image yet
+    else if (n8nResponse.message === 'Workflow was started') {
+      console.log('N8N workflow started (async mode), generation_id:', generationId);
+      
+      // Record stays in 'processing' status - N8N needs to call back with result
+      return new Response(
+        JSON.stringify({
+          success: true,
+          generation_id: generationId,
+          status: 'processing',
+          message: 'Generation started. N8N is processing your image.',
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    else {
+      // N8N returned an error or unexpected response
       const errorMessage = n8nResponse.error || n8nResponse.message || 'Generation failed';
       console.error('N8N generation failed:', errorMessage);
       
