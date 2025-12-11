@@ -7,6 +7,7 @@ import { lazy, Suspense } from "react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Loader2 } from "lucide-react";
 import { ClerkProvider, ClerkLoaded, ClerkLoading } from '@clerk/clerk-react';
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 
 // Eager load critical pages
 import Index from "./pages/Index";
@@ -37,6 +38,12 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+const paypalInitialOptions = {
+  clientId: "AS-M0yaOgF3urSHC0WTcBvhvfgRZst30NhR2m5WSFhf1g79k2zA6aoXcbYgz1HAHS9IB5zFPWJrJurQE",
+  currency: "USD",
+  intent: "capture",
+};
 
 // Loading component for Suspense fallback
 const PageLoader = () => (
@@ -107,18 +114,20 @@ const App = () => {
         publishableKey={clerkPubKey}
         afterSignOutUrl="/"
       >
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <ClerkLoading>
-              <PageLoader />
-            </ClerkLoading>
-            <ClerkLoaded>
-              <AppRoutes />
-            </ClerkLoaded>
-          </TooltipProvider>
-        </QueryClientProvider>
+        <PayPalScriptProvider options={paypalInitialOptions}>
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <ClerkLoading>
+                <PageLoader />
+              </ClerkLoading>
+              <ClerkLoaded>
+                <AppRoutes />
+              </ClerkLoaded>
+            </TooltipProvider>
+          </QueryClientProvider>
+        </PayPalScriptProvider>
       </ClerkProvider>
     </ErrorBoundary>
   );
