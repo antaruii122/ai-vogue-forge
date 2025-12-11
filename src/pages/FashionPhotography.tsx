@@ -1,3 +1,4 @@
+// Fashion Photography Tool - AI-powered fashion imagery generation
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/AppLayout";
