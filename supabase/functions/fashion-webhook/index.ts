@@ -107,11 +107,17 @@ serve(async (req) => {
     // PHASE 3: Handle N8N response
     // Check for successful generation with image
     if (n8nResponse.success && n8nResponse.image_url) {
+      // Clean the image URL - strip leading '=' if present (n8n expression artifact)
+      let cleanImageUrl = n8nResponse.image_url;
+      if (cleanImageUrl.startsWith('=')) {
+        cleanImageUrl = cleanImageUrl.substring(1);
+      }
+      
       // Success - update record with generated image
       const { error: updateError } = await supabase
         .from('user_generations')
         .update({
-          generated_images: [n8nResponse.image_url],
+          generated_images: [cleanImageUrl],
           status: 'completed',
         })
         .eq('id', generationId);
@@ -120,18 +126,18 @@ serve(async (req) => {
         console.error('Failed to update generation record:', updateError);
       }
 
-      console.log('Generation completed successfully:', n8nResponse.image_url);
+      console.log('Generation completed successfully:', cleanImageUrl);
 
       return new Response(
         JSON.stringify({
           success: true,
           generation_id: generationId,
-          image_url: n8nResponse.image_url,
+          image_url: cleanImageUrl,
           status: 'completed',
         }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
-    } 
+    }
     // Handle async workflow response - N8N started but hasn't returned image yet
     else if (n8nResponse.message === 'Workflow was started') {
       console.log('N8N workflow started (async mode), generation_id:', generationId);
