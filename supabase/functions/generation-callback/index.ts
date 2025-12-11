@@ -1,10 +1,23 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://esm.sh/zod@3.22.4";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
+
+// Input validation schema
+const CallbackSchema = z.object({
+  generation_id: z.string().uuid().optional(),
+  generationId: z.string().uuid().optional(),
+  image_url: z.string().url().max(2048).optional(),
+  imageUrl: z.string().url().max(2048).optional(),
+  success: z.boolean().optional(),
+  error: z.string().max(500).optional(),
+}).refine(data => data.generation_id || data.generationId, {
+  message: "Either generation_id or generationId is required"
+});
 
 serve(async (req) => {
   // Handle CORS preflight
@@ -17,23 +30,26 @@ serve(async (req) => {
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   try {
-    const body = await req.json();
-    console.log('Callback received:', JSON.stringify(body));
+    const rawBody = await req.json();
+    console.log('Callback received:', JSON.stringify(rawBody));
 
-    // Extract data from n8n callback
-    // n8n should send: { generation_id: "...", image_url: "...", success: true/false }
-    const { generation_id, generationId, image_url, imageUrl, success, error } = body;
-    
-    const genId = generation_id || generationId;
-    const imgUrl = image_url || imageUrl;
-
-    if (!genId) {
-      console.error('No generation_id provided');
+    // Validate input
+    const parseResult = CallbackSchema.safeParse(rawBody);
+    if (!parseResult.success) {
+      console.error('Input validation failed:', parseResult.error.errors);
       return new Response(
-        JSON.stringify({ error: 'generation_id is required' }),
+        JSON.stringify({ 
+          error: 'Invalid input', 
+          details: parseResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+        }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    const body = parseResult.data;
+    const genId = body.generation_id || body.generationId;
+    const imgUrl = body.image_url || body.imageUrl;
+    const { success, error } = body;
 
     // SECURITY: Validate that the generation exists and is in 'processing' status
     // This prevents attackers from updating arbitrary records
