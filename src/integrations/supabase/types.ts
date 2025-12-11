@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      payment_transactions: {
+        Row: {
+          amount_usd: number
+          completed_at: string | null
+          created_at: string
+          credits_purchased: number
+          id: string
+          paypal_order_id: string
+          status: string
+          tier: string
+          user_id: string
+        }
+        Insert: {
+          amount_usd: number
+          completed_at?: string | null
+          created_at?: string
+          credits_purchased: number
+          id?: string
+          paypal_order_id: string
+          status?: string
+          tier: string
+          user_id: string
+        }
+        Update: {
+          amount_usd?: number
+          completed_at?: string | null
+          created_at?: string
+          credits_purchased?: number
+          id?: string
+          paypal_order_id?: string
+          status?: string
+          tier?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          credits: number
+          id: string
+          total_credits_purchased: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          credits?: number
+          id?: string
+          total_credits_purchased?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          credits?: number
+          id?: string
+          total_credits_purchased?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_generations: {
         Row: {
           aspect_ratio: string
