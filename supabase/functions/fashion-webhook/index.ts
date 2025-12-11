@@ -31,6 +31,87 @@ serve(async (req) => {
     const userId = validation.userId;
     console.log('Request from user:', userId);
 
+    // ============================================
+    // CREDIT VALIDATION AND DEDUCTION
+    // ============================================
+    
+    // Step 1: Get or create user profile
+    let { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('id, credits')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (profileError) {
+      console.error('Error fetching profile:', profileError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to fetch user profile' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Step 2: If profile doesn't exist, create one with 3 free credits (signup bonus)
+    if (!profile) {
+      console.log('First-time user, creating profile with 3 free credits');
+      const { data: newProfile, error: createError } = await supabase
+        .from('profiles')
+        .insert({
+          user_id: userId,
+          credits: 3,
+          total_credits_purchased: 0,
+        })
+        .select('id, credits')
+        .single();
+
+      if (createError) {
+        console.error('Failed to create profile:', createError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to create user profile' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      profile = newProfile;
+      console.log('Created new profile with credits:', profile.credits);
+    }
+
+    console.log('User credit balance before generation:', profile.credits);
+
+    // Step 3: Check if user has enough credits
+    if (profile.credits < 1) {
+      console.log('Insufficient credits for user:', userId, 'Balance:', profile.credits);
+      return new Response(
+        JSON.stringify({
+          error: 'Insufficient credits',
+          credits: profile.credits,
+          message: 'You need 1 credit to generate a photo. Please purchase more credits.',
+        }),
+        { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Step 4: Deduct 1 credit BEFORE calling N8N (optimistic deduction)
+    const { data: updatedProfile, error: deductError } = await supabase
+      .from('profiles')
+      .update({ credits: profile.credits - 1 })
+      .eq('user_id', userId)
+      .select('credits')
+      .single();
+
+    if (deductError) {
+      console.error('Failed to deduct credit:', deductError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to process credit deduction' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const remainingCredits = updatedProfile.credits;
+    console.log('Credit deducted. Remaining balance:', remainingCredits);
+
+    // ============================================
+    // END CREDIT VALIDATION
+    // ============================================
+
     const body = await req.json();
     console.log('Received request body:', JSON.stringify(body));
 
@@ -53,6 +134,13 @@ serve(async (req) => {
 
     if (insertError) {
       console.error('Failed to create generation record:', insertError);
+      // REFUND the credit since we couldn't create the record
+      console.log('Refunding credit due to record creation failure');
+      await supabase
+        .from('profiles')
+        .update({ credits: remainingCredits + 1 })
+        .eq('user_id', userId);
+      
       return new Response(
         JSON.stringify({ error: 'Failed to create generation record', details: insertError.message }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -74,13 +162,34 @@ serve(async (req) => {
 
     console.log('Calling N8N webhook...');
     
-    const response = await fetch(WEBHOOK_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(webhookPayload),
-    });
+    let response;
+    try {
+      response = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(webhookPayload),
+      });
+    } catch (fetchError) {
+      console.error('N8N webhook call failed:', fetchError);
+      // REFUND the credit since N8N call failed
+      console.log('Refunding credit due to N8N call failure');
+      await supabase
+        .from('profiles')
+        .update({ credits: remainingCredits + 1 })
+        .eq('user_id', userId);
+      
+      await supabase
+        .from('user_generations')
+        .update({ status: 'failed' })
+        .eq('id', generationId);
+      
+      return new Response(
+        JSON.stringify({ error: 'Failed to connect to generation service' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     const responseText = await response.text();
     console.log('Webhook response status:', response.status);
@@ -92,7 +201,13 @@ serve(async (req) => {
       n8nResponse = JSON.parse(responseText);
     } catch (e) {
       console.error('Failed to parse N8N response:', e);
-      // Update record as failed
+      // REFUND the credit since we got invalid response
+      console.log('Refunding credit due to invalid N8N response');
+      await supabase
+        .from('profiles')
+        .update({ credits: remainingCredits + 1 })
+        .eq('user_id', userId);
+      
       await supabase
         .from('user_generations')
         .update({ status: 'failed' })
@@ -127,6 +242,7 @@ serve(async (req) => {
       }
 
       console.log('Generation completed successfully:', cleanImageUrl);
+      console.log('Final credit balance:', remainingCredits);
 
       return new Response(
         JSON.stringify({
@@ -134,6 +250,7 @@ serve(async (req) => {
           generation_id: generationId,
           image_url: cleanImageUrl,
           status: 'completed',
+          remaining_credits: remainingCredits,
         }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
@@ -141,6 +258,7 @@ serve(async (req) => {
     // Handle async workflow response - N8N started but hasn't returned image yet
     else if (n8nResponse.message === 'Workflow was started') {
       console.log('N8N workflow started (async mode), generation_id:', generationId);
+      console.log('Credit already deducted, balance:', remainingCredits);
       
       // Record stays in 'processing' status - N8N needs to call back with result
       return new Response(
@@ -149,14 +267,21 @@ serve(async (req) => {
           generation_id: generationId,
           status: 'processing',
           message: 'Generation started. N8N is processing your image.',
+          remaining_credits: remainingCredits,
         }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
     else {
-      // N8N returned an error or unexpected response
+      // N8N returned an error or unexpected response - REFUND the credit
       const errorMessage = n8nResponse.error || n8nResponse.message || 'Generation failed';
       console.error('N8N generation failed:', errorMessage);
+      console.log('Refunding credit due to N8N generation failure');
+      
+      await supabase
+        .from('profiles')
+        .update({ credits: remainingCredits + 1 })
+        .eq('user_id', userId);
       
       await supabase
         .from('user_generations')
@@ -169,6 +294,7 @@ serve(async (req) => {
           generation_id: generationId,
           error: errorMessage,
           status: 'failed',
+          remaining_credits: remainingCredits + 1, // Refunded
         }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
