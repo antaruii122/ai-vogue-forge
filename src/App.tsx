@@ -17,6 +17,7 @@ import Signup from "./pages/Signup";
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const FashionPhotographyTool = lazy(() => import("./pages/FashionPhotographyTool"));
 const FashionPhotography = lazy(() => import("./pages/FashionPhotography"));
+const FashionResults = lazy(() => import("./pages/FashionResults"));
 const VideoGeneration = lazy(() => import("./pages/VideoGeneration"));
 const ProductPhotography = lazy(() => import("./pages/ProductPhotography"));
 const AdminVideos = lazy(() => import("./pages/AdminVideos"));
@@ -70,6 +71,7 @@ const AppRoutes = () => (
         
         {/* Tool Routes - All Protected */}
         <Route path="/tools/fashion-photography" element={<ProtectedRoute><FashionPhotography /></ProtectedRoute>} />
+        <Route path="/tools/fashion-results" element={<ProtectedRoute><FashionResults /></ProtectedRoute>} />
         <Route path="/tools/video-generation" element={<ProtectedRoute><VideoGeneration /></ProtectedRoute>} />
         <Route path="/tools/product-photography" element={<ProtectedRoute><ProductPhotography /></ProtectedRoute>} />
         
