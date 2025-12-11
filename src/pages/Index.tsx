@@ -121,38 +121,46 @@ const Index = () => {
     number: "01",
     name: "Trial",
     subtitle: "Try risk-free",
-    price: "$6",
+    price: "$9",
     priceLabel: "One time payment",
+    pricePerCredit: "$0.45/credit",
     saveBadge: null,
     popular: false,
-    features: ["20 credits = 20 images", "1K resolution"]
+    features: ["20 credits", "20 images OR 2 videos", "1K resolution"],
+    creditInfo: "1 credit = 1 image • 10 credits = 1 video"
   }, {
     number: "02",
     name: "Basic",
     subtitle: "The essentials to get started",
     price: "$35",
     priceLabel: "One time payment",
-    saveBadge: "Save 7.4%",
+    pricePerCredit: "$0.25/credit",
+    saveBadge: "Save 44%",
     popular: false,
-    features: ["140 credits = 140 images", "1K resolution", "Image editing with prompts"]
+    features: ["140 credits", "140 images OR 14 videos", "1K resolution", "Image editing with prompts"],
+    creditInfo: "1 credit = 1 image • 10 credits = 1 video"
   }, {
     number: "03",
     name: "Professional",
     subtitle: "For growing businesses",
     price: "$99",
     priceLabel: "One time payment",
-    saveBadge: "Save 18.5%",
+    pricePerCredit: "$0.22/credit",
+    saveBadge: "Save 51%",
     popular: true,
-    features: ["450 credits = 450 images", "1K resolution", "Video generation", "Image editing with prompts"]
+    features: ["450 credits", "450 images OR 45 videos", "1K resolution", "Video generation", "Image editing with prompts"],
+    creditInfo: "1 credit = 1 image • 10 credits = 1 video"
   }, {
     number: "04",
     name: "Enterprise",
     subtitle: "For large businesses",
     price: "$450",
     priceLabel: "One time payment",
-    saveBadge: "Save 27.5%",
+    pricePerCredit: "$0.20/credit",
+    saveBadge: "Save 56%",
     popular: false,
-    features: ["2300 credits = 2300 images", "2K resolution", "Video generation", "Image editing with prompts"]
+    features: ["2300 credits", "2300 images OR 230 videos", "2K resolution", "Video generation", "Image editing with prompts"],
+    creditInfo: "1 credit = 1 image • 10 credits = 1 video"
   }];
   return <div className="min-h-screen bg-background">
       {/* Header */}
@@ -765,9 +773,12 @@ const Index = () => {
                 </CardHeader>
                 
                 <CardContent className="flex flex-col flex-1 pt-0">
-                  <div className="mb-6">
+                  <div className="mb-2">
                     <span className="text-4xl font-bold">{plan.price}</span>
                     <span className="text-gray-400 text-sm ml-2">{plan.priceLabel}</span>
+                  </div>
+                  <div className="text-primary text-sm font-medium mb-4">
+                    {plan.pricePerCredit}
                   </div>
                   
                   <ul className="space-y-3 flex-1">
@@ -777,7 +788,11 @@ const Index = () => {
                       </li>)}
                   </ul>
                   
-                  <Button className={`w-full mt-6 ${plan.popular ? 'bg-blue-500 hover:bg-blue-600' : ''}`} variant={plan.popular ? 'default' : 'outline'} onClick={() => navigate("/signup")}>
+                  <div className="text-xs text-gray-500 mt-4 border-t border-gray-700 pt-3">
+                    {plan.creditInfo}
+                  </div>
+                  
+                  <Button className={`w-full mt-4 ${plan.popular ? 'bg-blue-500 hover:bg-blue-600' : ''}`} variant={plan.popular ? 'default' : 'outline'} onClick={() => navigate("/signup")}>
                     Get started
                   </Button>
                 </CardContent>
