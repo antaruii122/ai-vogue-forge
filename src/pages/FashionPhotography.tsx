@@ -328,13 +328,20 @@ const FashionPhotography = () => {
       console.log('Generation result:', result);
 
       if (result.success && result.image_url) {
-        // Show the single generated image
+        // Completed - show the generated image
         setGeneratedPhotos([result.image_url]);
         setIsGenerating(false);
         
         toast({
           title: "Photo generated!",
           description: "Your fashion photo is ready.",
+        });
+      } else if (result.success && result.status === 'processing') {
+        // N8N is processing asynchronously
+        setIsGenerating(false);
+        toast({
+          title: "Generation queued",
+          description: "Your photo is being generated. This may take a few minutes. Check your portfolio for results.",
         });
       } else {
         throw new Error(result.error || 'Generation failed - no image returned');
