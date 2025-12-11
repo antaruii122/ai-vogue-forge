@@ -26,20 +26,22 @@ const FashionResults = () => {
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [generationId, setGenerationId] = useState<string | null>(null);
+  
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const hasStartedRef = useRef(false); // Prevent double calls
+  const pollingRef = useRef<NodeJS.Timeout | null>(null);
+  const hasStartedRef = useRef(false);
 
   const params = location.state as GenerationParams | null;
   const WEBHOOK_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fashion-webhook`;
+  const STATUS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generation-status`;
 
   useEffect(() => {
-    // Redirect if no params
     if (!params) {
       navigate('/tools/fashion-photography');
       return;
     }
 
-    // CRITICAL: Only call once using ref to prevent React StrictMode double-mount
     if (hasStartedRef.current) {
       console.log('Generation already started, skipping duplicate call');
       return;
@@ -48,23 +50,22 @@ const FashionResults = () => {
 
     console.log('=== STARTING GENERATION (ONCE) ===');
 
-    // Start elapsed time counter
     timerRef.current = setInterval(() => {
       setElapsedSeconds(prev => prev + 1);
     }, 1000);
 
-    // Call webhook ONCE and wait for response
-    callWebhook();
+    startGeneration();
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
+      if (pollingRef.current) clearInterval(pollingRef.current);
     };
   }, []);
 
-  const callWebhook = async () => {
+  const startGeneration = async () => {
     if (!params) return;
 
-    console.log('>>> Calling fashion-webhook ONCE');
+    console.log('>>> Calling fashion-webhook ONCE to start generation');
 
     try {
       const clerkToken = await getToken();
@@ -92,32 +93,83 @@ const FashionResults = () => {
       });
 
       const result = await response.json();
-      console.log('<<< Webhook response received:', result);
+      console.log('<<< Webhook response:', result);
 
-      if (timerRef.current) clearInterval(timerRef.current);
-
+      // If we got an image directly (sync response), show it
       if (result.success && result.image_url) {
-        // Success - we got the image directly
         setGeneratedImageUrl(result.image_url);
         setIsGenerating(false);
-        toast({
-          title: "Photo generated!",
-          description: `Completed in ${elapsedSeconds} seconds`,
-        });
-      } else if (result.error) {
-        setError(result.error);
-        setIsGenerating(false);
+        if (timerRef.current) clearInterval(timerRef.current);
+        toast({ title: "Photo generated!", description: `Completed in ${elapsedSeconds} seconds` });
+        return;
+      }
+
+      // N8N is async - we got a generation_id, now poll for result
+      if (result.generation_id) {
+        console.log('N8N is async, starting to poll for generation_id:', result.generation_id);
+        setGenerationId(result.generation_id);
+        startPolling(result.generation_id);
       } else {
-        // N8N returned but no image yet - this shouldn't happen with sync flow
-        setError('Generation completed but no image was returned. Please try again.');
+        setError(result.error || 'Failed to start generation');
         setIsGenerating(false);
+        if (timerRef.current) clearInterval(timerRef.current);
       }
     } catch (err) {
       console.error('Webhook error:', err);
-      if (timerRef.current) clearInterval(timerRef.current);
-      setError(err instanceof Error ? err.message : 'Failed to generate image');
+      setError(err instanceof Error ? err.message : 'Failed to start generation');
       setIsGenerating(false);
+      if (timerRef.current) clearInterval(timerRef.current);
     }
+  };
+
+  const startPolling = (genId: string) => {
+    console.log('Polling every 2s for generation:', genId);
+    
+    pollingRef.current = setInterval(async () => {
+      try {
+        const freshToken = await getToken();
+        if (!freshToken) return;
+
+        const response = await fetch(`${STATUS_URL}?id=${genId}`, {
+          headers: { 'Authorization': `Bearer ${freshToken}` },
+        });
+
+        if (!response.ok) {
+          console.error('Poll failed:', response.status);
+          return;
+        }
+
+        const status = await response.json();
+        console.log('Poll result:', status);
+
+        if (status.status === 'completed' && status.image_url) {
+          // Got the image!
+          setGeneratedImageUrl(status.image_url);
+          setIsGenerating(false);
+          if (pollingRef.current) clearInterval(pollingRef.current);
+          if (timerRef.current) clearInterval(timerRef.current);
+          toast({ title: "Photo generated!", description: `Completed in ${elapsedSeconds} seconds` });
+        } else if (status.status === 'failed') {
+          setError('Generation failed. Please try again.');
+          setIsGenerating(false);
+          if (pollingRef.current) clearInterval(pollingRef.current);
+          if (timerRef.current) clearInterval(timerRef.current);
+        }
+        // Keep polling if still 'processing'
+      } catch (err) {
+        console.error('Polling error:', err);
+      }
+    }, 2000);
+
+    // Timeout after 3 minutes
+    setTimeout(() => {
+      if (pollingRef.current && isGenerating) {
+        clearInterval(pollingRef.current);
+        if (timerRef.current) clearInterval(timerRef.current);
+        setError('Generation is taking too long. Your image may still be processing - check your portfolio later.');
+        setIsGenerating(false);
+      }
+    }, 180000);
   };
 
   const handleDownload = async () => {
