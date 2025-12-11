@@ -1,109 +1,162 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useUser } from "@clerk/clerk-react";
 import AppLayout from "@/components/AppLayout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Check, CreditCard, Download, Zap } from "lucide-react";
+import { Zap, Image, Video, Check, Sparkles, Clock, Info, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { useCredits } from "@/hooks/useCredits";
+import { PayPalCheckoutModal } from "@/components/PayPalCheckoutModal";
+import { supabase } from "@/integrations/supabase/client";
+import { format } from "date-fns";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-// Mock billing data
-const mockSubscription = {
-  plan: "Pro",
-  price: "$29/month",
-  credits_remaining: 75,
-  credits_total: 100,
-  next_billing_date: "2024-12-15",
-  credits_used_this_month: 25,
-  api_calls: 156,
-  storage_used: "2.3 GB",
-  storage_total: "10 GB",
-};
+interface Transaction {
+  id: string;
+  created_at: string;
+  tier: string;
+  amount_usd: number;
+  credits_purchased: number;
+  status: string;
+}
 
-const mockInvoices = [
-  { id: "1", date: "2024-11-01", amount: "$29.00", status: "Paid", invoice_url: "#" },
-  { id: "2", date: "2024-10-01", amount: "$29.00", status: "Paid", invoice_url: "#" },
-  { id: "3", date: "2024-09-01", amount: "$29.00", status: "Paid", invoice_url: "#" },
-];
+interface ProfileData {
+  credits: number;
+  total_credits_purchased: number;
+}
 
-const plans = [
+const CREDIT_PACKAGES = [
   {
-    name: "Free",
-    price: "$0",
-    period: "forever",
-    credits: "10 credits/month",
-    features: [
-      "10 AI generations per month",
-      "Basic templates",
-      "Standard resolution",
-      "Community support",
-    ],
-    current: false,
+    name: "Trial",
+    price: 9,
+    credits: 20,
+    perCredit: 0.45,
+    savings: null,
+    description: "20 photos OR 2 videos",
+    popular: false,
   },
   {
-    name: "Pro",
-    price: "$29",
-    period: "per month",
-    credits: "100 credits/month",
-    features: [
-      "100 AI generations per month",
-      "All premium templates",
-      "High resolution exports",
-      "Priority support",
-      "API access",
-      "Custom branding",
-    ],
-    current: true,
+    name: "Basic",
+    price: 35,
+    credits: 200,
+    perCredit: 0.175,
+    savings: "61%",
+    description: "200 photos OR 20 videos",
+    popular: false,
+    badge: "⭐",
+  },
+  {
+    name: "Professional",
+    price: 99,
+    credits: 600,
+    perCredit: 0.165,
+    savings: "63%",
+    description: "600 photos OR 60 videos",
     popular: true,
+    badge: "🔥",
   },
   {
     name: "Enterprise",
-    price: "Custom",
-    period: "contact sales",
-    credits: "Unlimited credits",
-    features: [
-      "Unlimited AI generations",
-      "Custom templates",
-      "Ultra-high resolution",
-      "Dedicated support",
-      "Advanced API access",
-      "White-label solution",
-      "Team collaboration",
-      "SLA guarantee",
-    ],
-    current: false,
+    price: 450,
+    credits: 3000,
+    perCredit: 0.15,
+    savings: "67%",
+    description: "3,000 photos OR 300 videos",
+    popular: false,
   },
 ];
 
 const Billing = () => {
   const { user, isLoaded } = useUser();
   const { toast } = useToast();
-  const [subscription] = useState(mockSubscription);
+  const { credits, isLoading: creditsLoading } = useCredits();
+  const [isPayPalOpen, setIsPayPalOpen] = useState(false);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [profileData, setProfileData] = useState<ProfileData | null>(null);
+  const [loadingTransactions, setLoadingTransactions] = useState(true);
+  const [usageStats, setUsageStats] = useState({ photos: 0, videos: 0 });
 
-  const handleUpgrade = (planName: string) => {
-    toast({
-      title: "Payment integration coming soon",
-      description: `You selected the ${planName} plan. Payment processing will be available soon.`,
-    });
+  // Fetch transactions and profile data
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!user?.id) return;
+
+      try {
+        // Fetch transactions
+        const { data: txData, error: txError } = await supabase
+          .from("payment_transactions")
+          .select("*")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(10);
+
+        if (txError) {
+          console.error("Error fetching transactions:", txError);
+        } else {
+          setTransactions(txData || []);
+        }
+
+        // Fetch profile data
+        const { data: profileData, error: profileError } = await supabase
+          .from("profiles")
+          .select("credits, total_credits_purchased")
+          .eq("user_id", user.id)
+          .maybeSingle();
+
+        if (profileError) {
+          console.error("Error fetching profile:", profileError);
+        } else {
+          setProfileData(profileData);
+        }
+
+        // Fetch usage stats (count generations this month)
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+
+        const { data: generationsData, error: genError } = await supabase
+          .from("user_generations")
+          .select("credits_used, style")
+          .eq("user_id", user.id)
+          .gte("created_at", startOfMonth.toISOString());
+
+        if (!genError && generationsData) {
+          // Assuming photos use 1 credit and videos use 10
+          let photos = 0;
+          let videos = 0;
+          generationsData.forEach((gen) => {
+            if (gen.credits_used >= 10) {
+              videos += 1;
+            } else {
+              photos += 1;
+            }
+          });
+          setUsageStats({ photos, videos });
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setLoadingTransactions(false);
+      }
+    };
+
+    fetchData();
+  }, [user?.id]);
+
+  const handleBuyCredits = () => {
+    setIsPayPalOpen(true);
   };
 
-  const handleAddPaymentMethod = () => {
-    toast({
-      title: "Payment integration coming soon",
-      description: "Payment method management will be available soon.",
-    });
-  };
-
-  const handleDownloadInvoice = (id: string) => {
-    toast({
-      title: "Downloading invoice",
-      description: `Invoice #${id} is being downloaded`,
-    });
-  };
-
-  if (!isLoaded) {
+  if (!isLoaded || creditsLoading) {
     return (
       <AppLayout>
         <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 flex items-center justify-center">
@@ -113,8 +166,10 @@ const Billing = () => {
     );
   }
 
-  const creditsPercentage = (subscription.credits_remaining / subscription.credits_total) * 100;
-  const storagePercentage = (parseFloat(subscription.storage_used) / 10) * 100;
+  const currentCredits = credits ?? profileData?.credits ?? 0;
+  const totalPurchased = profileData?.total_credits_purchased ?? 0;
+  const creditsUsedThisMonth = usageStats.photos + usageStats.videos * 10;
+  const videosCanMake = Math.floor(currentCredits / 10);
 
   return (
     <AppLayout>
@@ -122,137 +177,153 @@ const Billing = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
-        className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 p-8"
+        className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 p-4 md:p-8"
       >
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-4xl font-heading font-bold text-white mb-2">Billing & Subscription</h1>
-            <p className="text-muted-foreground">Manage your plan and billing information</p>
+            <h1 className="text-3xl md:text-4xl font-heading font-bold text-foreground mb-2">Credits & Billing</h1>
+            <p className="text-muted-foreground">Manage your credits and purchase history</p>
           </div>
 
-          {/* Current Plan & Usage */}
+          {/* Top Section - Balance & Usage */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            {/* Current Plan Card */}
-            <Card className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 border-purple-500/50">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-white flex items-center gap-2">
-                      <Zap className="h-5 w-5 text-purple-400" />
-                      Current Plan
-                    </CardTitle>
-                    <CardDescription>Your active subscription</CardDescription>
-                  </div>
-                  <Badge variant="outline" className="bg-purple-500/20 border-purple-500 text-purple-300">
-                    {subscription.plan}
-                  </Badge>
-                </div>
+            {/* Credit Balance Card */}
+            <Card className="bg-gradient-to-br from-purple-900/30 to-pink-900/20 border-purple-500/50">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-foreground flex items-center gap-2">
+                  <Zap className="h-5 w-5 text-yellow-400" />
+                  Your Credit Balance
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-baseline justify-between">
-                    <span className="text-4xl font-bold text-white">{subscription.price}</span>
+                <div className="space-y-6">
+                  {/* Large Credit Number */}
+                  <div className="text-center py-4">
+                    <span className="text-6xl font-bold text-foreground">{currentCredits}</span>
+                    <span className="text-2xl text-muted-foreground ml-2">Credits</span>
                   </div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Credits remaining</span>
-                      <span className="text-white font-semibold">
-                        {subscription.credits_remaining} / {subscription.credits_total}
-                      </span>
+
+                  {/* What you can create */}
+                  <div className="bg-gray-800/50 rounded-lg p-4 space-y-3">
+                    <p className="text-sm font-medium text-muted-foreground">What you can create:</p>
+                    <div className="flex items-center gap-3 text-foreground">
+                      <Image className="h-5 w-5 text-green-400" />
+                      <span>{currentCredits} AI photos</span>
                     </div>
-                    <Progress value={creditsPercentage} className="h-2" />
-                  </div>
-                  <div className="pt-4 border-t border-gray-700">
-                    <div className="flex justify-between text-sm mb-2">
-                      <span className="text-muted-foreground">Next billing date</span>
-                      <span className="text-white">{new Date(subscription.next_billing_date).toLocaleDateString()}</span>
+                    <div className="flex items-center gap-3 text-foreground">
+                      <Video className="h-5 w-5 text-blue-400" />
+                      <span>{videosCanMake} AI videos {currentCredits < 10 && <span className="text-muted-foreground text-sm">(need 10 credits)</span>}</span>
                     </div>
                   </div>
+
+                  <Button
+                    onClick={handleBuyCredits}
+                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-primary-foreground"
+                    size="lg"
+                  >
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Buy More Credits
+                  </Button>
                 </div>
               </CardContent>
             </Card>
 
             {/* Usage Statistics Card */}
             <Card className="bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700">
-              <CardHeader>
-                <CardTitle className="text-white">Usage Statistics</CardTitle>
-                <CardDescription>Your usage this billing period</CardDescription>
+              <CardHeader className="pb-4">
+                <CardTitle className="text-foreground flex items-center gap-2">
+                  📊 Usage This Month
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-muted-foreground">Credits used</span>
-                    <span className="text-white font-semibold">{subscription.credits_used_this_month} credits</span>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center py-3 border-b border-gray-700">
+                    <span className="text-muted-foreground">Credits spent</span>
+                    <span className="text-foreground font-semibold text-lg">{creditsUsedThisMonth}</span>
                   </div>
-                  <Progress value={(subscription.credits_used_this_month / subscription.credits_total) * 100} className="h-2" />
-                </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-2">
-                    <span className="text-muted-foreground">Storage used</span>
-                    <span className="text-white font-semibold">{subscription.storage_used} / {subscription.storage_total}</span>
+                  <div className="flex justify-between items-center py-2">
+                    <div className="flex items-center gap-2">
+                      <Image className="h-4 w-4 text-green-400" />
+                      <span className="text-muted-foreground">Photos generated</span>
+                    </div>
+                    <span className="text-foreground font-medium">{usageStats.photos}</span>
                   </div>
-                  <Progress value={storagePercentage} className="h-2" />
-                </div>
-                <div className="pt-4 border-t border-gray-700">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">API calls this month</span>
-                    <span className="text-white font-semibold">{subscription.api_calls}</span>
+                  <div className="flex justify-between items-center py-2">
+                    <div className="flex items-center gap-2">
+                      <Video className="h-4 w-4 text-blue-400" />
+                      <span className="text-muted-foreground">Videos generated</span>
+                    </div>
+                    <span className="text-foreground font-medium">{usageStats.videos}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2">
+                    <div className="flex items-center gap-2">
+                      <Zap className="h-4 w-4 text-yellow-400" />
+                      <span className="text-muted-foreground">Credits remaining</span>
+                    </div>
+                    <span className="text-foreground font-semibold">{currentCredits}</span>
+                  </div>
+                  <div className="pt-4 border-t border-gray-700">
+                    <div className="flex justify-between items-center">
+                      <span className="text-muted-foreground">Total credits purchased</span>
+                      <span className="text-foreground font-semibold">{totalPurchased}</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Plans */}
+          {/* Credit Packages Section */}
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white mb-6">Available Plans</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {plans.map((plan) => (
+            <h2 className="text-2xl font-bold text-foreground mb-2">Buy Credits - Use Anytime</h2>
+            <p className="text-muted-foreground mb-6">No subscription. Credits never expire.</p>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {CREDIT_PACKAGES.map((pkg) => (
                 <Card
-                  key={plan.name}
-                  className={`bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 relative ${
-                    plan.popular ? "border-purple-500/50 shadow-lg shadow-purple-500/20" : ""
+                  key={pkg.name}
+                  className={`bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 relative transition-all hover:scale-[1.02] hover:shadow-lg ${
+                    pkg.popular ? "border-purple-500/70 shadow-lg shadow-purple-500/20 ring-1 ring-purple-500/50" : ""
                   }`}
                 >
-                  {plan.popular && (
+                  {pkg.popular && (
                     <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-none">
+                      <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-primary-foreground border-none">
                         Most Popular
                       </Badge>
                     </div>
                   )}
-                  <CardHeader>
-                    <CardTitle className="text-white">{plan.name}</CardTitle>
-                    <div className="mt-4">
-                      <span className="text-4xl font-bold text-white">{plan.price}</span>
-                      {plan.period !== "contact sales" && (
-                        <span className="text-muted-foreground ml-2">{plan.period}</span>
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-foreground text-lg">
+                        {pkg.name} {pkg.badge}
+                      </CardTitle>
+                    </div>
+                    <div className="mt-3">
+                      <span className="text-3xl font-bold text-foreground">${pkg.price}</span>
+                    </div>
+                    <p className="text-lg text-purple-400 font-semibold">{pkg.credits} credits</p>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2 text-sm">
+                      <p className="text-muted-foreground">{pkg.description}</p>
+                      <p className="text-muted-foreground">${pkg.perCredit.toFixed(3)}/credit</p>
+                      {pkg.savings && (
+                        <Badge variant="outline" className="bg-green-500/20 border-green-500 text-green-300">
+                          Save {pkg.savings}
+                        </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-purple-400 mt-2">{plan.credits}</p>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-3 mb-6">
-                      {plan.features.map((feature) => (
-                        <li key={feature} className="flex items-start gap-2 text-sm">
-                          <Check className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
-                          <span className="text-muted-foreground">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
                     <Button
+                      onClick={handleBuyCredits}
                       className={`w-full ${
-                        plan.current
-                          ? "bg-gray-700 cursor-default hover:bg-gray-700"
-                          : plan.popular
-                          ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                          : "bg-gray-700 hover:bg-gray-600"
+                        pkg.popular
+                          ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-primary-foreground"
+                          : "bg-gray-700 hover:bg-gray-600 text-foreground"
                       }`}
-                      disabled={plan.current}
-                      onClick={() => handleUpgrade(plan.name)}
                     >
-                      {plan.current ? "Current Plan" : plan.name === "Enterprise" ? "Contact Sales" : "Upgrade"}
+                      Buy Now
                     </Button>
                   </CardContent>
                 </Card>
@@ -260,65 +331,100 @@ const Billing = () => {
             </div>
           </div>
 
-          {/* Payment Method */}
+          {/* Transaction History */}
           <Card className="bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700 mb-8">
             <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <CreditCard className="h-5 w-5" />
-                Payment Method
+              <CardTitle className="text-foreground flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                Transaction History
               </CardTitle>
-              <CardDescription>Manage your payment information</CardDescription>
+              <CardDescription>Your recent credit purchases</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center justify-between">
-                <p className="text-muted-foreground">No payment method added</p>
-                <Button variant="outline" onClick={handleAddPaymentMethod}>
-                  Add Payment Method
-                </Button>
-              </div>
+              {loadingTransactions ? (
+                <div className="flex items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                </div>
+              ) : transactions.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground mb-4">No transactions yet</p>
+                  <Button onClick={handleBuyCredits} variant="outline">
+                    Buy Your First Credits <ArrowRight className="h-4 w-4 ml-2" />
+                  </Button>
+                </div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-gray-700">
+                      <TableHead className="text-muted-foreground">Date</TableHead>
+                      <TableHead className="text-muted-foreground">Package</TableHead>
+                      <TableHead className="text-muted-foreground">Amount</TableHead>
+                      <TableHead className="text-muted-foreground">Credits</TableHead>
+                      <TableHead className="text-muted-foreground">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {transactions.map((tx) => (
+                      <TableRow key={tx.id} className="border-gray-700">
+                        <TableCell className="text-foreground">
+                          {format(new Date(tx.created_at), "MMM d, yyyy")}
+                        </TableCell>
+                        <TableCell className="text-foreground capitalize">{tx.tier}</TableCell>
+                        <TableCell className="text-foreground">${tx.amount_usd.toFixed(2)}</TableCell>
+                        <TableCell className="text-green-400 font-medium">+{tx.credits_purchased}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="outline"
+                            className={
+                              tx.status === "completed"
+                                ? "bg-green-500/20 border-green-500 text-green-300"
+                                : tx.status === "pending"
+                                ? "bg-yellow-500/20 border-yellow-500 text-yellow-300"
+                                : "bg-red-500/20 border-red-500 text-red-300"
+                            }
+                          >
+                            {tx.status === "completed" && <Check className="h-3 w-3 mr-1" />}
+                            {tx.status.charAt(0).toUpperCase() + tx.status.slice(1)}
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              )}
             </CardContent>
           </Card>
 
-          {/* Billing History */}
-          <Card className="bg-gradient-to-br from-gray-900 to-gray-800 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">Billing History</CardTitle>
-              <CardDescription>View and download your past invoices</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {mockInvoices.map((invoice) => (
-                  <div
-                    key={invoice.id}
-                    className="flex items-center justify-between p-4 rounded-lg bg-gray-800/50 border border-gray-700"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div>
-                        <p className="text-white font-medium">{new Date(invoice.date).toLocaleDateString()}</p>
-                        <p className="text-sm text-muted-foreground">Invoice #{invoice.id}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <Badge variant="outline" className="bg-green-500/20 border-green-500 text-green-300">
-                        {invoice.status}
-                      </Badge>
-                      <span className="text-white font-semibold">{invoice.amount}</span>
-                      <Button
-                        size="icon"
-                        variant="outline"
-                        className="border-gray-700 hover:bg-gray-700"
-                        onClick={() => handleDownloadInvoice(invoice.id)}
-                      >
-                        <Download className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                ))}
+          {/* Helpful Notes */}
+          <Card className="bg-gray-800/50 border-gray-700">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-3">
+                <Info className="h-5 w-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <p className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-400" />
+                    Credits never expire - use them whenever you want
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-400" />
+                    No monthly subscription required
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-400" />
+                    1 credit = 1 AI photo | 10 credits = 1 AI video
+                  </p>
+                  <p className="flex items-center gap-2">
+                    <Check className="h-4 w-4 text-green-400" />
+                    Unused credits roll over forever
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
       </motion.div>
+
+      <PayPalCheckoutModal isOpen={isPayPalOpen} onClose={() => setIsPayPalOpen(false)} />
     </AppLayout>
   );
 };
