@@ -52,36 +52,28 @@ export function useCredits(): UseCreditsReturn {
 
   useEffect(() => {
     fetchCredits();
-  }, [fetchCredits]);
-
-  // Listen for custom events to refetch credits
-  useEffect(() => {
+    
+    // Listen for custom events to refetch credits
     const handleCreditsUpdate = () => {
       fetchCredits();
     };
-
-    window.addEventListener('credits-updated', handleCreditsUpdate);
-    return () => {
-      window.removeEventListener('credits-updated', handleCreditsUpdate);
-    };
-  }, [fetchCredits]);
-
-  // Refetch when window gains focus (user returns from another page/tab)
-  useEffect(() => {
+    
+    // Refetch when window gains focus or page becomes visible
     const handleFocus = () => {
       fetchCredits();
     };
-
-    window.addEventListener('focus', handleFocus);
-    // Also refetch when page becomes visible
     const handleVisibilityChange = () => {
       if (document.visibilityState === 'visible') {
         fetchCredits();
       }
     };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
 
+    window.addEventListener('credits-updated', handleCreditsUpdate);
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
     return () => {
+      window.removeEventListener('credits-updated', handleCreditsUpdate);
       window.removeEventListener('focus', handleFocus);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
