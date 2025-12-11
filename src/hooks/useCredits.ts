@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useUser } from '@clerk/clerk-react';
-import { supabase } from '@/integrations/supabase/client';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 
 interface UseCreditsReturn {
   credits: number | null;
@@ -14,7 +13,7 @@ interface UseCreditsReturn {
 const AUTO_REFRESH_INTERVAL = 30000;
 
 export function useCredits(): UseCreditsReturn {
-  const { user, isLoaded } = useUser();
+  const { supabase, isLoaded, userId } = useSupabaseAuth();
   const [credits, setCredits] = useState<number | null>(null);
   const [totalPurchased, setTotalPurchased] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -22,7 +21,7 @@ export function useCredits(): UseCreditsReturn {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchCredits = useCallback(async () => {
-    if (!isLoaded || !user?.id) {
+    if (!isLoaded || !userId) {
       setIsLoading(false);
       return;
     }
@@ -33,7 +32,7 @@ export function useCredits(): UseCreditsReturn {
       const { data, error: fetchError } = await supabase
         .from('profiles')
         .select('credits, total_credits_purchased')
-        .eq('user_id', user.id)
+        .eq('user_id', userId)
         .maybeSingle();
 
       if (fetchError) {
@@ -58,7 +57,7 @@ export function useCredits(): UseCreditsReturn {
     } finally {
       setIsLoading(false);
     }
-  }, [user?.id, isLoaded]);
+  }, [supabase, userId, isLoaded]);
 
   useEffect(() => {
     // Initial fetch
