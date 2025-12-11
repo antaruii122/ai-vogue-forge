@@ -35,12 +35,45 @@ serve(async (req) => {
       );
     }
 
+    // SECURITY: Validate that the generation exists and is in 'processing' status
+    // This prevents attackers from updating arbitrary records
+    const { data: existingGeneration, error: fetchError } = await supabase
+      .from('user_generations')
+      .select('id, status')
+      .eq('id', genId)
+      .maybeSingle();
+
+    if (fetchError) {
+      console.error('Error fetching generation:', fetchError);
+      return new Response(
+        JSON.stringify({ error: 'Failed to verify generation' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (!existingGeneration) {
+      console.error('Generation not found:', genId);
+      return new Response(
+        JSON.stringify({ error: 'Generation not found' }),
+        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (existingGeneration.status !== 'processing') {
+      console.error('Generation not in processing status:', genId, existingGeneration.status);
+      return new Response(
+        JSON.stringify({ error: 'Generation is not in processing status' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     if (success === false || error) {
       // Generation failed
       const { error: updateError } = await supabase
         .from('user_generations')
         .update({ status: 'failed' })
-        .eq('id', genId);
+        .eq('id', genId)
+        .eq('status', 'processing'); // Extra safety: only update if still processing
 
       if (updateError) {
         console.error('Failed to update record as failed:', updateError);
@@ -62,13 +95,15 @@ serve(async (req) => {
     }
 
     // Update the generation record with the completed image
+    // Extra safety: only update if still in processing status
     const { error: updateError } = await supabase
       .from('user_generations')
       .update({
         generated_images: [imgUrl],
         status: 'completed',
       })
-      .eq('id', genId);
+      .eq('id', genId)
+      .eq('status', 'processing');
 
     if (updateError) {
       console.error('Failed to update generation record:', updateError);
