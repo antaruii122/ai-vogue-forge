@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Menu, ChevronDown, ChevronLeft, ChevronRight, X, Home, User, CreditCard, Wallet, FolderOpen, LogOut, PanelLeftClose, PanelLeft } from "lucide-react";
+import { Menu, X, Home, User, CreditCard, Wallet, FolderOpen, LogOut, PanelLeftClose, PanelLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import GoogleTranslate from "@/components/GoogleTranslate";
 import { useClerk } from "@clerk/clerk-react";
+import { CreditsDisplay } from "@/components/CreditsDisplay";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -94,10 +95,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             {/* Google Translate Widget */}
             <GoogleTranslate variant="dark" />
             
-            <button className="flex items-center gap-2 text-[#666666] hover:text-[#888888] transition-colors">
-              <span className="text-sm">0 CREDITS</span>
-              <ChevronDown className="w-4 h-4" />
-            </button>
+            <CreditsDisplay />
 
             <button className="flex items-center gap-2 text-[#666666] hover:text-[#888888] transition-colors">
               <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">

@@ -5,6 +5,7 @@ import { Loader2, CheckCircle, Download, Plus, Share2, AlertCircle } from "lucid
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@clerk/clerk-react";
+import { triggerCreditsRefetch } from "@/hooks/useCredits";
 
 interface GenerationParams {
   image_url: string;
@@ -100,6 +101,7 @@ const FashionResults = () => {
         setGeneratedImageUrl(result.image_url);
         setIsGenerating(false);
         if (timerRef.current) clearInterval(timerRef.current);
+        triggerCreditsRefetch(); // Refresh credits after generation
         toast({ title: "Photo generated!", description: `Completed in ${elapsedSeconds} seconds` });
         return;
       }
@@ -148,6 +150,7 @@ const FashionResults = () => {
           setIsGenerating(false);
           if (pollingRef.current) clearInterval(pollingRef.current);
           if (timerRef.current) clearInterval(timerRef.current);
+          triggerCreditsRefetch(); // Refresh credits after generation
           toast({ title: "Photo generated!", description: `Completed in ${elapsedSeconds} seconds` });
         } else if (status.status === 'failed') {
           setError('Generation failed. Please try again.');

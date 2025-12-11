@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Upload, Wand2, Download, Camera, Video, Sparkles, Star, Check, User, LogOut, ChevronDown, ArrowRight } from "lucide-react";
@@ -41,6 +41,7 @@ import GoogleTranslate from "@/components/GoogleTranslate";
 const Index = () => {
   const [showAnnouncement, setShowAnnouncement] = useState(true);
   const [currentlyPlayingVideoId, setCurrentlyPlayingVideoId] = useState<string>("");
+  const [searchParams] = useSearchParams();
   const {
     user,
     isLoaded
@@ -53,6 +54,19 @@ const Index = () => {
     toast
   } = useToast();
   const [videoUrl, setVideoUrl] = useState<string>('/videos/BOLD.mp4');
+
+  // Handle scroll to pricing from URL param
+  useEffect(() => {
+    const scrollTo = searchParams.get('scrollTo');
+    if (scrollTo === 'pricing') {
+      setTimeout(() => {
+        const pricingSection = document.getElementById('pricing');
+        if (pricingSection) {
+          pricingSection.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, [searchParams]);
   const [heroVideos, setHeroVideos] = useState({
     left1: '',
     left2: '',
