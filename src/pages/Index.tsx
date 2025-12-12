@@ -618,7 +618,7 @@ const Index = () => {
                       </div>
                       <div>
                         <p className="text-white font-semibold text-sm">Provamoda Studio</p>
-                        <p className="text-gray-500 text-xs">Sponsored • Fashion</p>
+                        <p className="text-gray-400 text-xs">Sponsored • Fashion</p>
                       </div>
                     </div>
                     <span className="text-gray-500">•••</span>
@@ -631,7 +631,7 @@ const Index = () => {
                   
                   {/* CTA Button */}
                   <div className="px-4 py-3">
-                    <Button className="w-full bg-cyan-500 hover:bg-cyan-600 text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2">
+                    <Button className="w-full bg-cyan-600 hover:bg-cyan-700 text-white text-sm font-medium rounded-lg flex items-center justify-center gap-2">
                       Launch your visual campaign
                       <ArrowRight className="w-4 h-4" />
                     </Button>
@@ -640,7 +640,7 @@ const Index = () => {
                   {/* Engagement Stats */}
                   <div className="flex items-center justify-between px-4 pb-4 text-gray-400 text-sm">
                     <span>312 likes • 8 comments</span>
-                    <span className="text-gray-500">View insights</span>
+                    <span className="text-gray-400">View insights</span>
                   </div>
                 </div>
               </div>
