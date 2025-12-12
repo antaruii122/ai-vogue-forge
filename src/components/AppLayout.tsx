@@ -1,18 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Menu, X, Home, User, CreditCard, Wallet, FolderOpen, LogOut, PanelLeftClose, PanelLeft, Bot, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Menu, X, Home, User, CreditCard, Wallet, FolderOpen, LogOut, PanelLeftClose, PanelLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import GoogleTranslate from "@/components/GoogleTranslate";
 import { useClerk } from "@clerk/clerk-react";
 import { CreditsDisplay } from "@/components/CreditsDisplay";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -23,7 +15,7 @@ const AppLayout = ({ children }: AppLayoutProps) => {
   const location = useLocation();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [isCreativeAgentModalOpen, setIsCreativeAgentModalOpen] = useState(false);
+  
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
     const saved = localStorage.getItem('sidebarCollapsed');
     return saved ? JSON.parse(saved) : false;
@@ -105,13 +97,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
             
             <CreditsDisplay />
 
-            <button 
-              onClick={() => setIsCreativeAgentModalOpen(true)}
-              className="flex items-center gap-2 text-purple-400 hover:text-purple-300 transition-colors"
-            >
-              <Bot className="w-4 h-4" />
-              <span className="text-sm hidden sm:inline">CreativeAgent</span>
-            </button>
 
             {/* Profile Avatar with Dropdown */}
             <div className="relative" ref={profileMenuRef}>
@@ -380,46 +365,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
         </AnimatePresence>
       </main>
 
-      {/* Creative Agent Coming Soon Modal */}
-      <Dialog open={isCreativeAgentModalOpen} onOpenChange={setIsCreativeAgentModalOpen}>
-        <DialogContent className="bg-gray-900 border-gray-700 text-foreground">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <Bot className="h-6 w-6 text-purple-400" />
-              Creative Agent
-              <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded-full ml-2">Coming Soon</span>
-            </DialogTitle>
-            <DialogDescription className="text-muted-foreground pt-4">
-              <div className="space-y-4">
-                <p className="text-base">
-                  🤖 AI-powered assistant for your creative projects
-                </p>
-                <div className="bg-gray-800/50 rounded-lg p-4 space-y-3">
-                  <p className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-yellow-400" />
-                    Get personalized style recommendations
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-yellow-400" />
-                    AI-guided creative direction
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-yellow-400" />
-                    Smart batch processing suggestions
-                  </p>
-                  <p className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4 text-yellow-400" />
-                    Brand consistency analysis
-                  </p>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  We're working hard to bring you this feature. Stay tuned!
-                </p>
-              </div>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
