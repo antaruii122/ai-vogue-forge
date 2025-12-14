@@ -8,7 +8,6 @@ import ErrorBoundary from "@/components/ErrorBoundary";
 import { Loader2 } from "lucide-react";
 import { ClerkProvider, ClerkLoaded, ClerkLoading } from '@clerk/clerk-react';
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
-import { ThemeProvider } from "@/components/ThemeProvider";
 
 // Eager load critical pages
 import Index from "./pages/Index";
@@ -111,27 +110,25 @@ const App = () => {
 
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="light" storageKey="theme-preference">
-        <ClerkProvider 
-          publishableKey={clerkPubKey}
-          afterSignOutUrl="/"
-        >
-          <PayPalScriptProvider options={paypalInitialOptions}>
-            <QueryClientProvider client={queryClient}>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <ClerkLoading>
-                  <PageLoader />
-                </ClerkLoading>
-                <ClerkLoaded>
-                  <AppRoutes />
-                </ClerkLoaded>
-              </TooltipProvider>
-            </QueryClientProvider>
-          </PayPalScriptProvider>
-        </ClerkProvider>
-      </ThemeProvider>
+      <ClerkProvider 
+        publishableKey={clerkPubKey}
+        afterSignOutUrl="/"
+      >
+        <PayPalScriptProvider options={paypalInitialOptions}>
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <ClerkLoading>
+                <PageLoader />
+              </ClerkLoading>
+              <ClerkLoaded>
+                <AppRoutes />
+              </ClerkLoaded>
+            </TooltipProvider>
+          </QueryClientProvider>
+        </PayPalScriptProvider>
+      </ClerkProvider>
     </ErrorBoundary>
   );
 };

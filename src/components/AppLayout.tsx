@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import GoogleTranslate from "@/components/GoogleTranslate";
 import { useClerk } from "@clerk/clerk-react";
 import { CreditsDisplay } from "@/components/CreditsDisplay";
-import { ThemeToggle } from "@/components/ThemeToggle";
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -93,9 +92,6 @@ const AppLayout = ({ children }: AppLayoutProps) => {
 
           {/* Right - Translate, Credits, CreativeAgent, Avatar */}
           <div className="flex items-center gap-4">
-            {/* Theme Toggle */}
-            <ThemeToggle />
-            
             {/* Google Translate Widget */}
             <GoogleTranslate variant="dark" />
             
