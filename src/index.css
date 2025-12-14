@@ -7,7 +7,53 @@ All colors MUST be HSL.
 */
 
 @layer base {
+  /* Light Mode (default) */
   :root {
+    --background: 0 0% 100%;
+    --background-lighter: 0 0% 98%;
+    --foreground: 240 10% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 10%;
+
+    --primary: 162 73% 40%;
+    --primary-foreground: 0 0% 100%;
+    
+    --primary-purple: 251 60% 55%;
+    
+    --secondary: 240 5% 92%;
+    --secondary-foreground: 240 10% 10%;
+
+    --muted: 240 5% 92%;
+    --muted-foreground: 240 5% 45%;
+
+    --accent: 162 73% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 5% 85%;
+    --input: 240 5% 85%;
+    --ring: 162 73% 40%;
+
+    --radius: 1rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 10% 10%;
+    --sidebar-primary: 162 73% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 5% 92%;
+    --sidebar-accent-foreground: 240 10% 10%;
+    --sidebar-border: 240 5% 85%;
+    --sidebar-ring: 162 73% 40%;
+  }
+
+  /* Dark Mode */
+  .dark {
     --background: 240 35% 8%;
     --background-lighter: 237 28% 13%;
     --foreground: 240 10% 98%;
@@ -54,7 +100,7 @@ All colors MUST be HSL.
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border transition-colors duration-200;
   }
 
   body {
@@ -79,13 +125,13 @@ All colors MUST be HSL.
   color: transparent !important;
 }
 
-/* Default dark theme styling for the dropdown */
+/* Default styling for the dropdown - adapts to theme */
 .goog-te-gadget .goog-te-combo {
   font-size: 13px !important;
   font-family: inherit !important;
-  background-color: hsl(237 28% 20%) !important;
-  color: hsl(240 10% 98%) !important;
-  border: 1px solid hsl(237 28% 30%) !important;
+  background-color: hsl(var(--secondary)) !important;
+  color: hsl(var(--foreground)) !important;
+  border: 1px solid hsl(var(--border)) !important;
   border-radius: 6px !important;
   padding: 5px 10px !important;
   cursor: pointer !important;
@@ -95,13 +141,13 @@ All colors MUST be HSL.
 }
 
 .goog-te-gadget .goog-te-combo:hover {
-  background-color: hsl(237 28% 25%) !important;
-  border-color: hsl(162 73% 46%) !important;
+  background-color: hsl(var(--muted)) !important;
+  border-color: hsl(var(--primary)) !important;
 }
 
 .goog-te-gadget .goog-te-combo:focus {
-  border-color: hsl(162 73% 46%) !important;
-  box-shadow: 0 0 0 2px hsl(162 73% 46% / 0.2) !important;
+  border-color: hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2) !important;
 }
 
 /* Dark header variant (for AppLayout) */
@@ -131,7 +177,7 @@ body {
 
 /* Style the dropdown options */
 .goog-te-menu-value span {
-  color: hsl(240 10% 98%) !important;
+  color: hsl(var(--foreground)) !important;
 }
 
 /* Mobile responsiveness */

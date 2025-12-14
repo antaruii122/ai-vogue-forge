@@ -39,6 +39,7 @@ import { useToast } from "@/hooks/use-toast";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import GoogleTranslate from "@/components/GoogleTranslate";
 import { PayPalCheckoutModal } from "@/components/PayPalCheckoutModal";
+import { ThemeToggle } from "@/components/ThemeToggle";
 const Index = () => {
   const [showAnnouncement, setShowAnnouncement] = useState(true);
   const [currentlyPlayingVideoId, setCurrentlyPlayingVideoId] = useState<string>("");
@@ -206,6 +207,9 @@ const Index = () => {
             </nav>
 
             <div className="flex items-center gap-2 md:gap-4">
+              {/* Theme Toggle */}
+              <ThemeToggle />
+              
               {/* Google Translate Widget */}
               <GoogleTranslate variant="dark" />
               
