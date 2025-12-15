@@ -1,0 +1,9 @@
+export { Header } from './Header';
+export { HeroSection } from './HeroSection';
+export { ProcessSection } from './ProcessSection';
+export { CarouselSection } from './CarouselSection';
+export { VideoMockupSection } from './VideoMockupSection';
+export { ExamplesSection } from './ExamplesSection';
+export { HowItWorksSection } from './HowItWorksSection';
+export { PricingSection } from './PricingSection';
+export { Footer } from './Footer';
