@@ -34,6 +34,7 @@ const Privacy = lazy(() => import("./pages/Privacy"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const ProtectedRoute = lazy(() => import("@/components/ProtectedRoute"));
+const AdminRoute = lazy(() => import("@/components/AdminRoute"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -85,7 +86,7 @@ const AppRoutes = () => (
         {/* Legacy Routes */}
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/tools/fashion-photography-old" element={<ProtectedRoute><FashionPhotographyTool /></ProtectedRoute>} />
-        <Route path="/admin/videos" element={<ProtectedRoute><AdminVideos /></ProtectedRoute>} />
+        <Route path="/admin/videos" element={<AdminRoute><AdminVideos /></AdminRoute>} />
         
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
