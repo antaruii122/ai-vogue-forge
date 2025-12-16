@@ -13,7 +13,7 @@ export const VideoMockupSection = ({ isLoggedIn }: VideoMockupSectionProps) => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-24 bg-background">
+    <section className="py-24 md:py-28 bg-background">
       <div className="container mx-auto px-4">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-16 items-center">
@@ -101,11 +101,11 @@ export const VideoMockupSection = ({ isLoggedIn }: VideoMockupSectionProps) => {
             
             {/* Right Side: Content */}
             <div className="space-y-8">
-              <span className="text-cyan-400 text-sm font-medium tracking-widest uppercase">Motion from Stills</span>
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold leading-tight">
+              <span className="text-cyan-400 text-sm font-semibold tracking-widest uppercase">Motion from Stills</span>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-foreground leading-[1.1]">
                 Turn Provamoda photos into scrolling-stopping fashion videos.
               </h2>
-              <p className="text-muted-foreground text-lg leading-relaxed">
+              <p className="text-foreground/70 text-lg leading-relaxed">
                 Feed any Provamoda still into our motion engine, describe the mood in a sentence, and generate vertical-ready videos that feel like full productions – without reshoots.
               </p>
               
@@ -116,7 +116,7 @@ export const VideoMockupSection = ({ isLoggedIn }: VideoMockupSectionProps) => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground mb-1">Pick your hero still</h4>
-                    <p className="text-muted-foreground text-sm">Start from any Provamoda shot you love – a lookbook pose, e-commerce angle, or campaign hero image.</p>
+                    <p className="text-foreground/60 text-sm leading-relaxed">Start from any Provamoda shot you love – a lookbook pose, e-commerce angle, or campaign hero image.</p>
                   </div>
                 </div>
                 
@@ -126,7 +126,7 @@ export const VideoMockupSection = ({ isLoggedIn }: VideoMockupSectionProps) => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground mb-1">Type a motion prompt</h4>
-                    <p className="text-muted-foreground text-sm">Describe the movement you want – e.g. "slow pan down, soft camera shake, studio lights pulsing to the beat".</p>
+                    <p className="text-foreground/60 text-sm leading-relaxed">Describe the movement you want – e.g. "slow pan down, soft camera shake, studio lights pulsing to the beat".</p>
                   </div>
                 </div>
                 
@@ -136,7 +136,7 @@ export const VideoMockupSection = ({ isLoggedIn }: VideoMockupSectionProps) => {
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground mb-1">Export ready-to-post clips</h4>
-                    <p className="text-muted-foreground text-sm">Download vertical videos in the right aspect ratios for Reels, TikTok, and Stories – no extra editing needed.</p>
+                    <p className="text-foreground/60 text-sm leading-relaxed">Download vertical videos in the right aspect ratios for Reels, TikTok, and Stories – no extra editing needed.</p>
                   </div>
                 </div>
               </div>
@@ -145,7 +145,7 @@ export const VideoMockupSection = ({ isLoggedIn }: VideoMockupSectionProps) => {
                 <Button size="lg" variant="outline" className="border-gray-600 hover:bg-gray-800" onClick={() => navigate(isLoggedIn ? "/video-generation" : "/signup")}>
                   Generate a sample video
                 </Button>
-                <span className="text-muted-foreground text-sm">Built for AI models, optimized for social feeds.</span>
+                <span className="text-foreground/50 text-sm">Built for AI models, optimized for social feeds.</span>
               </div>
             </div>
           </div>

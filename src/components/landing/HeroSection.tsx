@@ -18,16 +18,16 @@ export const HeroSection = ({ isLoggedIn }: HeroSectionProps) => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative overflow-hidden py-20 md:py-32">
+    <section className="relative overflow-hidden py-24 md:py-36">
       <div className="absolute inset-0 bg-gradient-to-b from-[#1a0b2e] via-[#0f0728] to-background" />
       <div className="container mx-auto px-4 relative z-10">
         <div className="max-w-5xl mx-auto text-center space-y-12">
           {/* Text Content */}
           <div className="space-y-6">
-            <h1 className="text-5xl md:text-7xl font-heading font-bold leading-tight">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-foreground">
               Fashion Photography Made Easy
             </h1>
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-xl md:text-2xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
               Transform your products into stunning professional photography with AI-powered precision and style
             </p>
           </div>

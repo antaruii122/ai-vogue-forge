@@ -14,9 +14,9 @@ import carousel13 from "@/assets/carousel-13.png";
 
 export const CarouselSection = () => {
   return (
-    <section className="py-20 bg-background overflow-hidden">
+    <section className="py-24 md:py-28 bg-background overflow-hidden">
       <div className="container mx-auto px-4 mb-12">
-        <h2 className="text-3xl md:text-4xl font-heading font-bold text-center">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-center text-foreground">
           See How Fashion Styles Look
         </h2>
       </div>
