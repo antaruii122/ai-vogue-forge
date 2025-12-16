@@ -6,4 +6,5 @@ export { VideoMockupSection } from './VideoMockupSection';
 export { ExamplesSection } from './ExamplesSection';
 export { HowItWorksSection } from './HowItWorksSection';
 export { PricingSection } from './PricingSection';
+export { FAQSection } from './FAQSection';
 export { Footer } from './Footer';

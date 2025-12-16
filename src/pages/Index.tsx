@@ -12,6 +12,7 @@ import {
   ExamplesSection,
   HowItWorksSection,
   PricingSection,
+  FAQSection,
   Footer,
 } from "@/components/landing";
 
@@ -83,6 +84,8 @@ const Index = () => {
         isOpen={isPayPalModalOpen} 
         onClose={() => setIsPayPalModalOpen(false)} 
       />
+
+      <FAQSection />
 
       <Footer />
     </div>
