@@ -26,9 +26,9 @@ const faqItems = [
 
 export const FAQSection = () => {
   return (
-    <section className="py-20 px-4 bg-muted/30">
+    <section className="py-24 md:py-28 px-4 bg-muted/30">
       <div className="max-w-3xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-foreground">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-center mb-16 text-foreground">
           Common Questions
         </h2>
         
@@ -39,10 +39,10 @@ export const FAQSection = () => {
               value={`item-${index}`}
               className="bg-background/50 border border-border rounded-lg px-6"
             >
-              <AccordionTrigger className="text-left text-foreground hover:no-underline py-5">
+              <AccordionTrigger className="text-left text-foreground font-medium hover:no-underline py-5">
                 {item.question}
               </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground pb-5">
+              <AccordionContent className="text-foreground/60 pb-5 leading-relaxed">
                 {item.answer}
               </AccordionContent>
             </AccordionItem>

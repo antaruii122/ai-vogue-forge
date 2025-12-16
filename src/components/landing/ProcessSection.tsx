@@ -9,7 +9,7 @@ export const ProcessSection = ({ isLoggedIn }: ProcessSectionProps) => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-20 relative overflow-hidden" style={{
+    <section className="py-24 md:py-28 relative overflow-hidden" style={{
       background: 'linear-gradient(135deg, #0a0a1f 0%, #0f1b2e 100%)'
     }}>
       {/* Decorative dots */}
@@ -26,8 +26,8 @@ export const ProcessSection = ({ isLoggedIn }: ProcessSectionProps) => {
             {/* Left Side: Content */}
             <div className="space-y-8">
               <div>
-                <p className="text-muted-foreground text-sm mb-4">How it works</p>
-                <h2 className="text-4xl md:text-5xl font-heading font-bold leading-tight">
+                <p className="text-foreground/50 text-sm font-medium uppercase tracking-wider mb-4">How it works</p>
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground leading-[1.1]">
                   From product shot to campaign-ready in minutes.
                 </h2>
               </div>
@@ -43,7 +43,7 @@ export const ProcessSection = ({ isLoggedIn }: ProcessSectionProps) => {
                   </div>
                   <div className="pb-6">
                     <h3 className="text-emerald-400 font-semibold text-lg mb-1">Upload your product photo</h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
+                    <p className="text-foreground/60 text-sm leading-relaxed">
                       Shoot on a simple background, then drag & drop your flat lay image to start.
                     </p>
                   </div>
@@ -59,7 +59,7 @@ export const ProcessSection = ({ isLoggedIn }: ProcessSectionProps) => {
                   </div>
                   <div className="pb-6">
                     <h3 className="text-blue-400 font-semibold text-lg mb-1">Choose model, pose & setting</h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
+                    <p className="text-foreground/60 text-sm leading-relaxed">
                       Pick body type, skin tone, location and camera style that match your brand guidelines.
                     </p>
                   </div>
@@ -74,7 +74,7 @@ export const ProcessSection = ({ isLoggedIn }: ProcessSectionProps) => {
                   </div>
                   <div>
                     <h3 className="text-purple-400 font-semibold text-lg mb-1">Download campaign-ready images</h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
+                    <p className="text-foreground/60 text-sm leading-relaxed">
                       AI generates photo-realistic model photos in seconds. Edit, tweak, or batch-export.
                     </p>
                   </div>
