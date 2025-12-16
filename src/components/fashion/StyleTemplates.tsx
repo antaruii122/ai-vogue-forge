@@ -14,9 +14,7 @@ const lifestyleTemplates = [
 const ecommerceTemplates = [
   { id: 101, name: "White Background", gradient: "from-gray-100 to-white", icon: Square },
   { id: 102, name: "Gray Background", gradient: "from-gray-400 to-gray-500", icon: Square },
-  { id: 103, name: "Multi-Angle Pack", gradient: "from-indigo-500 to-blue-500", icon: Layers },
-  { id: 104, name: "Detail Close-Up", gradient: "from-pink-500 to-rose-500", icon: ZoomIn },
-  { id: 105, name: "Ghost Mannequin", gradient: "from-cyan-500 to-teal-500", icon: Shirt },
+  { id: 103, name: "Ghost Mannequin", gradient: "from-cyan-500 to-teal-500", icon: Shirt },
 ];
 
 interface StyleTemplatesProps {
