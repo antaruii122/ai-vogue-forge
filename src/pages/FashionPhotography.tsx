@@ -246,14 +246,27 @@ const FashionPhotography = () => {
 
       // 3. Look up the selected AI model's image URL (if any)
       const selectedModelData = aiModels.find(m => m.id === selectedAiModel);
-      const modelUrl = selectedModelData?.image;
+      let modelUrl = selectedModelData?.image;
+      
+      // DEBUG: Log the raw model URL
+      console.log("DEBUG: Selected AI Model ID:", selectedAiModel);
+      console.log("DEBUG: Selected Model Data:", selectedModelData);
+      console.log("DEBUG: Raw Model URL:", modelUrl);
+      
+      // Convert relative asset paths to absolute URLs so external services can access them
+      if (modelUrl && !modelUrl.startsWith('http')) {
+        modelUrl = `${window.location.origin}${modelUrl}`;
+        console.log("DEBUG: Converted to absolute URL:", modelUrl);
+      }
 
       // 4. Prepare the Payload (UPDATED for Flux/Array support)
       // We now use 'image_urls' (plural) and always wrap the image in an array
       // If a model is selected, include both product image AND model image
-      const imageUrls = modelUrl 
-        ? [uploadedImageUrl, modelUrl]  // Product + Model
-        : [uploadedImageUrl];            // Product only
+      const imageUrls: string[] = [uploadedImageUrl];
+      if (modelUrl) {
+        imageUrls.push(modelUrl);
+      }
+      console.log("DEBUG: Final image_urls array:", imageUrls);
       
       const payload = {
         image_urls: imageUrls,
@@ -381,14 +394,22 @@ const FashionPhotography = () => {
                   onCustomCameraAngleChange={setCustomCameraAngle}
                 />
 
-                <GenerateButton
-                  isVisible={!!(uploadedImageUrl && selectedTemplate)}
-                  credits={credits}
-                  isCreditsLoading={isCreditsLoading}
-                  hasEnoughCredits={hasEnoughCredits}
-                  onGenerate={handleGenerate}
-                  onBuyCredits={() => setIsPayPalModalOpen(true)}
-                />
+                {/* Compute the selected model's URL for debugging */}
+                {(() => {
+                  const selectedModelData = aiModels.find(m => m.id === selectedAiModel);
+                  const modelUrl = selectedModelData?.image;
+                  return (
+                    <GenerateButton
+                      isVisible={!!(uploadedImageUrl && selectedTemplate)}
+                      credits={credits}
+                      isCreditsLoading={isCreditsLoading}
+                      hasEnoughCredits={hasEnoughCredits}
+                      onGenerate={handleGenerate}
+                      onBuyCredits={() => setIsPayPalModalOpen(true)}
+                      modelUrl={modelUrl}
+                    />
+                  );
+                })()}
               </div>
             </div>
           </div>
