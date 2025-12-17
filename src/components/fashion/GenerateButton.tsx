@@ -9,6 +9,7 @@ interface GenerateButtonProps {
   hasEnoughCredits: boolean;
   onGenerate: () => void;
   onBuyCredits: () => void;
+  modelUrl?: string; // Optional: the selected AI model's image URL
 }
 
 export const GenerateButton = ({
@@ -18,7 +19,13 @@ export const GenerateButton = ({
   hasEnoughCredits,
   onGenerate,
   onBuyCredits,
+  modelUrl,
 }: GenerateButtonProps) => {
+  const handleClick = () => {
+    console.log("DEBUG: GenerateButton clicked");
+    console.log("DEBUG: Model URL is:", modelUrl);
+    onGenerate();
+  };
   const getCreditColorClass = () => {
     if (credits === null || isCreditsLoading) return 'text-gray-400';
     if (credits > 10) return 'text-green-400';
@@ -41,7 +48,7 @@ export const GenerateButton = ({
       
       {hasEnoughCredits ? (
         <Button
-          onClick={onGenerate}
+          onClick={handleClick}
           className="w-full px-8 py-4 text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 hover:scale-[1.02] transition-all duration-200 shadow-lg rounded-lg"
         >
           <Sparkles className="mr-2 h-5 w-5" />
