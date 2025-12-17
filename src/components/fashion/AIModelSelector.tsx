@@ -12,7 +12,7 @@ import aiModel8 from "@/assets/ai-model-8.png";
 import aiModel9 from "@/assets/ai-model-9.png";
 import aiModel10 from "@/assets/ai-model-10.png";
 
-const aiModels = [
+export const aiModels = [
   { id: 1, name: "Model 1", image: aiModel1 },
   { id: 2, name: "Model 2", image: aiModel2 },
   { id: 3, name: "Model 3", image: aiModel3 },
