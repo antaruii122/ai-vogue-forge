@@ -208,47 +208,86 @@ const FashionPhotography = () => {
     return template?.name || "Unknown";
   };
 
-  const handleGenerate = () => {
-    if (!uploadedImageUrl || !selectedTemplate) {
-      toast({
-        title: "Missing information",
-        description: "Please upload an image and select a style",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (credits !== null && credits < 1) {
-      toast({
-        title: "⚠️ Insufficient Credits",
-        description: "You need 1 credit to generate. You have 0 credits.",
-        variant: "destructive",
-        action: (
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => setIsPayPalModalOpen(true)}
-            className="border-yellow-500 text-yellow-500 hover:bg-yellow-500/10"
-          >
-            <Zap className="w-3 h-3 mr-1" />
-            Buy Credits
-          </Button>
-        ),
-      });
-      return;
-    }
-
-    navigate('/tools/fashion-results', {
-      state: {
-        image_url: uploadedImageUrl,
-        style: getTemplateName(),
-        styleId: selectedTemplate,
-        aspectRatio,
-        background: background === "custom" ? customBackground : background,
-        lighting: lighting === "custom" ? customLighting : lighting,
-        cameraAngle: cameraAngle === "custom" ? customCameraAngle : cameraAngle,
+  const handleGenerate = async () => {
+    try {
+      // 1. Validation: Ensure we have an image
+      if (!uploadedImageUrl) {
+        toast({
+          title: "Missing image",
+          description: "Please upload an image first",
+          variant: "destructive",
+        });
+        return;
       }
-    });
+      
+      // 2. Validation: Ensure we have credits
+      if (credits !== null && credits < 1) {
+        toast({
+          title: "⚠️ Insufficient Credits",
+          description: "You need 1 credit to generate. You have 0 credits.",
+          variant: "destructive",
+          action: (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setIsPayPalModalOpen(true)}
+              className="border-yellow-500 text-yellow-500 hover:bg-yellow-500/10"
+            >
+              <Zap className="w-3 h-3 mr-1" />
+              Buy Credits
+            </Button>
+          ),
+        });
+        return;
+      }
+
+      console.log("🚀 Starting Generation...");
+
+      // 3. Prepare the Payload (UPDATED for Flux/Array support)
+      // We now use 'image_urls' (plural) and always wrap the image in an array
+      const payload = {
+        image_urls: [uploadedImageUrl], // <--- CRITICAL CHANGE: Always an Array
+        style: getTemplateName(),        // e.g. "Ghost Mannequin"
+        aspectRatio: aspectRatio || "9:16",
+        
+        // Pass optional parameters if they exist, otherwise "auto"
+        background: background === "custom" ? customBackground : (background || "auto"),
+        lighting: lighting === "custom" ? customLighting : (lighting || "auto"),
+        cameraAngle: cameraAngle === "custom" ? customCameraAngle : (cameraAngle || "auto"),
+        
+        // Pass custom text inputs if the user typed them
+        backgroundCustom: background === "custom" ? customBackground : null,
+        lightingCustom: lighting === "custom" ? customLighting : null,
+        cameraAngleCustom: cameraAngle === "custom" ? customCameraAngle : null
+      };
+
+      console.log("📤 Sending Payload:", payload);
+
+      // Navigate to results page with the payload
+      navigate('/tools/fashion-results', {
+        state: {
+          image_urls: payload.image_urls,
+          image_url: uploadedImageUrl, // Keep for backwards compatibility
+          style: payload.style,
+          styleId: selectedTemplate,
+          aspectRatio: payload.aspectRatio,
+          background: payload.background,
+          lighting: payload.lighting,
+          cameraAngle: payload.cameraAngle,
+          backgroundCustom: payload.backgroundCustom,
+          lightingCustom: payload.lightingCustom,
+          cameraAngleCustom: payload.cameraAngleCustom,
+        }
+      });
+
+    } catch (error) {
+      console.error('❌ Generation Error:', error);
+      toast({
+        title: "Generation failed",
+        description: error instanceof Error ? error.message : "Failed to start generation",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
