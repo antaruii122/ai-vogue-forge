@@ -2,20 +2,33 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Users, Check } from "lucide-react";
 
-// Public Supabase Storage URLs for AI model images (accessible by external services)
+// Local assets for UI display
+import aiModel1 from "@/assets/ai-model-1.png";
+import aiModel2 from "@/assets/ai-model-2.png";
+import aiModel3 from "@/assets/ai-model-3.png";
+import aiModel4 from "@/assets/ai-model-4.png";
+import aiModel5 from "@/assets/ai-model-5.png";
+import aiModel6 from "@/assets/ai-model-6.png";
+import aiModel7 from "@/assets/ai-model-7.png";
+import aiModel8 from "@/assets/ai-model-8.png";
+import aiModel9 from "@/assets/ai-model-9.png";
+import aiModel10 from "@/assets/ai-model-10.png";
+
+// Public Supabase Storage URLs for external backend access
+// Upload the actual images to this bucket path for external services to access
 const MODELS_BASE_URL = "https://syaauhmujhosskdpeiii.supabase.co/storage/v1/object/public/product-images/models";
 
 export const aiModels = [
-  { id: 1, name: "Model 1", image: `${MODELS_BASE_URL}/model-1.png` },
-  { id: 2, name: "Model 2", image: `${MODELS_BASE_URL}/model-2.png` },
-  { id: 3, name: "Model 3", image: `${MODELS_BASE_URL}/model-3.png` },
-  { id: 4, name: "Model 4", image: `${MODELS_BASE_URL}/model-4.png` },
-  { id: 5, name: "Model 5", image: `${MODELS_BASE_URL}/model-5.png` },
-  { id: 6, name: "Model 6", image: `${MODELS_BASE_URL}/model-6.png` },
-  { id: 7, name: "Model 7", image: `${MODELS_BASE_URL}/model-7.png` },
-  { id: 8, name: "Model 8", image: `${MODELS_BASE_URL}/model-8.png` },
-  { id: 9, name: "Model 9", image: `${MODELS_BASE_URL}/model-9.png` },
-  { id: 10, name: "Model 10", image: `${MODELS_BASE_URL}/model-10.png` },
+  { id: 1, name: "Model 1", image: aiModel1, publicUrl: `${MODELS_BASE_URL}/model-1.png` },
+  { id: 2, name: "Model 2", image: aiModel2, publicUrl: `${MODELS_BASE_URL}/model-2.png` },
+  { id: 3, name: "Model 3", image: aiModel3, publicUrl: `${MODELS_BASE_URL}/model-3.png` },
+  { id: 4, name: "Model 4", image: aiModel4, publicUrl: `${MODELS_BASE_URL}/model-4.png` },
+  { id: 5, name: "Model 5", image: aiModel5, publicUrl: `${MODELS_BASE_URL}/model-5.png` },
+  { id: 6, name: "Model 6", image: aiModel6, publicUrl: `${MODELS_BASE_URL}/model-6.png` },
+  { id: 7, name: "Model 7", image: aiModel7, publicUrl: `${MODELS_BASE_URL}/model-7.png` },
+  { id: 8, name: "Model 8", image: aiModel8, publicUrl: `${MODELS_BASE_URL}/model-8.png` },
+  { id: 9, name: "Model 9", image: aiModel9, publicUrl: `${MODELS_BASE_URL}/model-9.png` },
+  { id: 10, name: "Model 10", image: aiModel10, publicUrl: `${MODELS_BASE_URL}/model-10.png` },
 ];
 
 interface AIModelSelectorProps {

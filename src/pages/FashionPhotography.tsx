@@ -252,15 +252,10 @@ const FashionPhotography = () => {
       // 4. Force the array construction - ALWAYS start with product image
       const imagesToSend: string[] = [uploadedImageUrl];
       
-      // If a model is selected and has an image, add it to the array
-      if (foundModel && foundModel.image) {
-        // Convert relative asset path to absolute URL for external services
-        let modelImageUrl = foundModel.image;
-        if (!modelImageUrl.startsWith('http')) {
-          modelImageUrl = `${window.location.origin}${modelImageUrl}`;
-        }
-        imagesToSend.push(modelImageUrl);
-        console.log("DEBUG: Added model image:", modelImageUrl);
+      // If a model is selected and has a publicUrl, use that for external backend
+      if (foundModel && foundModel.publicUrl) {
+        imagesToSend.push(foundModel.publicUrl);
+        console.log("DEBUG: Added model publicUrl:", foundModel.publicUrl);
       }
       
       // Critical debug log - verify array contents before sending
