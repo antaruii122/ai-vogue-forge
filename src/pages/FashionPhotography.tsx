@@ -244,32 +244,30 @@ const FashionPhotography = () => {
 
       console.log("🚀 Starting Generation...");
 
-      // 3. Look up the selected AI model's image URL (if any)
-      const selectedModelData = aiModels.find(m => m.id === selectedAiModel);
-      let modelUrl = selectedModelData?.image;
+      // 3. Look up the selected AI model using selectedAiModel ID
+      const foundModel = aiModels.find(m => m.id === selectedAiModel);
+      console.log("DEBUG: selectedAiModel ID:", selectedAiModel);
+      console.log("DEBUG: foundModel:", foundModel);
       
-      // DEBUG: Log the raw model URL
-      console.log("DEBUG: Selected AI Model ID:", selectedAiModel);
-      console.log("DEBUG: Selected Model Data:", selectedModelData);
-      console.log("DEBUG: Raw Model URL:", modelUrl);
+      // 4. Force the array construction - ALWAYS start with product image
+      const imagesToSend: string[] = [uploadedImageUrl];
       
-      // Convert relative asset paths to absolute URLs so external services can access them
-      if (modelUrl && !modelUrl.startsWith('http')) {
-        modelUrl = `${window.location.origin}${modelUrl}`;
-        console.log("DEBUG: Converted to absolute URL:", modelUrl);
+      // If a model is selected and has an image, add it to the array
+      if (foundModel && foundModel.image) {
+        // Convert relative asset path to absolute URL for external services
+        let modelImageUrl = foundModel.image;
+        if (!modelImageUrl.startsWith('http')) {
+          modelImageUrl = `${window.location.origin}${modelImageUrl}`;
+        }
+        imagesToSend.push(modelImageUrl);
+        console.log("DEBUG: Added model image:", modelImageUrl);
       }
-
-      // 4. Prepare the Payload (UPDATED for Flux/Array support)
-      // We now use 'image_urls' (plural) and always wrap the image in an array
-      // If a model is selected, include both product image AND model image
-      const imageUrls: string[] = [uploadedImageUrl];
-      if (modelUrl) {
-        imageUrls.push(modelUrl);
-      }
-      console.log("DEBUG: Final image_urls array:", imageUrls);
+      
+      // Critical debug log - verify array contents before sending
+      console.log("Sending these images:", imagesToSend);
       
       const payload = {
-        image_urls: imageUrls,
+        image_urls: imagesToSend,
         style: getTemplateName(),        // e.g. "Ghost Mannequin"
         aspectRatio: aspectRatio || "9:16",
         
