@@ -9,7 +9,8 @@ import { triggerCreditsRefetch } from "@/hooks/useCredits";
 import { PayPalCheckoutModal } from "@/components/PayPalCheckoutModal";
 
 interface GenerationParams {
-  image_url: string;
+  image_url: string;           // Primary product image (backwards compat)
+  image_urls?: string[];       // Array of all images (product + model)
   style: string;
   styleId: number;
   aspectRatio: string;
@@ -79,6 +80,10 @@ const FashionResults = () => {
         return;
       }
 
+      // Use image_urls array if available, otherwise fall back to single image_url
+      const imageUrlsToSend = params.image_urls || [params.image_url];
+      console.log('DEBUG: Sending image_urls to webhook:', imageUrlsToSend);
+
       const response = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: {
@@ -86,7 +91,7 @@ const FashionResults = () => {
           'Authorization': `Bearer ${clerkToken}`,
         },
         body: JSON.stringify({
-          image_url: params.image_url,
+          image_urls: imageUrlsToSend,  // Always send as array
           style: params.style,
           styleId: params.styleId,
           aspectRatio: params.aspectRatio,
