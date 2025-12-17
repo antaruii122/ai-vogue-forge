@@ -71,7 +71,24 @@ serve(async (req) => {
       );
     }
 
-    // Generate signed URL (valid for 1 hour) - works for private buckets
+    // If the bucket is public, return a stable public URL (best for external services like n8n)
+    if (bucket === 'product-images') {
+      const publicUrl = `${supabaseUrl}/storage/v1/object/public/${bucket}/${filePath}`;
+
+      console.log('Upload successful, public URL generated');
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          url: publicUrl,
+          path: filePath,
+          access: 'public'
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Otherwise, fall back to signed URLs (works for private buckets)
     const { data: signedUrlData, error: signedUrlError } = await supabase.storage
       .from(bucket)
       .createSignedUrl(filePath, 3600); // 1 hour expiry
@@ -87,11 +104,12 @@ serve(async (req) => {
     console.log('Upload successful, signed URL generated');
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         url: signedUrlData.signedUrl,
         path: filePath,
-        expiresIn: 3600 // seconds
+        expiresIn: 3600, // seconds
+        access: 'signed'
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
