@@ -233,39 +233,105 @@ serve(async (req) => {
     }
 
     const responseText = await response.text();
+    const contentType = response.headers.get('content-type') || '';
     console.log('Webhook response status:', response.status);
+    console.log('Webhook response content-type:', contentType);
     console.log('Webhook response:', responseText);
 
+    // If upstream returned an error (e.g., Cloudflare 524), do NOT try to parse as JSON.
+    // Refund credit + mark generation failed and return a clean JSON error payload.
+    if (!response.ok) {
+      console.error('Generation service returned non-2xx status:', response.status);
+      console.log('Refunding credit due to upstream non-2xx response');
+
+      await supabase
+        .from('profiles')
+        .update({ credits: remainingCredits + 1 })
+        .eq('user_id', userId);
+
+      await supabase
+        .from('user_generations')
+        .update({ status: 'failed' })
+        .eq('id', generationId);
+
+      return new Response(
+        JSON.stringify({
+          success: false,
+          generation_id: generationId,
+          status: 'failed',
+          error: 'Generation service error',
+          details: `Upstream returned HTTP ${response.status}`,
+          upstream_preview: responseText.slice(0, 500),
+          remaining_credits: remainingCredits + 1,
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Parse the N8N response - handle empty response as async workflow
-    let n8nResponse;
+    let n8nResponse: any;
     if (!responseText || responseText.trim() === '') {
       // Empty response means N8N is processing asynchronously
       console.log('N8N returned empty response - treating as async workflow');
       n8nResponse = { message: 'Workflow was started' };
+    } else if (!contentType.toLowerCase().includes('application/json')) {
+      // Non-JSON response from upstream (common when Cloudflare/host returns an HTML error page)
+      console.error('Invalid (non-JSON) response from generation service');
+      console.log('Refunding credit due to invalid (non-JSON) upstream response');
+
+      await supabase
+        .from('profiles')
+        .update({ credits: remainingCredits + 1 })
+        .eq('user_id', userId);
+
+      await supabase
+        .from('user_generations')
+        .update({ status: 'failed' })
+        .eq('id', generationId);
+
+      return new Response(
+        JSON.stringify({
+          success: false,
+          generation_id: generationId,
+          status: 'failed',
+          error: 'Invalid response from generation service',
+          details: `Expected JSON but got: ${contentType || 'unknown content-type'}`,
+          upstream_preview: responseText.slice(0, 500),
+          remaining_credits: remainingCredits + 1,
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     } else {
       try {
         n8nResponse = JSON.parse(responseText);
       } catch (e) {
-        console.error('Failed to parse N8N response:', e);
-        // REFUND the credit since we got invalid response
-        console.log('Refunding credit due to invalid N8N response');
+        console.error('Failed to parse N8N JSON response:', e);
+        // REFUND the credit since we got invalid JSON
+        console.log('Refunding credit due to invalid N8N JSON');
+
         await supabase
           .from('profiles')
           .update({ credits: remainingCredits + 1 })
           .eq('user_id', userId);
-        
+
         await supabase
           .from('user_generations')
           .update({ status: 'failed' })
           .eq('id', generationId);
-        
+
         return new Response(
-          JSON.stringify({ error: 'Invalid response from generation service' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          JSON.stringify({
+            success: false,
+            generation_id: generationId,
+            status: 'failed',
+            error: 'Invalid JSON response from generation service',
+            upstream_preview: responseText.slice(0, 500),
+            remaining_credits: remainingCredits + 1,
+          }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
     }
-
     // PHASE 3: Handle N8N response
     // Check for successful generation with image
     if (n8nResponse.success && n8nResponse.image_url) {
