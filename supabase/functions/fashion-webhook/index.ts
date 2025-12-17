@@ -5,15 +5,19 @@ import { validateClerkToken, corsHeaders } from "../_shared/clerk-auth.ts";
 
 const WEBHOOK_URL = "https://n8n.quicklyandgood.com/webhook/662d6440-b0e1-4c5e-9c71-11e077a84e39";
 
-// Input validation schema
+// Input validation schema - supports both single image_url and image_urls array
 const FashionWebhookSchema = z.object({
-  image_url: z.string().url().max(2048),
+  image_url: z.string().url().max(2048).optional(),
+  image_urls: z.array(z.string().max(2048)).optional(),
   style: z.string().max(100),
   aspectRatio: z.enum(['9:16', '3:4', '1:1']).optional().default('9:16'),
   background: z.string().max(200).optional(),
   lighting: z.string().max(200).optional(),
   cameraAngle: z.string().max(200).optional(),
-});
+}).refine(
+  (data) => data.image_url || (data.image_urls && data.image_urls.length > 0),
+  { message: "Either image_url or image_urls must be provided" }
+);
 
 serve(async (req) => {
   // Handle CORS preflight
@@ -147,12 +151,16 @@ serve(async (req) => {
     
     const body = parseResult.data;
 
+    // Normalize image URLs - support both single and array format
+    const imageUrls = body.image_urls || (body.image_url ? [body.image_url] : []);
+    const primaryImageUrl = imageUrls[0] || '';
+
     // PHASE 1: Insert record into user_generations with status 'processing'
     const { data: generationRecord, error: insertError } = await supabase
       .from('user_generations')
       .insert({
         user_id: userId,
-        original_image_url: body.image_url,
+        original_image_url: primaryImageUrl,
         style: body.style,
         aspect_ratio: body.aspectRatio || '9:16',
         background: body.background || 'auto',
@@ -186,6 +194,7 @@ serve(async (req) => {
     const webhookPayload = {
       body: {
         ...body,
+        image_urls: imageUrls, // Always send as array for consistency
         userId,
         generationId,
         timestamp: new Date().toISOString(),
@@ -227,28 +236,34 @@ serve(async (req) => {
     console.log('Webhook response status:', response.status);
     console.log('Webhook response:', responseText);
 
-    // Parse the N8N response
+    // Parse the N8N response - handle empty response as async workflow
     let n8nResponse;
-    try {
-      n8nResponse = JSON.parse(responseText);
-    } catch (e) {
-      console.error('Failed to parse N8N response:', e);
-      // REFUND the credit since we got invalid response
-      console.log('Refunding credit due to invalid N8N response');
-      await supabase
-        .from('profiles')
-        .update({ credits: remainingCredits + 1 })
-        .eq('user_id', userId);
-      
-      await supabase
-        .from('user_generations')
-        .update({ status: 'failed' })
-        .eq('id', generationId);
-      
-      return new Response(
-        JSON.stringify({ error: 'Invalid response from generation service' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    if (!responseText || responseText.trim() === '') {
+      // Empty response means N8N is processing asynchronously
+      console.log('N8N returned empty response - treating as async workflow');
+      n8nResponse = { message: 'Workflow was started' };
+    } else {
+      try {
+        n8nResponse = JSON.parse(responseText);
+      } catch (e) {
+        console.error('Failed to parse N8N response:', e);
+        // REFUND the credit since we got invalid response
+        console.log('Refunding credit due to invalid N8N response');
+        await supabase
+          .from('profiles')
+          .update({ credits: remainingCredits + 1 })
+          .eq('user_id', userId);
+        
+        await supabase
+          .from('user_generations')
+          .update({ status: 'failed' })
+          .eq('id', generationId);
+        
+        return new Response(
+          JSON.stringify({ error: 'Invalid response from generation service' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
     }
 
     // PHASE 3: Handle N8N response
