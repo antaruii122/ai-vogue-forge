@@ -12,6 +12,7 @@ import { Zap } from "lucide-react";
 import {
   ImageUploader,
   AIModelSelector,
+  aiModels,
   StyleTemplates,
   allTemplates,
   OutputFormatSelector,
@@ -243,10 +244,19 @@ const FashionPhotography = () => {
 
       console.log("🚀 Starting Generation...");
 
-      // 3. Prepare the Payload (UPDATED for Flux/Array support)
+      // 3. Look up the selected AI model's image URL (if any)
+      const selectedModelData = aiModels.find(m => m.id === selectedAiModel);
+      const modelUrl = selectedModelData?.image;
+
+      // 4. Prepare the Payload (UPDATED for Flux/Array support)
       // We now use 'image_urls' (plural) and always wrap the image in an array
+      // If a model is selected, include both product image AND model image
+      const imageUrls = modelUrl 
+        ? [uploadedImageUrl, modelUrl]  // Product + Model
+        : [uploadedImageUrl];            // Product only
+      
       const payload = {
-        image_urls: [uploadedImageUrl], // <--- CRITICAL CHANGE: Always an Array
+        image_urls: imageUrls,
         style: getTemplateName(),        // e.g. "Ghost Mannequin"
         aspectRatio: aspectRatio || "9:16",
         
