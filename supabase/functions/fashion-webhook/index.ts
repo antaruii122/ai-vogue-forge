@@ -269,45 +269,20 @@ serve(async (req) => {
     }
 
     // Parse the N8N response - handle empty response as async workflow
+    // NOTE: N8N sometimes returns text/html content-type even with JSON body, so we try to parse regardless
     let n8nResponse: any;
     if (!responseText || responseText.trim() === '') {
       // Empty response means N8N is processing asynchronously
       console.log('N8N returned empty response - treating as async workflow');
       n8nResponse = { message: 'Workflow was started' };
-    } else if (!contentType.toLowerCase().includes('application/json')) {
-      // Non-JSON response from upstream (common when Cloudflare/host returns an HTML error page)
-      console.error('Invalid (non-JSON) response from generation service');
-      console.log('Refunding credit due to invalid (non-JSON) upstream response');
-
-      await supabase
-        .from('profiles')
-        .update({ credits: remainingCredits + 1 })
-        .eq('user_id', userId);
-
-      await supabase
-        .from('user_generations')
-        .update({ status: 'failed' })
-        .eq('id', generationId);
-
-      return new Response(
-        JSON.stringify({
-          success: false,
-          generation_id: generationId,
-          status: 'failed',
-          error: 'Invalid response from generation service',
-          details: `Expected JSON but got: ${contentType || 'unknown content-type'}`,
-          upstream_preview: responseText.slice(0, 500),
-          remaining_credits: remainingCredits + 1,
-        }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
     } else {
+      // Try to parse as JSON regardless of content-type (N8N often sends text/html with JSON body)
       try {
         n8nResponse = JSON.parse(responseText);
+        console.log('Successfully parsed N8N response as JSON');
       } catch (e) {
-        console.error('Failed to parse N8N JSON response:', e);
-        // REFUND the credit since we got invalid JSON
-        console.log('Refunding credit due to invalid N8N JSON');
+        console.error('Failed to parse N8N response as JSON:', e);
+        console.log('Refunding credit due to invalid N8N response');
 
         await supabase
           .from('profiles')
@@ -324,7 +299,8 @@ serve(async (req) => {
             success: false,
             generation_id: generationId,
             status: 'failed',
-            error: 'Invalid JSON response from generation service',
+            error: 'Invalid response from generation service',
+            details: `Could not parse response as JSON. Content-type: ${contentType || 'unknown'}`,
             upstream_preview: responseText.slice(0, 500),
             remaining_credits: remainingCredits + 1,
           }),
