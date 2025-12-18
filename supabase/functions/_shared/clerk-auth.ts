@@ -110,6 +110,10 @@ export async function checkAdminRole(supabase: any, userId: string): Promise<boo
 }
 
 export const corsHeaders = {
+  // Reflect the request origin when present (needed for stricter CORS environments), otherwise allow all.
+  // Note: We intentionally do not set Access-Control-Allow-Credentials so "*" remains valid.
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
+  'Access-Control-Allow-Headers': 'authorization, Authorization, x-client-info, apikey, content-type, accept',
+  'Access-Control-Max-Age': '86400',
 };
