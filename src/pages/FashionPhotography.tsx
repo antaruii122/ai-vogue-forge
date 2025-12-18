@@ -29,11 +29,12 @@ const FashionPhotography = () => {
   const { credits, isLoading: isCreditsLoading, refetch: refetchCredits } = useCredits();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Upload state
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  // Upload state - now supports multiple images
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [uploadedImageUrls, setUploadedImageUrls] = useState<string[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
   const [isDragging, setIsDragging] = useState(false);
+  const MAX_IMAGES = 8;
 
   // Template state
   const [selectedTemplate, setSelectedTemplate] = useState<number | null>(null);
@@ -77,98 +78,117 @@ const FashionPhotography = () => {
     e.preventDefault();
     setIsDragging(false);
     
-    const files = e.dataTransfer.files;
+    const files = Array.from(e.dataTransfer.files);
     if (files.length > 0) {
-      handleFile(files[0]);
+      handleFiles(files);
     }
   };
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      handleFile(files[0]);
+      handleFiles(Array.from(files));
     }
   };
 
-  const handleFile = async (file: File) => {
-    // Validate file type
+  const handleFiles = async (files: File[]) => {
+    // Check how many more we can add
+    const remainingSlots = MAX_IMAGES - uploadedImageUrls.length;
+    const filesToProcess = files.slice(0, remainingSlots);
+    
+    if (files.length > remainingSlots) {
+      toast({
+        title: "Too many images",
+        description: `You can only upload ${MAX_IMAGES} images total. Only the first ${remainingSlots} will be added.`,
+        variant: "destructive",
+      });
+    }
+
     const validMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     const validExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
-    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
-    
-    const isValidMime = validMimeTypes.includes(file.type);
-    const isValidExtension = validExtensions.includes(fileExtension);
-    
-    if (!isValidMime && !isValidExtension) {
-      toast({
-        title: "Invalid file type",
-        description: "Please upload a valid image file (JPG, JPEG, PNG, WebP, or GIF)",
-        variant: "destructive",
-      });
-      return;
-    }
 
-    // Validate file size (10MB)
-    if (file.size > 10 * 1024 * 1024) {
-      toast({
-        title: "File too large",
-        description: "File size must be less than 10MB",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    try {
-      if (!user?.id) {
+    for (const file of filesToProcess) {
+      const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+      const isValidMime = validMimeTypes.includes(file.type);
+      const isValidExtension = validExtensions.includes(fileExtension);
+      
+      if (!isValidMime && !isValidExtension) {
         toast({
-          title: "Authentication required",
-          description: "Please log in to upload images",
+          title: "Invalid file type",
+          description: `${file.name} is not a valid image file (JPG, JPEG, PNG, WebP, or GIF)`,
           variant: "destructive",
         });
-        return;
+        continue;
       }
 
-      toast({
-        title: "Uploading image...",
-        description: "Please wait while we upload your photo",
-      });
-      
-      const clerkToken = await getToken();
-      
-      if (!clerkToken) {
+      if (file.size > 10 * 1024 * 1024) {
         toast({
-          title: "Authentication error",
-          description: "Please log in again",
+          title: "File too large",
+          description: `${file.name} exceeds 10MB limit`,
           variant: "destructive",
         });
-        return;
+        continue;
       }
-      
-      const publicUrl = await uploadImageToStorage(file, user.id, 'uploads', clerkToken);
-      
-      setSelectedFile(file);
-      setUploadedImageUrl(publicUrl);
-      
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-      
-      toast({
-        title: "Upload successful!",
-        description: "Your image has been uploaded to storage",
-      });
-    } catch (error) {
-      toast({
-        title: "Upload failed",
-        description: error instanceof Error ? error.message : "Failed to upload image",
-        variant: "destructive",
-      });
+
+      try {
+        if (!user?.id) {
+          toast({
+            title: "Authentication required",
+            description: "Please log in to upload images",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        toast({
+          title: "Uploading image...",
+          description: `Uploading ${file.name}`,
+        });
+        
+        const clerkToken = await getToken();
+        
+        if (!clerkToken) {
+          toast({
+            title: "Authentication error",
+            description: "Please log in again",
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        const publicUrl = await uploadImageToStorage(file, user.id, 'uploads', clerkToken);
+        
+        setSelectedFiles(prev => [...prev, file]);
+        setUploadedImageUrls(prev => [...prev, publicUrl]);
+        
+        const url = URL.createObjectURL(file);
+        setPreviewUrls(prev => [...prev, url]);
+        
+      } catch (error) {
+        toast({
+          title: "Upload failed",
+          description: `Failed to upload ${file.name}`,
+          variant: "destructive",
+        });
+      }
     }
+    
+    toast({
+      title: "Upload complete!",
+      description: `${filesToProcess.length} image(s) uploaded successfully`,
+    });
   };
 
-  const handleChangePhoto = () => {
-    setSelectedFile(null);
-    setUploadedImageUrl(null);
-    setPreviewUrl(null);
+  const handleRemoveImage = (index: number) => {
+    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
+    setUploadedImageUrls(prev => prev.filter((_, i) => i !== index));
+    setPreviewUrls(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleClearAll = () => {
+    setSelectedFiles([]);
+    setUploadedImageUrls([]);
+    setPreviewUrls([]);
     setSelectedTemplate(null);
     setSelectedAiModel(null);
     if (fileInputRef.current) {
@@ -211,11 +231,11 @@ const FashionPhotography = () => {
 
   const handleGenerate = async () => {
     try {
-      // 1. Validation: Ensure we have an image
-      if (!uploadedImageUrl) {
+      // 1. Validation: Ensure we have at least one image
+      if (uploadedImageUrls.length === 0) {
         toast({
           title: "Missing image",
-          description: "Please upload an image first",
+          description: "Please upload at least one reference image",
           variant: "destructive",
         });
         return;
@@ -249,10 +269,10 @@ const FashionPhotography = () => {
       console.log("DEBUG: selectedAiModel ID:", selectedAiModel);
       console.log("DEBUG: foundModel:", foundModel);
       
-      // 4. Force the array construction - ALWAYS start with product image
-      const imagesToSend: string[] = [uploadedImageUrl];
+      // 4. Start with all uploaded reference images
+      const imagesToSend: string[] = [...uploadedImageUrls];
       
-      // If a model is selected and has a publicUrl, use that for external backend
+      // If a model is selected and has a publicUrl, add it
       if (foundModel && foundModel.publicUrl) {
         imagesToSend.push(foundModel.publicUrl);
         console.log("DEBUG: Added model publicUrl:", foundModel.publicUrl);
@@ -283,7 +303,7 @@ const FashionPhotography = () => {
       navigate('/tools/fashion-results', {
         state: {
           image_urls: payload.image_urls,
-          image_url: uploadedImageUrl, // Keep for backwards compatibility
+          image_url: uploadedImageUrls[0], // Keep for backwards compatibility (first image)
           style: payload.style,
           styleId: selectedTemplate,
           aspectRatio: payload.aspectRatio,
@@ -335,14 +355,16 @@ const FashionPhotography = () => {
               {/* Left Column - Upload & AI Model */}
               <div className="space-y-6">
                 <ImageUploader
-                  previewUrl={previewUrl}
+                  previewUrls={previewUrls}
                   isDragging={isDragging}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
                   onFileSelect={handleFileInput}
-                  onChangePhoto={handleChangePhoto}
+                  onRemoveImage={handleRemoveImage}
+                  onClearAll={handleClearAll}
                   fileInputRef={fileInputRef}
+                  maxImages={MAX_IMAGES}
                 />
 
                 <AIModelSelector
@@ -393,7 +415,7 @@ const FashionPhotography = () => {
                   const modelUrl = selectedModelData?.image;
                   return (
                     <GenerateButton
-                      isVisible={!!(uploadedImageUrl && selectedTemplate)}
+                      isVisible={!!(uploadedImageUrls.length > 0 && selectedTemplate)}
                       credits={credits}
                       isCreditsLoading={isCreditsLoading}
                       hasEnoughCredits={hasEnoughCredits}
