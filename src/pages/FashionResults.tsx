@@ -32,10 +32,33 @@ const FashionResults = () => {
   const [generationId, setGenerationId] = useState<string | null>(null);
   const [isPayPalModalOpen, setIsPayPalModalOpen] = useState(false);
   const [remainingCredits, setRemainingCredits] = useState<number | null>(null);
+  const [loadingMessage, setLoadingMessage] = useState("Iniciando motores de Inteligencia Artificial...");
   
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const pollingRef = useRef<NodeJS.Timeout | null>(null);
   const hasStartedRef = useRef(false);
+  const messageIndexRef = useRef(0);
+
+  const loadingMessages = [
+    "Iniciando motores de Inteligencia Artificial...",
+    "La IA está analizando tu estilo...",
+    "Ajustando la iluminación y composición...",
+    "Renderizando píxeles de alta definición...",
+    "Esto está tomando un poco más, vale la pena la espera...",
+    "Aplicando los toques finales...",
+  ];
+
+  // Cycle through loading messages
+  useEffect(() => {
+    if (!isGenerating) return;
+    
+    const messageInterval = setInterval(() => {
+      messageIndexRef.current = (messageIndexRef.current + 1) % loadingMessages.length;
+      setLoadingMessage(loadingMessages[messageIndexRef.current]);
+    }, 4000);
+
+    return () => clearInterval(messageInterval);
+  }, [isGenerating]);
 
   const params = location.state as GenerationParams | null;
   const WEBHOOK_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/fashion-webhook`;
@@ -202,7 +225,7 @@ const FashionResults = () => {
       }
     }, 2000);
 
-    // Timeout after 3 minutes
+    // Timeout after 10 minutes
     setTimeout(() => {
       if (pollingRef.current && isGenerating) {
         clearInterval(pollingRef.current);
@@ -210,7 +233,7 @@ const FashionResults = () => {
         setError('Generation is taking too long. Your image may still be processing - check your portfolio later.');
         setIsGenerating(false);
       }
-    }, 180000);
+    }, 600000);
   };
 
   const handleDownload = async () => {
@@ -275,10 +298,10 @@ const FashionResults = () => {
             </div>
             
             <h1 className="text-2xl font-bold text-foreground mb-3">
-              Generating Your Fashion Photo...
+              {loadingMessage}
             </h1>
             <p className="text-muted-foreground mb-2">
-              Please wait while our AI creates your image.
+              Por favor no cierres esta página. Estamos creando tu obra maestra.
             </p>
             <p className="text-purple-400 text-lg font-mono mb-6">
               {elapsedSeconds}s elapsed
@@ -294,7 +317,7 @@ const FashionResults = () => {
             </div>
 
             <p className="text-xs text-gray-500">
-              Typically takes 15-60 seconds. Do not close this page.
+              La generación puede tomar varios minutos. No cierres esta página.
             </p>
           </div>
         </div>
