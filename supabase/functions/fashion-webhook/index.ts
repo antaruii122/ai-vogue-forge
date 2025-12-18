@@ -345,8 +345,14 @@ serve(async (req) => {
       );
     }
     // Handle async workflow response - N8N started but hasn't returned image yet
-    else if (n8nResponse.message === 'Workflow was started') {
+    // Accept multiple variations of "started" messages from N8N
+    else if (
+      n8nResponse.message === 'Workflow was started' || 
+      n8nResponse.message === 'Generation started' ||
+      (n8nResponse.success === true && !n8nResponse.image_url)
+    ) {
       console.log('N8N workflow started (async mode), generation_id:', generationId);
+      console.log('N8N response message:', n8nResponse.message);
       console.log('Credit already deducted, balance:', remainingCredits);
       
       // Record stays in 'processing' status - N8N needs to call back with result
