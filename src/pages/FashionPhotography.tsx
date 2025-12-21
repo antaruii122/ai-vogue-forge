@@ -350,10 +350,10 @@ const FashionPhotography = () => {
               />
             </div>
 
-            {/* Main content - 2 column layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-[35%_65%] gap-8">
+            {/* Main content - Responsive 2 column layout */}
+            <div className="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-[minmax(280px,35%)_1fr]">
               {/* Left Column - Upload & AI Model */}
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 <ImageUploader
                   previewUrls={previewUrls}
                   isDragging={isDragging}
@@ -377,7 +377,7 @@ const FashionPhotography = () => {
               </div>
 
               {/* Right Column - Templates & Options */}
-              <div className="space-y-8">
+              <div className="space-y-6 sm:space-y-8">
                 <StyleTemplates
                   selectedTemplate={selectedTemplate}
                   activeStyleTab={activeStyleTab}
