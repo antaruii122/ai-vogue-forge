@@ -61,7 +61,7 @@ export const StyleTemplates = ({
         </TabsList>
 
         <TabsContent value="lifestyle" className="mt-0">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6">
             {lifestyleTemplates.map((template) => {
               const Icon = template.icon;
               const isSelected = selectedTemplate === template.id;
@@ -70,7 +70,7 @@ export const StyleTemplates = ({
                 <div
                   key={template.id}
                   onClick={() => onStyleSelect(template.id)}
-                  className={`relative cursor-pointer rounded-2xl overflow-hidden transition-all duration-300 ease-out border-2 aspect-[9/16]
+                  className={`relative cursor-pointer rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 ease-out border-2 aspect-[3/4] sm:aspect-[9/16]
                     ${isSelected 
                       ? 'border-purple-500 scale-[1.02] shadow-2xl shadow-purple-500/40' 
                       : 'border-gray-700/50 opacity-80 hover:opacity-100 hover:scale-[1.01] hover:shadow-xl hover:shadow-purple-500/20 hover:border-purple-400/50'
@@ -82,15 +82,15 @@ export const StyleTemplates = ({
                     className="w-full h-full object-cover absolute inset-0"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-5">
-                    <div className="flex items-center gap-3">
-                      <Icon className="w-5 h-5 text-white" />
-                      <span className="text-white font-semibold text-lg">{template.name}</span>
+                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-5">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white flex-shrink-0" />
+                      <span className="text-white font-semibold text-sm sm:text-lg truncate">{template.name}</span>
                     </div>
                   </div>
                   {isSelected && (
-                    <div className="absolute top-3 right-3 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center shadow-lg">
-                      <Check className="w-5 h-5 text-white" />
+                    <div className="absolute top-2 right-2 sm:top-3 sm:right-3 w-6 h-6 sm:w-8 sm:h-8 bg-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                      <Check className="w-3 h-3 sm:w-5 sm:h-5 text-white" />
                     </div>
                   )}
                 </div>
@@ -100,7 +100,7 @@ export const StyleTemplates = ({
         </TabsContent>
 
         <TabsContent value="ecommerce" className="mt-0">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:gap-6">
             {ecommerceTemplates.map((template) => {
               const Icon = template.icon;
               const isSelected = selectedTemplate === template.id;
@@ -109,7 +109,7 @@ export const StyleTemplates = ({
                 <div
                   key={template.id}
                   onClick={() => onStyleSelect(template.id)}
-                  className={`relative cursor-pointer rounded-2xl overflow-hidden transition-all duration-300 ease-out border-2 aspect-[9/16]
+                  className={`relative cursor-pointer rounded-xl sm:rounded-2xl overflow-hidden transition-all duration-300 ease-out border-2 aspect-[3/4] sm:aspect-[9/16]
                     ${isSelected 
                       ? 'border-purple-500 scale-[1.02] shadow-2xl shadow-purple-500/40' 
                       : 'border-gray-700/50 opacity-80 hover:opacity-100 hover:scale-[1.01] hover:shadow-xl hover:shadow-purple-500/20 hover:border-purple-400/50'
@@ -118,15 +118,15 @@ export const StyleTemplates = ({
                   {/* Placeholder gradient background for e-commerce styles */}
                   <div className={`w-full h-full absolute inset-0 bg-gradient-to-br ${template.gradient}`} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-5">
-                    <div className="flex items-center gap-3">
-                      <Icon className="w-5 h-5 text-white" />
-                      <span className="text-white font-semibold text-lg">{template.name}</span>
+                  <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-5">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-white flex-shrink-0" />
+                      <span className="text-white font-semibold text-sm sm:text-lg truncate">{template.name}</span>
                     </div>
                   </div>
                   {isSelected && (
-                    <div className="absolute top-3 right-3 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center shadow-lg">
-                      <Check className="w-5 h-5 text-white" />
+                    <div className="absolute top-2 right-2 sm:top-3 sm:right-3 w-6 h-6 sm:w-8 sm:h-8 bg-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                      <Check className="w-3 h-3 sm:w-5 sm:h-5 text-white" />
                     </div>
                   )}
                 </div>

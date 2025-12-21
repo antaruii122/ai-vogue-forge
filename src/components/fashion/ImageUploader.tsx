@@ -33,8 +33,8 @@ export const ImageUploader = ({
   if (hasImages) {
     return (
       <div className="space-y-4">
-        {/* Grid Preview */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+        {/* Grid Preview - responsive: 2 cols on mobile, 3 on sm, 4 on md+ */}
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
           {previewUrls.map((url, index) => (
             <div
               key={index}
@@ -46,10 +46,14 @@ export const ImageUploader = ({
                 className="w-full h-full object-cover"
               />
               <button
-                onClick={() => onRemoveImage(index)}
-                className="absolute top-1 right-1 p-1 bg-black/70 rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRemoveImage(index);
+                }}
+                className="absolute top-1 right-1 p-1.5 bg-black/70 rounded-full opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                aria-label={`Remove image ${index + 1}`}
               >
-                <X className="w-4 h-4 text-white" />
+                <X className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
               </button>
               <div className="absolute bottom-1 left-1 px-1.5 py-0.5 bg-black/70 rounded text-xs text-white">
                 {index + 1}
@@ -61,11 +65,11 @@ export const ImageUploader = ({
           {canAddMore && (
             <div
               onClick={() => fileInputRef.current?.click()}
-              className="aspect-square rounded-lg border-2 border-dashed border-gray-600 hover:border-purple-400 flex flex-col items-center justify-center cursor-pointer transition-colors bg-gray-900/50"
+              className="aspect-square rounded-lg border-2 border-dashed border-gray-600 hover:border-purple-400 flex flex-col items-center justify-center cursor-pointer transition-colors bg-gray-900/50 min-h-[80px]"
             >
-              <UploadCloud className="w-8 h-8 text-gray-500 mb-1" />
+              <UploadCloud className="w-6 h-6 sm:w-8 sm:h-8 text-gray-500 mb-1" />
               <span className="text-xs text-gray-500">Add More</span>
-              <span className="text-xs text-gray-600">({previewUrls.length}/{maxImages})</span>
+              <span className="text-[10px] sm:text-xs text-gray-600">({previewUrls.length}/{maxImages})</span>
             </div>
           )}
         </div>
